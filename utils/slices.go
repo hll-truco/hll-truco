@@ -1,7 +1,7 @@
 package utils
 
 // removeElements returns a copy of xs without any element that may be present in ys
-func CopyWithoutThese(xs, ys []int) []int {
+func CopyWithoutThese(xs []int, ys ...int) []int {
 	// create a map to store the elements of ys
 	m := make(map[int]bool)
 	for _, y := range ys {
