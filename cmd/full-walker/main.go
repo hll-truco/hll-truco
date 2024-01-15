@@ -23,8 +23,9 @@ var deck = []int{10, 20, 11, 21, 14, 24, 15}
 // e.g., 0:140
 //       1:2
 //       2:3
+
 var topology = make(map[uint]int)
-var topologyDone = make(map[uint]int)
+var dones = make(map[uint]int)
 
 func todasLasAristasChancePosibles(p *pdt.Partida, level uint) uint64 {
 
@@ -42,25 +43,32 @@ func todasLasAristasChancePosibles(p *pdt.Partida, level uint) uint64 {
 			// todos sus manojos posibles
 			todosSusManojosPosibles := combinatronics.Combs(resto2, 3)
 
-			topology[level] = len(deck) * len(todosMisManojosPosibles) * len(todosSusManojosPosibles)
-
 			for _, opManojoIDs := range todosSusManojosPosibles {
+
+				topology[level] = len(deck) * len(todosMisManojosPosibles) * len(todosSusManojosPosibles)
+
+				// ini
 				p, _ = pdt.Parse(string(bs), true)
 				utils.SetCartasRonda(p, muestraID, miManojoIDs, opManojoIDs)
 				recPlay(p, level+1)
-				totalAristasPosibles += 1
+				// fin
 
-				// finalizado uno de los manojos de op en `level`
-				if _, ok := topologyDone[level]; !ok {
-					topologyDone[level] = 0
+				totalAristasPosibles += 1
+				_, ok := dones[level]
+				if !ok {
+					dones[level] = 0
 				}
-				topologyDone[level] += 1
+				dones[level] += 1
 
 			}
 			// finalizado uno de los manojos de mi en `level`
 		}
-		// finalizado una muestra en `level`
 	}
+
+	// termine con todas las de este level.
+	// la borro
+	delete(dones, level)
+	delete(topology, level)
 
 	return totalAristasPosibles
 }
@@ -71,9 +79,19 @@ func recPlay(p *pdt.Partida, level uint) {
 	// para la partida dada, todas las jugadas posibles
 	chis := pdt.Chis(p)
 
+	// largo?
+	t := 0
+	for mix := range chis {
+		t += len(chis[mix])
+	}
+	topology[level] = t
+	dones[level] = 0
+
 	// las juego
 	for mix := range chis {
 		for aix := range chis[mix] {
+
+			// ini
 			p, _ = pdt.Parse(string(bs), true)
 			pkts := chis[mix][aix].Hacer(p)
 
@@ -83,10 +101,7 @@ func recPlay(p *pdt.Partida, level uint) {
 
 			if terminoLaPartida := p.Terminada(); terminoLaPartida {
 				terminals++
-				// utils.PrintEvery(terminals, 100_000)
-				printer.Print(fmt.Sprintf("topo: %v, done: %v", topology, topologyDone))
-				//
-				//
+				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v", topology, dones))
 			} else if terminoLaRonda := utils.RondaIsDone(pkts); terminoLaRonda {
 				// simular todos repartos de manojos posibles
 				todasLasAristasChancePosibles(p, level+1)
@@ -94,8 +109,15 @@ func recPlay(p *pdt.Partida, level uint) {
 				// sigue
 				recPlay(p, level+1)
 			}
+
+			// termine con una arista
+			dones[level] += 1
 		}
 	}
+
+	// termine con todas
+	delete(topology, level)
+	delete(dones, level)
 }
 
 func main() {
