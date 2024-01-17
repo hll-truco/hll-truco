@@ -128,6 +128,7 @@ func recPlay(p *pdt.Partida, level uint) {
 }
 
 func main() {
+	start := time.Now()
 	n := 2
 	azules := []string{"Alice", "Ariana", "Annie"}
 	rojos := []string{"Bob", "Ben", "Bill"}
@@ -135,16 +136,31 @@ func main() {
 	// p, err := pdt.NuevaMiniPartida(azules[:n>>1], rojos[:n>>1], verbose)
 
 	p, _ := pdt.NuevaPartida(
-		pdt.A5, // 10 pts
-		true,   // mini
+		pdt.A40, // <----- no importa poque la condicion de parada es Ronda
+		true,    // mini
 		azules[:n>>1],
 		rojos[:n>>1],
 		0, // limiteEnvido
 		verbose)
 
-	p.Puntajes[pdt.Azul] = 3
-	p.Puntajes[pdt.Rojo] = 3
-
 	log.Println("total aristas nivel 0:", todasLasAristasChancePosibles(p, 0))
 	log.Println("terminals:", terminals)
+	log.Println("finished:", time.Since(start))
 }
+
+/*
+
+bench (M2)
+for i in {1..10}; do go run cmd/ronda-walker/*.go; done
+NO-verbose:
+x=617ms, s=2.05
+
+verbose, usando `empiezaNuevaRonda`
+x=647ms, s=5.26
+(5% más lento que no-verbose)
+
+verbose, usando `pdt.IsDone`
+x=648, s=3.87
+(5% más lento que no-verbose)
+
+*/
