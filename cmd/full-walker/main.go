@@ -11,13 +11,16 @@ import (
 )
 
 var (
+	verbose   bool                = false
 	terminals uint64              = 0
 	printer   *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 10)
 )
 
 // mazo de cartas primas
 // var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27, 18, 28}
-var deck = []int{10, 20, 11, 21, 14, 24, 15}
+// var deck = []int{10, 20, 11, 21, 14, 24, 15}
+
+var deck = []int{20, 0, 26, 36, 12, 16, 5}
 
 // mapa de nivel:branches
 // e.g., 0:140
@@ -48,7 +51,7 @@ func todasLasAristasChancePosibles(p *pdt.Partida, level uint) uint64 {
 				topology[level] = len(deck) * len(todosMisManojosPosibles) * len(todosSusManojosPosibles)
 
 				// ini
-				p, _ = pdt.Parse(string(bs), true)
+				p, _ = pdt.Parse(string(bs), verbose)
 				utils.SetCartasRonda(p, muestraID, miManojoIDs, opManojoIDs)
 				recPlay(p, level+1)
 				// fin
@@ -92,8 +95,15 @@ func recPlay(p *pdt.Partida, level uint) {
 		for aix := range chis[mix] {
 
 			// ini
-			p, _ = pdt.Parse(string(bs), true)
-			pkts := chis[mix][aix].Hacer(p)
+			p, _ = pdt.Parse(string(bs), verbose)
+			_, empiezaNuevaRonda := chis[mix][aix].Hacer(p)
+
+			// empiezaNuevaRondaCalc := utils.RondaIsDone(pkts)
+			// if empiezaNuevaRondaCalc != empiezaNuevaRonda {
+			// 	p, _ = pdt.Parse(string(bs), verbose)
+			// 	_, empiezaNuevaRonda := chis[mix][aix].Hacer(p)
+			// 	panic(fmt.Sprintf("no da lo mismo %v %v\n", empiezaNuevaRondaCalc, empiezaNuevaRonda))
+			// }
 
 			// 1. se termino la partida? -> terminals +1
 			// 2. se termino la ronda? -> simular todas las aristas del chance node
@@ -102,7 +112,7 @@ func recPlay(p *pdt.Partida, level uint) {
 			if terminoLaPartida := p.Terminada(); terminoLaPartida {
 				terminals++
 				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v", topology, dones))
-			} else if terminoLaRonda := utils.RondaIsDone(pkts); terminoLaRonda {
+			} else if empiezaNuevaRonda {
 				// simular todos repartos de manojos posibles
 				todasLasAristasChancePosibles(p, level+1)
 			} else {
@@ -124,7 +134,6 @@ func main() {
 	n := 2
 	azules := []string{"Alice", "Ariana", "Annie"}
 	rojos := []string{"Bob", "Ben", "Bill"}
-	verbose := true
 
 	// p, err := pdt.NuevaMiniPartida(azules[:n>>1], rojos[:n>>1], verbose)
 
@@ -134,8 +143,7 @@ func main() {
 		azules[:n>>1],
 		rojos[:n>>1],
 		0, // limiteEnvido
-		verbose,
-	)
+		verbose)
 
 	p.Puntajes[pdt.Azul] = 3
 	p.Puntajes[pdt.Rojo] = 3
