@@ -8,9 +8,19 @@ import (
 )
 
 func main() {
+
+	// n := 40 // full deck
+	// n := 12
+	n := 1 + 3 + 3 // <- min 2p
+
+	miniIDs := make([]int, n)
+	for i := range miniIDs {
+		miniIDs[i] = i
+	}
+
 	// mazo de cartas primas
 	// miniIDs := []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27, 18, 28}
-	miniIDs := []int{20, 0, 26, 36, 12, 16, 5}
+	// miniIDs := []int{20, 0, 26, 36, 12, 16, 5}
 
 	var totalAristasPosibles uint64 = 0
 
