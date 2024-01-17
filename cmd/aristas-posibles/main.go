@@ -9,7 +9,8 @@ import (
 
 func main() {
 	// mazo de cartas primas
-	miniIDs := []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27, 18, 28}
+	// miniIDs := []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27, 18, 28}
+	miniIDs := []int{20, 0, 26, 36, 12, 16, 5}
 
 	var totalAristasPosibles uint64 = 0
 
