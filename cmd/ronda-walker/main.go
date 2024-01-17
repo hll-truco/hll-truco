@@ -13,14 +13,24 @@ import (
 var (
 	verbose   bool                = false
 	terminals uint64              = 0
-	printer   *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 10)
+	printer   *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 60)
 )
 
-// mazo de cartas primas
-// var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27, 18, 28}
+// full
+// var deck = []int{
+// 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+// 	21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+// }
+
+// 14
+var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27, 18, 28}
+
+// 12
+// var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27}
+
 // var deck = []int{10, 20, 11, 21, 14, 24, 15}
 
-var deck = []int{20, 0, 26, 36, 12, 16, 5}
+// var deck = []int{20, 0, 26, 36, 12, 16, 5}
 
 // mapa de nivel:branches
 // e.g., 0:140
@@ -130,6 +140,7 @@ func recPlay(p *pdt.Partida, level uint) {
 func main() {
 	start := time.Now()
 	n := 2
+	limEnvite := 1
 	azules := []string{"Alice", "Ariana", "Annie"}
 	rojos := []string{"Bob", "Ben", "Bill"}
 
@@ -140,7 +151,7 @@ func main() {
 		true,    // mini
 		azules[:n>>1],
 		rojos[:n>>1],
-		0, // limiteEnvido
+		limEnvite, // limiteEnvido
 		verbose)
 
 	log.Println("total aristas nivel 0:", todasLasAristasChancePosibles(p, 0))
