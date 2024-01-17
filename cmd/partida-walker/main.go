@@ -98,9 +98,12 @@ func recPlay(p *pdt.Partida, level uint) {
 			p, _ = pdt.Parse(string(bs), verbose)
 			_, empiezaNuevaRonda := chis[mix][aix].Hacer(p)
 
-			if empiezaNuevaRonda || p.Terminada() {
+			if terminoLaPartida := p.Terminada(); terminoLaPartida {
 				terminals++
 				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v", topology, dones))
+			} else if empiezaNuevaRonda {
+				// simular todos repartos de manojos posibles
+				todasLasAristasChancePosibles(p, level+1)
 			} else {
 				// sigue
 				recPlay(p, level+1)

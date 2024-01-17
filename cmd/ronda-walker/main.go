@@ -109,12 +109,9 @@ func recPlay(p *pdt.Partida, level uint) {
 			// 2. se termino la ronda? -> simular todas las aristas del chance node
 			// 3. ninguna de las dos -> rec
 
-			if terminoLaPartida := p.Terminada(); terminoLaPartida {
+			if empiezaNuevaRonda || p.Terminada() {
 				terminals++
 				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v", topology, dones))
-			} else if empiezaNuevaRonda {
-				// simular todos repartos de manojos posibles
-				todasLasAristasChancePosibles(p, level+1)
 			} else {
 				// sigue
 				recPlay(p, level+1)
