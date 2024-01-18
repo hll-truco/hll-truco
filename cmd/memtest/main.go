@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"runtime"
 	"time"
 
@@ -49,19 +50,39 @@ func bToMb(b uint64) uint64 {
 	return b / 1024 / 1024
 }
 
-func main() {
-	var n int
-	flag.IntVar(&n, "n", 0, "Amount of memory to fill in MiB")
-	flag.Parse()
+var delay = time.Millisecond * 5
 
+func DynamicSlice(n int) []byte {
 	data := make([]byte, 0)
 	for i := 0; i < n; i++ {
 		data = append(data, make([]byte, 1024*1024)...)
 		printer.Print(getMemUsage())
-		time.Sleep(time.Millisecond * 5)
+		time.Sleep(delay)
 	}
+	return data
+}
+
+func FixedSlice(n int) []byte {
+	data := make([]byte, 0, n*1024*1024)
+	for i := 0; i < n; i++ {
+		data = append(data, make([]byte, 1024*1024)...)
+		printer.Print(getMemUsage())
+		time.Sleep(delay)
+	}
+	return data
+}
+
+func main() {
+	fmt.Printf("Current process ID: %d\n", os.Getpid())
+
+	var n int
+	flag.IntVar(&n, "n", 0, "Amount of memory to fill in MiB")
+	flag.Parse()
+
+	// data := dynamicSlice(n)
+	data := FixedSlice(n)
 
 	fmt.Println("done. sleeping 10s.", len(data))
-	time.Sleep(10 * time.Second)
+	time.Sleep(1 * time.Minute)
 	fmt.Println(len(data))
 }
