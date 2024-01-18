@@ -23,10 +23,10 @@ var (
 // }
 
 // 14
-var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27, 18, 28}
+// var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27, 18, 28}
 
 // 12
-// var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27}
+var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27}
 
 // var deck = []int{10, 20, 11, 21, 14, 24, 15}
 
@@ -106,7 +106,7 @@ func recPlay(p *pdt.Partida, level uint) {
 
 			// ini
 			p, _ = pdt.Parse(string(bs), verbose)
-			pkts := chis[mix][aix].Hacer(p)
+			pkts, _ := chis[mix][aix].Hacer(p)
 
 			if pdt.IsDone(pkts) || p.Terminada() {
 				terminals++
@@ -137,6 +137,7 @@ func main() {
 
 	p, _ := pdt.NuevaPartida(
 		pdt.A40, // <----- no importa poque la condicion de parada es Ronda
+		true,
 		azules[:n>>1],
 		rojos[:n>>1],
 		limEnvite, // limiteEnvido

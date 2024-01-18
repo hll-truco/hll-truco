@@ -6,18 +6,31 @@ import (
 	"time"
 
 	"github.com/filevich/combinatronics"
+	"github.com/filevich/truco-cfr/abs"
+	"github.com/filevich/truco-cfr/info"
 	"github.com/hll-truco/experiments/utils"
 	"github.com/truquito/truco/pdt"
 )
 
 var (
-	verbose   bool                = false
+	verbose   bool                = true
 	terminals uint64              = 0
+	infosets  map[string]bool     = map[string]bool{}
 	printer   *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 10)
 )
 
-// mazo de cartas primas
+// full
+// var deck = []int{
+// 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+// 	21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+// }
+
+// 14
 // var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27, 18, 28}
+
+// 12
+// var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27}
+
 // var deck = []int{10, 20, 11, 21, 14, 24, 15}
 
 var deck = []int{20, 0, 26, 36, 12, 16, 5}
@@ -96,14 +109,23 @@ func recPlay(p *pdt.Partida, level uint) {
 
 			// ini
 			p, _ = pdt.Parse(string(bs), verbose)
+
+			// infoset?
+			activePlayer := pdt.Rho(p)
+			a := &abs.A1{}
+			aixs := pdt.GetA(p, activePlayer)
+			info := info.MkInfoset1(p, activePlayer, aixs, a)
+			infosets[info.Hash()] = true
+
 			pkts, _ := chis[mix][aix].Hacer(p)
 
-			if terminoLaPartida := p.Terminada(); terminoLaPartida {
+			if pdt.IsDone(pkts) || p.Terminada() {
 				terminals++
-				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v", topology, dones))
-			} else if pdt.IsDone(pkts) {
-				// simular todos repartos de manojos posibles
-				todasLasAristasChancePosibles(p, level+1)
+				mem := utils.GetMemUsage()
+				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v\n\t%s",
+					topology,
+					dones,
+					mem))
 			} else {
 				// sigue
 				recPlay(p, level+1)
@@ -120,23 +142,24 @@ func recPlay(p *pdt.Partida, level uint) {
 }
 
 func main() {
+	start := time.Now()
 	n := 2
+	limEnvite := 1
 	azules := []string{"Alice", "Ariana", "Annie"}
 	rojos := []string{"Bob", "Ben", "Bill"}
 
 	// p, err := pdt.NuevaMiniPartida(azules[:n>>1], rojos[:n>>1], verbose)
 
 	p, _ := pdt.NuevaPartida(
-		pdt.A40, // 10 pts
+		pdt.A40, // <----- no importa poque la condicion de parada es Ronda
 		true,
 		azules[:n>>1],
 		rojos[:n>>1],
-		0, // limiteEnvido
+		limEnvite, // limiteEnvido
 		verbose)
-
-	p.Puntajes[pdt.Azul] = 4
-	p.Puntajes[pdt.Rojo] = 4
 
 	log.Println("total aristas nivel 0:", todasLasAristasChancePosibles(p, 0))
 	log.Println("terminals:", terminals)
+	log.Println("infosets:", len(infosets))
+	log.Println("finished:", time.Since(start))
 }
