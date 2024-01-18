@@ -9,4 +9,5 @@ require (
 	github.com/filevich/combinatronics v0.0.0-20220316214652-26aa6db09482
 )
 
-replace github.com/truquito/truco => ../minitruco
+// replace github.com/truquito/truco => ../minitruco
+replace github.com/truquito/truco => ../truco

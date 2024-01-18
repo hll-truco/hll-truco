@@ -106,20 +106,9 @@ func recPlay(p *pdt.Partida, level uint) {
 
 			// ini
 			p, _ = pdt.Parse(string(bs), verbose)
-			_, empiezaNuevaRonda := chis[mix][aix].Hacer(p)
+			pkts := chis[mix][aix].Hacer(p)
 
-			// empiezaNuevaRondaCalc := utils.RondaIsDone(pkts)
-			// if empiezaNuevaRondaCalc != empiezaNuevaRonda {
-			// 	p, _ = pdt.Parse(string(bs), verbose)
-			// 	_, empiezaNuevaRonda := chis[mix][aix].Hacer(p)
-			// 	panic(fmt.Sprintf("no da lo mismo %v %v\n", empiezaNuevaRondaCalc, empiezaNuevaRonda))
-			// }
-
-			// 1. se termino la partida? -> terminals +1
-			// 2. se termino la ronda? -> simular todas las aristas del chance node
-			// 3. ninguna de las dos -> rec
-
-			if empiezaNuevaRonda || p.Terminada() {
+			if pdt.IsDone(pkts) || p.Terminada() {
 				terminals++
 				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v", topology, dones))
 			} else {
@@ -148,7 +137,6 @@ func main() {
 
 	p, _ := pdt.NuevaPartida(
 		pdt.A40, // <----- no importa poque la condicion de parada es Ronda
-		true,    // mini
 		azules[:n>>1],
 		rojos[:n>>1],
 		limEnvite, // limiteEnvido

@@ -96,12 +96,12 @@ func recPlay(p *pdt.Partida, level uint) {
 
 			// ini
 			p, _ = pdt.Parse(string(bs), verbose)
-			_, empiezaNuevaRonda := chis[mix][aix].Hacer(p)
+			pkts := chis[mix][aix].Hacer(p)
 
 			if terminoLaPartida := p.Terminada(); terminoLaPartida {
 				terminals++
 				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v", topology, dones))
-			} else if empiezaNuevaRonda {
+			} else if pdt.IsDone(pkts) {
 				// simular todos repartos de manojos posibles
 				todasLasAristasChancePosibles(p, level+1)
 			} else {
@@ -127,8 +127,7 @@ func main() {
 	// p, err := pdt.NuevaMiniPartida(azules[:n>>1], rojos[:n>>1], verbose)
 
 	p, _ := pdt.NuevaPartida(
-		pdt.A5, // 10 pts
-		true,   // mini
+		pdt.A40, // 10 pts
 		azules[:n>>1],
 		rojos[:n>>1],
 		0, // limiteEnvido
