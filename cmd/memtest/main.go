@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"runtime"
 	"time"
 
 	"github.com/hll-truco/experiments/utils"
@@ -52,27 +51,13 @@ reduce memory overhead.
 
 */
 
-func getMemUsage() string {
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
-	return fmt.Sprintf("HeapAlloc = %v MiB\tTotalAlloc = %v MiB\tSys = %v MiB\tNumGC = %v",
-		bToMb(m.HeapAlloc),
-		bToMb(m.TotalAlloc),
-		bToMb(m.Sys),
-		m.NumGC)
-}
-
-func bToMb(b uint64) uint64 {
-	return b / 1024 / 1024
-}
-
 var delay = time.Millisecond * 5
 
 func DynamicSlice(n int) []byte {
 	data := make([]byte, 0)
 	for i := 0; i < n; i++ {
 		data = append(data, make([]byte, 1024*1024)...)
-		printer.Print(getMemUsage())
+		printer.Print(utils.GetMemUsage())
 		time.Sleep(delay)
 	}
 	return data
@@ -82,7 +67,7 @@ func FixedSlice(n int) []byte {
 	data := make([]byte, 0, n*1024*1024)
 	for i := 0; i < n; i++ {
 		data = append(data, make([]byte, 1024*1024)...)
-		printer.Print(getMemUsage())
+		printer.Print(utils.GetMemUsage())
 		time.Sleep(delay)
 	}
 	return data
