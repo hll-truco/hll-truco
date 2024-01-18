@@ -34,6 +34,22 @@ var printer *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 1)
 
 *HeapAlloc*
 
+run `python cmd/memtest/plot_dynm_vs_fixed.py` and judge by yourself
+
+From https://go.dev/blog/go119runtime
+
+"
+(...)
+The first is that when the peak memory use of an application is unpredictable,
+GOGC alone offers virtually no protection from running out of memory. With just
+GOGC, the Go runtime is simply unaware of how much memory it has available to
+it. Setting a memory limit enables the runtime to be robust against transient,
+recoverable load spikes by making it aware of when it needs to work harder to
+reduce memory overhead.
+(...)
+"
+
+
 */
 
 func getMemUsage() string {
@@ -73,14 +89,15 @@ func FixedSlice(n int) []byte {
 }
 
 func main() {
+	fmt.Println("GOMEMLIMIT:", os.Getenv("GOMEMLIMIT"))
 	fmt.Printf("Current process ID: %d\n", os.Getpid())
 
 	var n int
 	flag.IntVar(&n, "n", 0, "Amount of memory to fill in MiB")
 	flag.Parse()
 
-	// data := dynamicSlice(n)
-	data := FixedSlice(n)
+	data := DynamicSlice(n)
+	// data := FixedSlice(n)
 
 	fmt.Println("done. sleeping 10s.", len(data))
 	time.Sleep(1 * time.Minute)
