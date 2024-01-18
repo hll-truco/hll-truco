@@ -16,7 +16,7 @@ var (
 	verbose   bool                = true
 	terminals uint64              = 0
 	infosets  map[string]bool     = map[string]bool{}
-	printer   *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 10)
+	printer   *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 60)
 )
 
 // full
@@ -29,11 +29,11 @@ var (
 // var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27, 18, 28}
 
 // 12
-// var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27}
+var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27}
 
+// 6
 // var deck = []int{10, 20, 11, 21, 14, 24, 15}
-
-var deck = []int{20, 0, 26, 36, 12, 16, 5}
+// var deck = []int{20, 0, 26, 36, 12, 16, 5}
 
 // mapa de nivel:branches
 // e.g., 0:140
@@ -112,7 +112,7 @@ func recPlay(p *pdt.Partida, level uint) {
 
 			// infoset?
 			activePlayer := pdt.Rho(p)
-			a := &abs.A1{}
+			a := &abs.A3{}
 			aixs := pdt.GetA(p, activePlayer)
 			info := info.MkInfoset1(p, activePlayer, aixs, a)
 			infosets[info.Hash()] = true
