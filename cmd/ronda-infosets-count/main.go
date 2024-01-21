@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/sha1"
 	"fmt"
 	"log"
 	"time"
@@ -115,7 +116,7 @@ func recPlay(p *pdt.Partida, level uint) {
 			a := &abs.A3{}
 			aixs := pdt.GetA(p, activePlayer)
 			info := info.MkInfoset1(p, activePlayer, aixs, a)
-			infosets[info.Hash()] = true
+			infosets[info.Hash(sha1.New())] = true
 
 			pkts, _ := chis[mix][aix].Hacer(p)
 
