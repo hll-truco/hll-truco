@@ -1,11 +1,14 @@
 package main
 
 import (
+	"crypto/sha1"
 	"fmt"
 	"log"
 	"time"
 
 	"github.com/filevich/combinatronics"
+	"github.com/filevich/truco-cfr/abs"
+	"github.com/filevich/truco-cfr/info"
 	"github.com/hll-truco/experiments/utils"
 	"github.com/truquito/truco/pdt"
 )
@@ -13,6 +16,7 @@ import (
 var (
 	verbose   bool                = false
 	terminals uint64              = 0
+	infosets  map[string]bool     = map[string]bool{}
 	printer   *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 60)
 )
 
@@ -106,11 +110,24 @@ func recPlay(p *pdt.Partida, level uint) {
 
 			// ini
 			p, _ = pdt.Parse(string(bs), verbose)
+
+			// infoset?
+			activePlayer := pdt.Rho(p)
+			a := &abs.A3{}
+			aixs := pdt.GetA(p, activePlayer)
+			info := info.MkInfoset1(p, activePlayer, aixs, a)
+			infosets[info.Hash(sha1.New())] = true
+
 			pkts, _ := chis[mix][aix].Hacer(p)
 
 			if pdt.IsDone(pkts) || p.Terminada() {
 				terminals++
-				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v", topology, dones))
+				mem := utils.GetMemUsage()
+				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v\n\t%s\n\tcount: %d",
+					topology,
+					dones,
+					mem,
+					len(infosets)))
 			} else {
 				// sigue
 				recPlay(p, level+1)
@@ -145,6 +162,7 @@ func main() {
 
 	log.Println("total aristas nivel 0:", todasLasAristasChancePosibles(p, 0))
 	log.Println("terminals:", terminals)
+	log.Println("infosets:", len(infosets))
 	log.Println("finished:", time.Since(start))
 }
 

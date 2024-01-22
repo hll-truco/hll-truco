@@ -123,10 +123,11 @@ func recPlay(p *pdt.Partida, level uint) {
 			if pdt.IsDone(pkts) || p.Terminada() {
 				terminals++
 				mem := utils.GetMemUsage()
-				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v\n\t%s",
+				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v\n\t%s\n\tcount: %d",
 					topology,
 					dones,
-					mem))
+					mem,
+					len(infosets)))
 			} else {
 				// sigue
 				recPlay(p, level+1)
