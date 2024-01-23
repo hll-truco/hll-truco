@@ -1,7 +1,12 @@
 package utils
 
 import (
+	"crypto/sha1"
+	"crypto/sha256"
+	"crypto/sha512"
 	"fmt"
+	"hash"
+	"hash/adler32"
 	"log"
 	"runtime"
 	"time"
@@ -46,4 +51,19 @@ func GetMemUsage() string {
 
 func ByteToMb(b uint64) uint64 {
 	return b / 1024 / 1024
+}
+
+func ParseHashFn(ID string) hash.Hash {
+	switch ID {
+	case "sha160":
+		return sha1.New()
+	case "sha256":
+		return sha256.New()
+	case "sha512":
+		return sha512.New()
+	case "adler32":
+		return adler32.New()
+	}
+	log.Panicf("hash `%s` not found", ID)
+	return nil
 }
