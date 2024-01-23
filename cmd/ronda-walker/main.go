@@ -114,8 +114,7 @@ func recPlay(p *pdt.Partida, level uint) {
 			// infoset?
 			activePlayer := pdt.Rho(p)
 			a := &abs.A3{}
-			aixs := pdt.GetA(p, activePlayer)
-			info := info.MkInfoset1(p, activePlayer, aixs, a)
+			info := info.NewInfosetRondaBase(p, activePlayer, a, nil)
 			infosets[info.Hash(sha1.New())] = true
 
 			pkts, _ := chis[mix][aix].Hacer(p)
