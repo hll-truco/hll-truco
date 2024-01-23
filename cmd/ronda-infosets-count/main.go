@@ -1,7 +1,7 @@
 package main
 
 import (
-	"crypto/sha1"
+	"flag"
 	"fmt"
 	"log"
 	"time"
@@ -13,36 +13,43 @@ import (
 	"github.com/truquito/truco/pdt"
 )
 
+// flags/parametros:
 var (
-	verbose   bool                = true
-	terminals uint64              = 0
-	infosets  map[string]bool     = map[string]bool{}
-	printer   *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 60)
+	deckSize = flag.Int("deck", 14, "Deck size")
+	report   = flag.Int("report", 60*10, "Delta (in seconds) for printing log msgs")
+	track    = flag.Bool("track", true, "Should I count infosets?")
+	absID    = flag.String("abs", "a1", "Abstractor ID")
+	infoset  = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
+	hashID   = flag.String("hash", "sha1", "Infoset hashing function")
 )
 
-// full
-// var deck = []int{
-// 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-// 	21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-// }
+var (
+	deck        []int               = nil
+	a           abs.IAbstraccion    = nil
+	infoBuilder info.InfosetBuilder = nil
+	verbose     bool                = true
+	terminals   uint64              = 0
+	infosets    map[string]bool     = map[string]bool{}
+	printer     *utils.CronoPrinter = nil
+	topology                        = make(map[uint]int)
+	dones                           = make(map[uint]int)
+)
 
-// 14
-// var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27, 18, 28}
+func init() {
+	flag.Parse()
 
-// 12
-var deck = []int{10, 20, 11, 21, 14, 24, 15, 25, 16, 26, 17, 27}
+	log.Println("deckSize", *deckSize)
+	log.Println("track", *track)
+	log.Println("absId", *absID)
+	log.Println("infoset", *infoset)
+	log.Println("hash", *hashID)
+	log.Println("report", *report)
 
-// 6
-// var deck = []int{10, 20, 11, 21, 14, 24, 15}
-// var deck = []int{20, 0, 26, 36, 12, 16, 5}
-
-// mapa de nivel:branches
-// e.g., 0:140
-//       1:2
-//       2:3
-
-var topology = make(map[uint]int)
-var dones = make(map[uint]int)
+	deck = utils.Deck(*deckSize)
+	a = abs.ParseAbstractor(*absID)
+	infoBuilder = info.ParseInfosetBuilder(*infoset)
+	printer = utils.NewCronoPrinter(time.Second * time.Duration(*report))
+}
 
 func todasLasAristasChancePosibles(p *pdt.Partida, level uint) uint64 {
 
@@ -112,11 +119,13 @@ func recPlay(p *pdt.Partida, level uint) {
 			p, _ = pdt.Parse(string(bs), verbose)
 
 			// infoset?
-			activePlayer := pdt.Rho(p)
-			a := &abs.A3{}
-			aixs := pdt.GetA(p, activePlayer)
-			info := info.MkInfoset1(p, activePlayer, aixs, a)
-			infosets[info.Hash(sha1.New())] = true
+			if *track {
+				activePlayer := pdt.Rho(p)
+				// info := info.NewInfosetRondaBase(p, activePlayer, a, nil)
+				info := infoBuilder(p, activePlayer, a, nil)
+				hashFn := utils.ParseHashFn(*hashID)
+				infosets[info.Hash(hashFn)] = true
+			}
 
 			pkts, _ := chis[mix][aix].Hacer(p)
 
