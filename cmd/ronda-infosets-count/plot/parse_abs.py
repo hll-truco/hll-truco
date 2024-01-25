@@ -22,20 +22,15 @@ for root, dirs, files in os.walk(args.directory):
                 for line in lines:
                     match_done = re.search(r'\tdone: map\[0:(\d+)', line)
                     match_count = re.search(r'\tcount:\s(\d+)', line)
-                    if match_done:
-                        done.append(int(match_done.group(1)))
-                    elif match_count:
-                        count.append(int(match_count.group(1)))
-
+                    if match_done: done.append(int(match_done.group(1)))
+                    elif match_count: count.append(int(match_count.group(1)))
                 result_dict[file] = {
                     "done": done,
                     "count": count
                 }
 
-if args.output is None:
-    output_path = os.path.join(args.directory, 'result.json')
-else:
-    output_path = args.output
+output_path = os.path.join(args.directory, 'result.json') \
+    if args.output is None else args.output
 
 with open(output_path, 'w') as f:
     json.dump(result_dict, f, indent=2)
