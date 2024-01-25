@@ -21,6 +21,7 @@ func PrintEvery(x uint64, delta uint64) {
 }
 
 type CronoPrinter struct {
+	start     time.Time
 	lastPrint time.Time
 	delta     time.Duration
 }
@@ -28,12 +29,13 @@ type CronoPrinter struct {
 func (p *CronoPrinter) Print(x string) {
 	if time.Since(p.lastPrint) > p.delta {
 		p.lastPrint = time.Now()
-		log.Println(x)
+		log.Printf("(%v) %s\n", time.Since(p.start), x)
 	}
 }
 
 func NewCronoPrinter(delta time.Duration) *CronoPrinter {
 	return &CronoPrinter{
+		start:     time.Now(),
 		lastPrint: time.Now(),
 		delta:     delta,
 	}
