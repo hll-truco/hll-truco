@@ -174,3 +174,20 @@ func main() {
 	log.Println("infosets:", len(infosets))
 	log.Println("finished:", time.Since(start))
 }
+
+/*
+
+bench (M2)
+for i in {1..10}; do go run cmd/ronda-walker/*.go; done
+NO-verbose:
+x=617ms, s=2.05
+
+verbose, usando `empiezaNuevaRonda`
+x=647ms, s=5.26
+(5% más lento que no-verbose)
+
+verbose, usando `pdt.IsDone`
+x=648, s=3.87
+(5% más lento que no-verbose)
+
+*/
