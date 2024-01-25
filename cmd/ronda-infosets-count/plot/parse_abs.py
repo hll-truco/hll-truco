@@ -8,7 +8,7 @@ parser.add_argument('-d', '--directory', type=str, required=True, help='Director
 parser.add_argument('-o', '--output', type=str, default=None, help='Path to output JSON file')
 args = parser.parse_args()
 
-result_dict = {}
+data = {}
 
 for root, dirs, files in os.walk(args.directory):
     for file in files:
@@ -24,7 +24,7 @@ for root, dirs, files in os.walk(args.directory):
                     match_count = re.search(r'\tcount:\s(\d+)', line)
                     if match_done: done.append(int(match_done.group(1)))
                     elif match_count: count.append(int(match_count.group(1)))
-                result_dict[file] = {
+                data[file] = {
                     "done": done,
                     "count": count
                 }
@@ -33,6 +33,6 @@ output_path = os.path.join(args.directory, 'result.json') \
     if args.output is None else args.output
 
 with open(output_path, 'w') as f:
-    json.dump(result_dict, f, indent=2)
+    json.dump(data, f, indent=2)
 
 print(f"\nResult saved to {output_path}")
