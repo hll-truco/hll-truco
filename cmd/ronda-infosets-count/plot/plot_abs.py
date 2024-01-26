@@ -62,5 +62,34 @@ for file,d in data.items():
 axs[1].legend()
 
 plt.tight_layout()
+plt.show()
 
+# progress
+import matplotlib.pyplot as plt
+
+# Plot
+fig, ax = plt.subplots(1, 1, figsize=(10, 5))
+
+labels = [k for k in data.keys()]
+deltas = [data[k]['delta'] for k in labels]
+etas = [data[k]['eta'] for k in labels]
+labels = [k[:k.index('.')] for k in labels]
+
+ax.barh(labels, deltas, label='delta')
+ax.barh(labels, etas, left=deltas, label='eta')
+
+# limit
+import datetime
+for i in range(1,10+1):
+    ax.axvline(
+        x=datetime.timedelta(days=i).total_seconds(),
+        linewidth=0.5,
+        alpha=0.2,
+        color='black')
+
+ax.set_xlabel('time (s)')
+ax.set_title('Progress')
+ax.legend()
+
+plt.tight_layout()
 plt.show()

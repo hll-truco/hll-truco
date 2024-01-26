@@ -13,21 +13,62 @@ data = {}
 for root, dirs, files in os.walk(args.directory):
     for file in files:
         if file.endswith('.out'):
-            print(file)
             file_path = os.path.join(root, file)
             with open(file_path, 'r') as f:
                 lines = f.readlines()
                 done = []
                 count = []
+                first_commit = None
+                last_commit = None
                 for line in lines:
                     match_done = re.search(r'\tdone: map\[0:(\d+)', line)
                     match_count = re.search(r'\tcount:\s(\d+)', line)
+                    match_date = re.search(r'^\d{4}/\d{2}/\d{2} \d{,2}:\d{,2}:\d{,2}', line)
                     if match_done: done.append(int(match_done.group(1)))
                     elif match_count: count.append(int(match_count.group(1)))
+                    elif match_date:
+                        last_commit = match_date.group(0)
+                        if first_commit is None: first_commit = last_commit
                 data[file] = {
                     "done": done,
-                    "count": count
+                    "count": count,
+                    "first_commit": first_commit,
+                    "last_commit": last_commit,
                 }
+
+# post proc
+import datetime
+
+def progress(
+    current,
+    goal,
+    start:datetime.datetime,
+    last_commit:datetime.datetime,
+):
+    prog = current / goal
+    delta = last_commit - start
+    eta = 1 * delta / prog
+    prog = round(prog, 3)
+    return prog, delta, eta, delta+eta
+
+parse_date = lambda s: datetime.datetime.strptime(s, '%Y/%m/%d %H:%M:%S')
+
+# progress
+for file,d in data.items():
+    current = d['done'][-1]
+    goal = 480480
+    first_commit = parse_date(d['first_commit'])
+    last_commit = parse_date(d['last_commit'])
+    prog, delta, eta, eta_total = progress(current, goal, first_commit, last_commit)
+    d["prog"] = prog
+    d["delta"] = delta.total_seconds()
+    d["eta"] = eta.total_seconds()
+    d["eta_total"] = eta_total.total_seconds()
+    print("{:<0}\t{:>20}\t{:>20}\t{:>20}".format(
+        file,
+        f"progress:{round(prog*100)}%",
+        f"delta:{str(delta)[:str(delta).rfind(':')]}",
+        f"eta_total:{str(eta_total)[:str(eta_total).rfind(':')]}"))
 
 output_path = os.path.join(args.directory, 'result.json') \
     if args.output is None else args.output
