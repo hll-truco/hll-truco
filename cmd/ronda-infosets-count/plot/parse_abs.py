@@ -3,6 +3,10 @@ import os
 import re
 import json
 
+import sys
+sys.path.append('cmd/python-common')
+import parse_utils
+
 parser = argparse.ArgumentParser(description='List all .out files in a directory')
 parser.add_argument('-d', '--directory', type=str, required=True, help='Directory to search for .out files')
 parser.add_argument('-o', '--output', type=str, default=None, help='Path to output JSON file')
@@ -37,29 +41,14 @@ for root, dirs, files in os.walk(args.directory):
                 }
 
 # post proc
-import datetime
-
-def progress(
-    current,
-    goal,
-    start:datetime.datetime,
-    last_commit:datetime.datetime,
-):
-    prog = current / goal
-    delta = last_commit - start
-    eta = 1 * delta / prog
-    prog = round(prog, 3)
-    return prog, delta, eta, delta+eta
-
-parse_date = lambda s: datetime.datetime.strptime(s, '%Y/%m/%d %H:%M:%S')
 
 # progress
 for file,d in data.items():
     current = d['done'][-1]
     goal = 480480
-    first_commit = parse_date(d['first_commit'])
-    last_commit = parse_date(d['last_commit'])
-    prog, delta, eta, eta_total = progress(current, goal, first_commit, last_commit)
+    first_commit = parse_utils.parse_date(d['first_commit'])
+    last_commit = parse_utils.parse_date(d['last_commit'])
+    prog, delta, eta, eta_total = parse_utils.progress(current, goal, first_commit, last_commit)
     d["prog"] = prog
     d["delta"] = delta.total_seconds()
     d["eta"] = eta.total_seconds()
