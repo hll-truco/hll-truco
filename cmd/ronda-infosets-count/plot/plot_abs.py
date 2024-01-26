@@ -75,8 +75,8 @@ deltas = [data[k]['delta'] for k in labels]
 etas = [data[k]['eta'] for k in labels]
 labels = [k[:k.index('.')] for k in labels]
 
-ax.barh(labels, deltas, label='delta')
-ax.barh(labels, etas, left=deltas, label='eta')
+ax.barh(labels, deltas, label='done')
+ax.barh(labels, etas, left=deltas, label='100%')
 
 # limit
 import datetime
@@ -86,6 +86,23 @@ for i in range(1,10+1):
         linewidth=0.5,
         alpha=0.2,
         color='black')
+
+ax.axvline(
+    x=datetime.timedelta(days=5).total_seconds(),
+    linewidth=0.85,
+    alpha=1,
+    label='cluster lim',
+    color='red')
+
+max_secs = max([d+e for d,e in zip(deltas,etas)])
+max_delta = str(datetime.timedelta(seconds=max_secs))
+
+ax.axvline(
+    x=max_secs,
+    linewidth=0.85,
+    label=f"{max_delta[:max_delta.rfind(':')]}",
+    alpha=1,
+    color='purple')
 
 ax.set_xlabel('time (s)')
 ax.set_title('Progress')
