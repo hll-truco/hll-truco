@@ -1,4 +1,4 @@
-### Run as
+## Run as
 
 `go run cmd/ronda-infosets-count/*.go -deck=7 -abs=a3 -info=InfosetRondaBase -hash=sha160 -report=10 -track=true`
 
