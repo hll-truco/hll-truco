@@ -2,44 +2,24 @@
 
 `go run cmd/ronda-infosets-count/*.go -deck=7 -abs=a3 -info=InfosetRondaBase -hash=sha160 -report=10 -track=true`
 
-### Runs
+## Results
 
-`go run cmd/ronda-infosets-count/*.go -deck=7 -abs=a1 -info=InfosetRondaBase -hash=sha160 -report=100 -track=true`
+### -deck=7 -info=InfosetRondaBase -hash=sha160
 
-```
-2024/01/23 11:12:32 terminals: 688936
-2024/01/23 11:12:32 infosets: 818
-2024/01/23 11:12:32 finished: 1m14.358814625s
-```
+| abstraction | terminals | infosets | finished |
+|-------------|-----------|----------|----------|
+| a1          | 688,936   | 818      | 1m14     |
+| b           | 688,936   | 1,849    | 1m11     |
+| a2          | 688,936   | 1,849    | 1m12     |
+| a3          | 688,936   | 4,006    | 1m12     |
+| none        | 688,936   | 4,690    | 1m12     |
 
-`go run cmd/ronda-infosets-count/*.go -deck=7 -abs=b -info=InfosetRondaBase -hash=sha160 -report=100 -track=true `
+### -deck=14 -info=InfosetRondaBase -hash=sha160
 
-```
-2024/01/23 11:16:57 terminals: 688936
-2024/01/23 11:16:57 infosets: 1849
-2024/01/23 11:16:57 finished: 1m11.822076833s
-```
-
-`go run cmd/ronda-infosets-count/*.go -deck=7 -abs=a2 -info=InfosetRondaBase -hash=sha160 -report=100 -track=true`
-
-```
-2024/01/23 11:14:27 terminals: 688936
-2024/01/23 11:14:27 infosets: 1849
-2024/01/23 11:14:27 finished: 1m12.14959225s
-```
-
-`go run cmd/ronda-infosets-count/*.go -deck=7 -abs=a3 -info=InfosetRondaBase -hash=sha160 -report=100 -track=true`
-
-```
-2024/01/23 11:11:02 terminals: 688936
-2024/01/23 11:11:02 infosets: 4006
-2024/01/23 11:11:02 finished: 1m12.113222791s
-```
-
-`go run cmd/ronda-infosets-count/*.go -deck=7 -abs=null -info=InfosetRondaBase -hash=sha160 -report=100 -track=true`
-
-```
-2024/01/23 11:18:55 terminals: 688936
-2024/01/23 11:18:55 infosets: 4690
-2024/01/23 11:18:55 finished: 1m12.947073958s
-```
+| abstraction | terminals     | infosets | finished |
+|-------------|---------------|----------|----------|
+| a1          | 2,446,543,800 | 3,388    | 71h12m   |
+| b           | ?             | ?        | ?        |
+| a2          | 2,446,543,800 | 35,448   | 76h7m    |
+| a3          | 2,446,543,800 | 184,316  | 73h30m   |
+| none        | ?             | ?        | ?        |
