@@ -10,6 +10,7 @@ def progress(
 ):
     prog = current / goal
     delta = last_commit - start
-    eta = 1 * delta / prog
+    eta_total = delta.total_seconds() / prog
+    eta_total = datetime.timedelta(seconds=round(eta_total))
     prog = round(prog, 3)
-    return prog, delta, eta, delta+eta
+    return prog, delta, eta_total-delta, eta_total
