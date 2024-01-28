@@ -11,6 +11,7 @@ require (
 )
 
 replace github.com/truquito/truco => ../minitruco
+
 // replace github.com/truquito/truco => ../truco
 
 replace github.com/filevich/truco-cfr => ../truco-cfr
