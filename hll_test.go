@@ -79,10 +79,14 @@ func TestEstimateCardinality10M(t *testing.T) {
 
 		c := Calc(buckets)
 		tDelta := time.Since(start)
+		n := len(buckets)
+		if n > 10 {
+			n = 10
+		}
 		fmt.Printf("Estimated cardinality for b=%d is %d (%v) %v\n",
 			bits_buckets,
 			c,
 			tDelta,
-			buckets)
+			buckets[:n])
 	}
 }
