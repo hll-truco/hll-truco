@@ -42,14 +42,13 @@ import datetime
 for bits_buckets in range(1,14+1):
     m = 2 ** bits_buckets
     start = datetime.datetime.now()
-    T = 10000000 - 10
+    T = 10_000_000 - 10
     delta = round(T / m)
 
     buckets = []
 
     for i in range(m):
         _from, _to = delta*i, delta*(i+1)
-        # print(f"from {_from} to {_to}")
         hll = HyperLogLog()
         for i in range(_from,_to+1): hll.add(i)
         buckets += [hll.M]

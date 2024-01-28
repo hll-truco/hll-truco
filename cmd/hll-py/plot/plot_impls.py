@@ -51,14 +51,33 @@ data3 = {
     14: 10007551,
 }
 
+data4 = {
+    1: 3699110,
+    2: 3587969,
+    3: 6175975,
+    4: 9748779,
+    5: 9974485,
+    6: 10040620,
+    7: 10420121,
+    8: 10325609,
+    9: 10000488,
+    10: 9942274,
+    11: 9901559,
+    12: 9816209,
+    13: 10016917,
+    14: 10101145,
+}
+
+
 fig, ax = plt.subplots(1,1, figsize=(10,5))
 
-ax.plot(list(data.keys()), list(data.values()), '-o', label='original')
-ax.plot(list(data2.keys()), list(data2.values()), '-o', label='jp orig')
-ax.plot(list(data3.keys()), list(data3.values()), '-o', label='jp parallel')
+ax.plot(list(data.keys()), list(data.values()), '-', linewidth=0.8, label='original')
+# ax.plot(list(data2.keys()), list(data2.values()), '-', linewidth=0.8, label='jp orig')
+ax.plot(list(data3.keys()), list(data3.values()), '-', linewidth=0.8, label='jp parallel')
+ax.plot(list(data4.keys()), list(data4.values()), '-', linewidth=0.8, color='black', label='jp go parallel')
 
 ax.set_xticks(list(data.keys()), [str((2**x)) for x in data.keys()])
-ax.axhline(y=(10000000-10), color='r', linestyle='--')
+ax.axhline(y=(10000000-10), color='r', linestyle='--', linewidth=0.5, alpha=0.5)
 ax.set_xlabel('m=2^b')
 ax.set_ylabel('Estimated cardinality for 1M distinct elements')
 ax.set_title('Estimated cardinality for different values of b')
