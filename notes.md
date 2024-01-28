@@ -1,3 +1,4 @@
+# The size of Poker
 
 http://arxiv.org/abs/1302.7008v2
 
@@ -27,3 +28,56 @@ Measuring the Size of Large No-Limit Poker Games, Johanson, 2013.
 - sha512 ~ 2^512 ~ 1e154
 - Skein-1024 ~ 2^1024 ~ 1e308
 
+
+
+
+
+
+# Duplicate hash output length
+
+```go
+import (
+    "crypto/sha512"
+    "encoding/hex"
+)
+
+func main() {
+    // Concatenate two 512-bit hashes together
+    h1 := sha512.Sum512([]byte("hello"))
+    h2 := sha512.Sum512([]byte("world"))
+    h := append(h1[:], h2[:]...)
+
+    // Convert the hash to a hexadecimal string
+    hashString := hex.EncodeToString(h)
+
+    fmt.Println(hashString)
+}
+```
+
+
+
+
+
+# Hash function with variable output length
+
+```go
+import (
+    "crypto/sha3"
+    "fmt"
+)
+
+func main() {
+    data := []byte("your data here")
+    hash := make([]byte, 75) // 600 bits / 8 bits per byte = 75 bytes
+    sha3.ShakeSum256(hash, data)
+    fmt.Printf("%x\n", hash)
+}
+```
+
+
+
+# Hash output as string-bin in Python
+
+```py
+bin(int(hashlib.sha256(str("123").encode('utf-8')).hexdigest(), 16))
+```
