@@ -9,7 +9,6 @@ import (
 
 	"github.com/filevich/truco-cfr/abs"
 	"github.com/filevich/truco-cfr/info"
-	hll "github.com/hll-truco/experiments"
 	"github.com/hll-truco/experiments/utils"
 	"github.com/truquito/truco/pdt"
 )
@@ -29,7 +28,7 @@ var (
 	verbose     bool                = true
 	terminals   uint64              = 0
 	printer     *utils.CronoPrinter = nil
-	h           *hll.HyperLogLog    = hll.NewHyperLogLog(2)
+	// h           *hll.HyperLogLog    = hll.NewHyperLogLog(2)
 )
 
 var start = time.Now()
@@ -73,13 +72,13 @@ func randomWalk(p *pdt.Partida) {
 		}
 
 		// infoset
-		activePlayer := pdt.Rho(p)
-		info := infoBuilder(p, activePlayer, a, nil)
-		hashFn := utils.ParseHashFn(*hashID)
-		hash := info.HashBytes(hashFn)
-		if h.Add(hash) {
-			log.Println(time.Since(start), h.M)
-		}
+		// activePlayer := pdt.Rho(p)
+		// info := infoBuilder(p, activePlayer, a, nil)
+		// hashFn := utils.ParseHashFn(*hashID)
+		// hash := info.HashBytes(hashFn)
+		// if h.Add(hash) {
+		// 	log.Println(time.Since(start), h.M)
+		// }
 
 		chis := pdt.Chis(p)
 		j := uniformPick(chis)
@@ -121,7 +120,7 @@ func main() {
 		// termino la partida o se acabó el tiempo
 	}
 
-	log.Println("M_j:", h.M)
+	// log.Println("M_j:", h.M)
 	log.Println("terminals:", terminals)
 	log.Println("finished:", time.Since(start))
 }
