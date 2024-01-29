@@ -26,8 +26,12 @@ type CronoPrinter struct {
 	delta     time.Duration
 }
 
+func (p *CronoPrinter) ShouldPrint() bool {
+	return time.Since(p.lastPrint) > p.delta
+}
+
 func (p *CronoPrinter) Print(x string) {
-	if time.Since(p.lastPrint) > p.delta {
+	if p.ShouldPrint() {
 		p.lastPrint = time.Now()
 		log.Printf("(%v) %s\n", time.Since(p.start), x)
 	}
