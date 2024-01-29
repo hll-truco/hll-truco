@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"time"
 
 	"github.com/filevich/combinatronics"
@@ -161,9 +162,12 @@ func main() {
 
 	// p, err := pdt.NuevaMiniPartida(azules[:n>>1], rojos[:n>>1], verbose)
 
+	rand.Seed(time.Now().UnixNano())
+
 	p, _ := pdt.NuevaPartida(
 		pdt.A40, // <----- no importa poque la condicion de parada es Ronda
 		true,
+		deck,
 		azules[:n>>1],
 		rojos[:n>>1],
 		limEnvite, // limiteEnvido

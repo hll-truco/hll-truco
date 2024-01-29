@@ -146,6 +146,7 @@ func main() {
 	p, _ := pdt.NuevaPartida(
 		pdt.A40, // 10 pts
 		true,
+		deck,
 		azules[:n>>1],
 		rojos[:n>>1],
 		0, // limiteEnvido
