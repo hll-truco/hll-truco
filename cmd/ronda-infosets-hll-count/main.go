@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/axiomhq/hyperloglog"
 	"github.com/filevich/truco-cfr/abs"
 	"github.com/filevich/truco-cfr/info"
 	"github.com/hll-truco/experiments/utils"
@@ -19,6 +20,7 @@ var (
 	absID    = flag.String("abs", "a1", "Abstractor ID")
 	infoset  = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
 	hashID   = flag.String("hash", "sha1", "Infoset hashing function")
+	report   = flag.Int("report", 60*10, "Delta (in seconds) for printing log msgs")
 )
 
 var (
@@ -27,14 +29,14 @@ var (
 	infoBuilder info.InfosetBuilder = nil
 	verbose     bool                = true
 	terminals   uint64              = 0
-	printer     *utils.CronoPrinter = nil
-	// h           *hll.HyperLogLog    = hll.NewHyperLogLog(2)
+	printer     *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 10)
+	axiom                           = hyperloglog.New16()
 )
 
 var start = time.Now()
 
 // var limit = time.Millisecond * 500
-var limit = time.Second
+var limit = time.Minute
 
 func init() {
 	flag.Parse()
@@ -43,11 +45,12 @@ func init() {
 	log.Println("absId", *absID)
 	log.Println("infoset", *infoset)
 	log.Println("hash", *hashID)
+	log.Println("report every", *report)
 
 	deck = utils.Deck(*deckSize)
 	a = abs.ParseAbstractor(*absID)
 	infoBuilder = info.ParseInfosetBuilder(*infoset)
-	printer = utils.NewCronoPrinter(0)
+	printer = utils.NewCronoPrinter(time.Second * time.Duration(*report))
 }
 
 func uniformPick(chis [][]pdt.IJugada) pdt.IJugada {
@@ -72,10 +75,11 @@ func randomWalk(p *pdt.Partida) {
 		}
 
 		// infoset
-		// activePlayer := pdt.Rho(p)
-		// info := infoBuilder(p, activePlayer, a, nil)
-		// hashFn := utils.ParseHashFn(*hashID)
-		// hash := info.HashBytes(hashFn)
+		activePlayer := pdt.Rho(p)
+		info := infoBuilder(p, activePlayer, a, nil)
+		hashFn := utils.ParseHashFn(*hashID)
+		hash := info.HashBytes(hashFn)
+		axiom.Insert(hash)
 		// if h.Add(hash) {
 		// 	log.Println(time.Since(start), h.M)
 		// }
@@ -87,11 +91,14 @@ func randomWalk(p *pdt.Partida) {
 
 		if pdt.IsDone(pkts) || p.Terminada() {
 			terminals++
-			if false {
-				mem := utils.GetMemUsage()
-				printer.Print(fmt.Sprintf("\n\t%s",
-					mem))
-			}
+		}
+
+		if printer.ShouldPrint() {
+			e := axiom.Estimate()
+			mem := utils.GetMemUsage()
+			printer.Print(fmt.Sprintf("\n\testimate:%d\n\t%s",
+				e,
+				mem))
 		}
 	}
 }
@@ -120,7 +127,7 @@ func main() {
 		// termino la partida o se acabó el tiempo
 	}
 
-	// log.Println("M_j:", h.M)
+	log.Println("final estimate:", axiom.Estimate())
 	log.Println("terminals:", terminals)
 	log.Println("finished:", time.Since(start))
 }
