@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log/slog"
 	"os"
 	"time"
 
@@ -57,7 +57,10 @@ func DynamicSlice(n int) []byte {
 	data := make([]byte, 0)
 	for i := 0; i < n; i++ {
 		data = append(data, make([]byte, 1024*1024)...)
-		printer.Print(utils.GetMemUsage())
+		if printer.ShouldPrint() {
+			slog.Info("REPORT", "mem", utils.GetMemUsage())
+			printer.Check()
+		}
 		time.Sleep(delay)
 	}
 	return data
@@ -67,15 +70,26 @@ func FixedSlice(n int) []byte {
 	data := make([]byte, 0, n*1024*1024)
 	for i := 0; i < n; i++ {
 		data = append(data, make([]byte, 1024*1024)...)
-		printer.Print(utils.GetMemUsage())
+		if printer.ShouldPrint() {
+			slog.Info("REPORT", "mem", utils.GetMemUsage())
+			printer.Check()
+		}
 		time.Sleep(delay)
 	}
 	return data
 }
 
+func init() {
+	// logging
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+}
+
 func main() {
-	fmt.Println("GOMEMLIMIT:", os.Getenv("GOMEMLIMIT"))
-	fmt.Printf("Current process ID: %d\n", os.Getpid())
+	slog.Info(
+		"START",
+		"GOMEMLIMIT", os.Getenv("GOMEMLIMIT"),
+		"PID", os.Getpid())
 
 	var n int
 	flag.IntVar(&n, "n", 0, "Amount of memory to fill in MiB")
@@ -84,7 +98,11 @@ func main() {
 	data := DynamicSlice(n)
 	// data := FixedSlice(n)
 
-	fmt.Println("done. sleeping 10s.", len(data))
-	time.Sleep(1 * time.Minute)
-	fmt.Println(len(data))
+	sleepDelta := 1 * time.Minute
+	slog.Info("SLEEPING", "delta", sleepDelta.String(), "lenData", len(data))
+	time.Sleep(sleepDelta)
+
+	slog.Info(
+		"RESULTS",
+		"lenData", len(data))
 }
