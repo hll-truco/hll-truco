@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/hll-truco/experiments/utils"
+	"github.com/hll-truco/hll-truco/utils"
 )
 
 var printer *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 1)

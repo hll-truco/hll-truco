@@ -3,7 +3,7 @@ package utils_test
 import (
 	"testing"
 
-	"github.com/hll-truco/experiments/utils"
+	"github.com/hll-truco/hll-truco/utils"
 )
 
 func TestCopyWithoutThese(t *testing.T) {

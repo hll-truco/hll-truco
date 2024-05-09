@@ -10,7 +10,7 @@ import (
 	"github.com/filevich/combinatronics"
 	"github.com/filevich/truco-cfr/abs"
 	"github.com/filevich/truco-cfr/info"
-	"github.com/hll-truco/experiments/utils"
+	"github.com/hll-truco/hll-truco/utils"
 	"github.com/truquito/truco/pdt"
 )
 

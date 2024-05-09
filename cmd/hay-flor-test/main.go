@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/filevich/combinatronics"
-	"github.com/hll-truco/experiments/utils"
+	"github.com/hll-truco/hll-truco/utils"
 	"github.com/truquito/truco/pdt"
 )
 
