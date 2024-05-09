@@ -37,6 +37,10 @@ var (
 func init() {
 	flag.Parse()
 
+	// logging
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
 	slog.Info(
 		"START",
 		"deckSize", *deckSizeFlag,
@@ -53,10 +57,6 @@ func init() {
 
 	// start timer
 	start = time.Now()
-
-	// logging
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	slog.SetDefault(logger)
 }
 
 func uniformPick(chis [][]pdt.IJugada) pdt.IJugada {
@@ -135,5 +135,5 @@ func main() {
 		"RESULTS",
 		"finalEstimate", axiom.Estimate(),
 		"terminals:", terminals,
-		"finished", time.Since(start))
+		"finished", time.Since(start).Seconds())
 }
