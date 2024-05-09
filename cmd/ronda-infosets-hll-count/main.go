@@ -35,8 +35,9 @@ var (
 
 var start = time.Now()
 
-// var limit = time.Millisecond * 500
 var limit = time.Minute
+
+// var limit = 10 * time.Minute
 
 func init() {
 	flag.Parse()
@@ -95,10 +96,9 @@ func randomWalk(p *pdt.Partida) {
 
 		if printer.ShouldPrint() {
 			e := axiom.Estimate()
-			mem := utils.GetMemUsage()
-			printer.Print(fmt.Sprintf("\n\testimate:%d\n\t%s",
-				e,
-				mem))
+			// mem := utils.GetMemUsage()
+			printer.Print(fmt.Sprintf("\n\testimate:%d",
+				e))
 		}
 	}
 }
