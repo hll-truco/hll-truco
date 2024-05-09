@@ -25,6 +25,7 @@ Measuring the Size of Large No-Limit Poker Games, Johanson, 2013.
 
 ### Hashes
 
+- ui64 ~ 2^64 ~ 1e19
 - sha512 ~ 2^512 ~ 1e154
 - Skein-1024 ~ 2^1024 ~ 1e308
 
