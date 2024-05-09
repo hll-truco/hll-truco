@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"log"
+	"log/slog"
 	"math/rand"
+	"os"
 	"time"
 
 	"github.com/axiomhq/hyperloglog"
@@ -19,7 +19,8 @@ var (
 	absIDFlag    = flag.String("abs", "a1", "Abstractor ID")
 	infosetFlag  = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
 	hashIDFlag   = flag.String("hash", "sha160", "Infoset hashing function")
-	reportFlag   = flag.Int("report", 60*10, "Delta (in seconds) for printing log msgs")
+	limitFlag    = flag.Int("limit", 60, "Run time limit (in seconds) (default 1m)")
+	reportFlag   = flag.Int("report", 10, "Delta (in seconds) for printing log msgs")
 )
 
 var (
@@ -29,26 +30,33 @@ var (
 	terminals   uint64              = 0
 	printer     *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 10)
 	axiom                           = hyperloglog.New16()
+	start       time.Time           = time.Now()
+	limit       time.Duration       = 0
 )
-
-var start = time.Now()
-
-var limit = time.Minute
-
-// var limit = 10 * time.Minute
 
 func init() {
 	flag.Parse()
 
-	log.Println("deckSize", *deckSizeFlag)
-	log.Println("absId", *absIDFlag)
-	log.Println("infoset", *infosetFlag)
-	log.Println("hash", *hashIDFlag)
-	log.Println("report every", *reportFlag)
+	slog.Info(
+		"START",
+		"deckSize", *deckSizeFlag,
+		"absId", *absIDFlag,
+		"infoset", *infosetFlag,
+		"hash", *hashIDFlag,
+		"limitFlag", *limitFlag,
+		"reportFlag", *reportFlag)
 
 	deck = utils.Deck(*deckSizeFlag)
 	infoBuilder = info.BuilderFactory(*hashIDFlag, *infosetFlag, *absIDFlag)
+	limit = time.Second * time.Duration(*limitFlag)
 	printer = utils.NewCronoPrinter(time.Second * time.Duration(*reportFlag))
+
+	// start timer
+	start = time.Now()
+
+	// logging
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
 }
 
 func uniformPick(chis [][]pdt.IJugada) pdt.IJugada {
@@ -93,8 +101,8 @@ func randomWalk(p *pdt.Partida) {
 
 		if printer.ShouldPrint() {
 			e := axiom.Estimate()
-			// mem := utils.GetMemUsage()
-			printer.Print(fmt.Sprintf("\n\testimate:%d", e))
+			delta := printer.Check().Seconds()
+			slog.Info("REPORT", "delta", delta, "estimate", e)
 		}
 	}
 }
@@ -123,7 +131,9 @@ func main() {
 		// termino la partida o se acabó el tiempo
 	}
 
-	log.Println("final estimate:", axiom.Estimate())
-	log.Println("terminals:", terminals)
-	log.Println("finished:", time.Since(start))
+	slog.Info(
+		"RESULTS",
+		"finalEstimate", axiom.Estimate(),
+		"terminals:", terminals,
+		"finished", time.Since(start))
 }

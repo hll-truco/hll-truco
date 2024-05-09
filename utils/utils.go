@@ -30,11 +30,9 @@ func (p *CronoPrinter) ShouldPrint() bool {
 	return time.Since(p.lastPrint) > p.delta
 }
 
-func (p *CronoPrinter) Print(x string) {
-	if p.ShouldPrint() {
-		p.lastPrint = time.Now()
-		log.Printf("(%v) %s\n", time.Since(p.start), x)
-	}
+func (p *CronoPrinter) Check() time.Duration {
+	p.lastPrint = time.Now()
+	return time.Since(p.start)
 }
 
 func NewCronoPrinter(delta time.Duration) *CronoPrinter {
