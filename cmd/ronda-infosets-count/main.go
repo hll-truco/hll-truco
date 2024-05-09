@@ -15,12 +15,12 @@ import (
 
 // flags/parametros:
 var (
-	deckSize = flag.Int("deck", 14, "Deck size")
-	report   = flag.Int("report", 60*10, "Delta (in seconds) for printing log msgs")
-	track    = flag.Bool("track", true, "Should I count infosets?")
-	absID    = flag.String("abs", "a1", "Abstractor ID")
-	infoset  = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
-	hashID   = flag.String("hash", "sha1", "Infoset hashing function")
+	deckSizeFlag = flag.Int("deck", 14, "Deck size")
+	reportFlag   = flag.Int("report", 60*10, "Delta (in seconds) for printing log msgs")
+	trackFlag    = flag.Bool("track", true, "Should I count infosets?")
+	absIDFlag    = flag.String("abs", "a1", "Abstractor ID")
+	infosetFlag  = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
+	hashIDFlag   = flag.String("hash", "sha1", "Infoset hashing function")
 )
 
 var (
@@ -37,16 +37,16 @@ var (
 func init() {
 	flag.Parse()
 
-	log.Println("deckSize", *deckSize)
-	log.Println("track", *track)
-	log.Println("absId", *absID)
-	log.Println("infoset", *infoset)
-	log.Println("hash", *hashID)
-	log.Println("report", *report)
+	log.Println("deckSize", *deckSizeFlag)
+	log.Println("track", *trackFlag)
+	log.Println("absId", *absIDFlag)
+	log.Println("infoset", *infosetFlag)
+	log.Println("hash", *hashIDFlag)
+	log.Println("report", *reportFlag)
 
-	deck = utils.Deck(*deckSize)
-	infoBuilder = info.BuilderFactory(*hashID, *infoset, *absID)
-	printer = utils.NewCronoPrinter(time.Second * time.Duration(*report))
+	deck = utils.Deck(*deckSizeFlag)
+	infoBuilder = info.BuilderFactory(*hashIDFlag, *infosetFlag, *absIDFlag)
+	printer = utils.NewCronoPrinter(time.Second * time.Duration(*reportFlag))
 }
 
 func todasLasAristasChancePosibles(p *pdt.Partida, level uint) uint64 {
@@ -117,10 +117,10 @@ func recPlay(p *pdt.Partida, level uint) {
 			p, _ = pdt.Parse(string(bs), verbose)
 
 			// infoset?
-			if *track {
+			if *trackFlag {
 				activePlayer := pdt.Rho(p)
 				info := infoBuilder.Info(p, activePlayer, nil)
-				hashFn := utils.ParseHashFn(*hashID)
+				hashFn := utils.ParseHashFn(*hashIDFlag)
 				infosets[info.Hash(hashFn)] = true
 			}
 

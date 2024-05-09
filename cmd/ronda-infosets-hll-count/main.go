@@ -15,11 +15,11 @@ import (
 
 // flags/parametros:
 var (
-	deckSize = flag.Int("deck", 14, "Deck size")
-	absID    = flag.String("abs", "a1", "Abstractor ID")
-	infoset  = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
-	hashID   = flag.String("hash", "sha1", "Infoset hashing function")
-	report   = flag.Int("report", 60*10, "Delta (in seconds) for printing log msgs")
+	deckSizeFlag = flag.Int("deck", 14, "Deck size")
+	absIDFlag    = flag.String("abs", "a1", "Abstractor ID")
+	infosetFlag  = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
+	hashIDFlag   = flag.String("hash", "sha1", "Infoset hashing function")
+	reportFlag   = flag.Int("report", 60*10, "Delta (in seconds) for printing log msgs")
 )
 
 var (
@@ -40,15 +40,15 @@ var limit = time.Minute
 func init() {
 	flag.Parse()
 
-	log.Println("deckSize", *deckSize)
-	log.Println("absId", *absID)
-	log.Println("infoset", *infoset)
-	log.Println("hash", *hashID)
-	log.Println("report every", *report)
+	log.Println("deckSize", *deckSizeFlag)
+	log.Println("absId", *absIDFlag)
+	log.Println("infoset", *infosetFlag)
+	log.Println("hash", *hashIDFlag)
+	log.Println("report every", *reportFlag)
 
-	deck = utils.Deck(*deckSize)
-	infoBuilder = info.BuilderFactory(*hashID, *infoset, *absID)
-	printer = utils.NewCronoPrinter(time.Second * time.Duration(*report))
+	deck = utils.Deck(*deckSizeFlag)
+	infoBuilder = info.BuilderFactory(*hashIDFlag, *infosetFlag, *absIDFlag)
+	printer = utils.NewCronoPrinter(time.Second * time.Duration(*reportFlag))
 }
 
 func uniformPick(chis [][]pdt.IJugada) pdt.IJugada {
@@ -75,7 +75,7 @@ func randomWalk(p *pdt.Partida) {
 		// infoset
 		activePlayer := pdt.Rho(p)
 		info := infoBuilder.Info(p, activePlayer, nil)
-		hashFn := utils.ParseHashFn(*hashID)
+		hashFn := utils.ParseHashFn(*hashIDFlag)
 		hash := info.HashBytes(hashFn)
 		axiom.Insert(hash)
 		// if h.Add(hash) {
