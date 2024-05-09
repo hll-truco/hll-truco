@@ -8,10 +8,9 @@ import (
 	"time"
 
 	"github.com/filevich/combinatronics"
-	"github.com/filevich/truco-cfr/abs"
-	"github.com/filevich/truco-cfr/info"
+	"github.com/filevich/truco-ai/info"
 	"github.com/hll-truco/hll-truco/utils"
-	"github.com/truquito/truco/pdt"
+	"github.com/truquito/gotruco/pdt"
 )
 
 // flags/parametros:
@@ -26,8 +25,7 @@ var (
 
 var (
 	deck        []int               = nil
-	a           abs.IAbstraccion    = nil
-	infoBuilder info.InfosetBuilder = nil
+	infoBuilder *info.Builder       = nil
 	verbose     bool                = true
 	terminals   uint64              = 0
 	infosets    map[string]bool     = map[string]bool{}
@@ -47,8 +45,7 @@ func init() {
 	log.Println("report", *report)
 
 	deck = utils.Deck(*deckSize)
-	a = abs.ParseAbstractor(*absID)
-	infoBuilder = info.ParseInfosetBuilder(*infoset)
+	infoBuilder = info.BuilderFactory(*hashID, *infoset, *absID)
 	printer = utils.NewCronoPrinter(time.Second * time.Duration(*report))
 }
 
@@ -122,8 +119,7 @@ func recPlay(p *pdt.Partida, level uint) {
 			// infoset?
 			if *track {
 				activePlayer := pdt.Rho(p)
-				// info := info.NewInfosetRondaBase(p, activePlayer, a, nil)
-				info := infoBuilder(p, activePlayer, a, nil)
+				info := infoBuilder.Info(p, activePlayer, nil)
 				hashFn := utils.ParseHashFn(*hashID)
 				infosets[info.Hash(hashFn)] = true
 			}

@@ -1,16 +1,14 @@
 package main
 
 import (
-	"crypto/sha1"
 	"fmt"
 	"log"
 	"time"
 
 	"github.com/filevich/combinatronics"
-	"github.com/filevich/truco-cfr/abs"
-	"github.com/filevich/truco-cfr/info"
+	"github.com/filevich/truco-ai/info"
 	"github.com/hll-truco/hll-truco/utils"
-	"github.com/truquito/truco/pdt"
+	"github.com/truquito/gotruco/pdt"
 )
 
 var (
@@ -103,9 +101,10 @@ func recPlay(p *pdt.Partida, level uint) {
 
 			// infoset?
 			activePlayer := pdt.Rho(p)
-			a := &abs.A3{}
-			info := info.NewInfosetRondaBase(p, activePlayer, a, nil)
-			infosets[info.Hash(sha1.New())] = true
+			// info := info.NewInfosetRondaBase(p, activePlayer, a, nil)
+			infoBuilder := info.BuilderFactory("sha160", "InfosetRondaBase", "a3")
+			i := infoBuilder.Info(p, activePlayer, nil)
+			infosets[i.Hash(infoBuilder.Hash)] = true
 
 			pkts, _ := chis[mix][aix].Hacer(p)
 

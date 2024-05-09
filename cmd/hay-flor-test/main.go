@@ -5,7 +5,7 @@ import (
 
 	"github.com/filevich/combinatronics"
 	"github.com/hll-truco/hll-truco/utils"
-	"github.com/truquito/truco/pdt"
+	"github.com/truquito/gotruco/pdt"
 )
 
 func setCartas(m *pdt.Manojo, cartasIDs []int) {

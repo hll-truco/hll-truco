@@ -8,10 +8,9 @@ import (
 	"time"
 
 	"github.com/axiomhq/hyperloglog"
-	"github.com/filevich/truco-cfr/abs"
-	"github.com/filevich/truco-cfr/info"
+	"github.com/filevich/truco-ai/info"
 	"github.com/hll-truco/hll-truco/utils"
-	"github.com/truquito/truco/pdt"
+	"github.com/truquito/gotruco/pdt"
 )
 
 // flags/parametros:
@@ -25,8 +24,7 @@ var (
 
 var (
 	deck        []int               = nil
-	a           abs.IAbstraccion    = nil
-	infoBuilder info.InfosetBuilder = nil
+	infoBuilder *info.Builder       = nil
 	verbose     bool                = true
 	terminals   uint64              = 0
 	printer     *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 10)
@@ -49,8 +47,7 @@ func init() {
 	log.Println("report every", *report)
 
 	deck = utils.Deck(*deckSize)
-	a = abs.ParseAbstractor(*absID)
-	infoBuilder = info.ParseInfosetBuilder(*infoset)
+	infoBuilder = info.BuilderFactory(*hashID, *infoset, *absID)
 	printer = utils.NewCronoPrinter(time.Second * time.Duration(*report))
 }
 
@@ -77,7 +74,7 @@ func randomWalk(p *pdt.Partida) {
 
 		// infoset
 		activePlayer := pdt.Rho(p)
-		info := infoBuilder(p, activePlayer, a, nil)
+		info := infoBuilder.Info(p, activePlayer, nil)
 		hashFn := utils.ParseHashFn(*hashID)
 		hash := info.HashBytes(hashFn)
 		axiom.Insert(hash)
