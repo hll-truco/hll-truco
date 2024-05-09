@@ -20,7 +20,7 @@ var (
 	trackFlag    = flag.Bool("track", true, "Should I count infosets?")
 	absIDFlag    = flag.String("abs", "a1", "Abstractor ID")
 	infosetFlag  = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
-	hashIDFlag   = flag.String("hash", "sha1", "Infoset hashing function")
+	hashIDFlag   = flag.String("hash", "sha160", "Infoset hashing function")
 )
 
 var (

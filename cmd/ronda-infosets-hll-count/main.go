@@ -18,7 +18,7 @@ var (
 	deckSizeFlag = flag.Int("deck", 14, "Deck size")
 	absIDFlag    = flag.String("abs", "a1", "Abstractor ID")
 	infosetFlag  = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
-	hashIDFlag   = flag.String("hash", "sha1", "Infoset hashing function")
+	hashIDFlag   = flag.String("hash", "sha160", "Infoset hashing function")
 	reportFlag   = flag.Int("report", 60*10, "Delta (in seconds) for printing log msgs")
 )
 
@@ -94,8 +94,7 @@ func randomWalk(p *pdt.Partida) {
 		if printer.ShouldPrint() {
 			e := axiom.Estimate()
 			// mem := utils.GetMemUsage()
-			printer.Print(fmt.Sprintf("\n\testimate:%d",
-				e))
+			printer.Print(fmt.Sprintf("\n\testimate:%d", e))
 		}
 	}
 }
