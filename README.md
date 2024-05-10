@@ -1,12 +1,12 @@
 
 ## cmds
 
-#### `cmd/ronda-infosets-hll-count`
+#### `cmd/count-infosets-ronda-hll`
 
 - for a given time limit (`l`) approximates the number of information sets **AT 
   ROUND LEVEL** using axiomhq's HLL.
 - it outputs the estimated number of infosets + total terminal nodes visited
-- e.g.: `go run cmd/ronda-infosets-hll-count/main.go -deck=7 -hash=sha160 -limit
+- e.g.: `go run cmd/count-infosets-ronda-hll/main.go -deck=7 -hash=sha160 -limit
   =120 -report=10`
 
 #### `cmd/stress-mem`
@@ -23,42 +23,42 @@
   in `GOMEMLIMIT=600000000 go run cmd/stress-mem/main.go -n 500` now 
   activity monitor shows a memory consumption of about `564 MiB`
 
-#### `cmd/ronda-infosets-count`
+#### `cmd/count-infosets-ronda-deterministically`
 
 - deterministically count the number of infoset for a given deck size **at round
   level**.
-- e.g.: `go run cmd/ronda-infosets-count -deck=7 -hash=sha160 -info=InfosetRonda
-  Base -abs=a1 -track=true -report=10`
+- e.g.: `go run cmd/count-infosets-ronda-deterministically/main.go -deck=7 
+  -hash=sha160 -info=InfosetRondaBase -abs=a1 -track=true -report=10`
 
-#### `cmd/partida-infoset-count`
+#### `cmd/count-infosets-partida-deterministically`
 
 - deterministically count the number of infoset for a given deck size **at game
   level**.
 - WARNING: this can take a **LOT** of time
-- e.g.: `go run cmd/partida-infoset-count/main.go`
+- e.g.: `go run cmd/count-infosets-partida-deterministically/main.go`
 
-#### `cmd/hll-py`
+#### `cmd/hll-py-example`
 
 - hyperloglog python experimental implementation
-- run as `python cmd/hll-py/hll1.py`
+- run as `python cmd/hll-py-example/hll1.py`
 
-#### `cmd/hll-axion`
+#### `cmd/hll-axiom-example`
 
 - hyperloglog example in go using the axiom lib
-- run as `go run cmd/hll-axiom/main.go`
+- run as `go run cmd/hll-axiom-example/main.go`
 
-#### `cmd/hay-flor-test`
+#### `cmd/check-hay-flor`
 
 - for a given set of cards (i.e., a deck) it returns weather there's at least
   one flor (i.e., a combination of 3 cards + 1 muestra so that it's a flor)
-- run as `go run cmd/hay-flor-test/main.go`
+- run as `go run cmd/check-hay-flor/main.go`
 
-#### `cmd/aristas-posibles-count`
+#### `cmd/count-root-edges-deterministically`
 
 - for a given deck size (harcoded) it returns the total possible number of edges
   comming out of the root chance node.
 - it should obey the equation $...$
-- run as `go run cmd/aristas-posibles-count/main.go`
+- run as `go run cmd/count-root-edges-deterministically/main.go`
 
 
 
