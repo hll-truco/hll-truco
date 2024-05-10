@@ -4,7 +4,7 @@ import re
 import json
 
 import sys
-sys.path.append('cmd/python-common')
+sys.path.append('cmd/_')
 import parse_utils
 
 parser = argparse.ArgumentParser(description='List all .out files in a directory')
