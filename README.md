@@ -20,7 +20,7 @@
   about `1 GiB` but go's runtime shows a `HeapAlloc` usage of `520 MiB` (this 
   is expected)
 - but then if we cap the mem pool size to 600MiB using env var `GOMEMLIMIT` as
-  in `GOMEMLIMIT=600000000 go run cmd/stressmem-test/main.go -n 500` now 
+  in `GOMEMLIMIT=600000000 go run cmd/stress-mem/main.go -n 500` now 
   activity monitor shows a memory consumption of about `564 MiB`
 
 #### `cmd/ronda-infosets-count`
