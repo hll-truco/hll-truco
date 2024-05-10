@@ -43,14 +43,32 @@ func NewCronoPrinter(delta time.Duration) *CronoPrinter {
 	}
 }
 
-func GetMemUsage() string {
+type MemUsage struct {
+	HeapAlloc  uint64
+	TotalAlloc uint64
+	Sys        uint64
+	NumGC      uint32
+}
+
+func (mu *MemUsage) String() string {
+	return fmt.Sprintf(
+		"HeapAlloc=%v MiB\tTotalAlloc=%v MiB\tSys = %v MiB\tNumGC=%v",
+		ByteToMb(mu.HeapAlloc),
+		ByteToMb(mu.TotalAlloc),
+		ByteToMb(mu.Sys),
+		mu.NumGC)
+}
+
+// returns memory usage in MiB
+func GetMemUsage() *MemUsage {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
-	return fmt.Sprintf("HeapAlloc = %v MiB\tTotalAlloc = %v MiB\tSys = %v MiB\tNumGC = %v",
-		ByteToMb(m.HeapAlloc),
-		ByteToMb(m.TotalAlloc),
-		ByteToMb(m.Sys),
-		m.NumGC)
+	return &MemUsage{
+		HeapAlloc:  ByteToMb(m.HeapAlloc),
+		TotalAlloc: ByteToMb(m.TotalAlloc),
+		Sys:        ByteToMb(m.Sys),
+		NumGC:      m.NumGC,
+	}
 }
 
 func ByteToMb(b uint64) uint64 {
