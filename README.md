@@ -28,6 +28,13 @@
   level**.
 - e.g.: `go run cmd/ronda-infosets-count -deck=7 -hash=sha160 -info=InfosetRondaBase -abs=a1 -track=true -report=10`
 
+#### `cmd/partida-infoset-count`
+
+- deterministically count the number of infoset for a given deck size **at game
+  level**.
+- WARNING: this can take a **LOT** of time
+- e.g.: `go run cmd/partida-infoset-count/main.go`
+
 ### args
 
 #### supported hashes

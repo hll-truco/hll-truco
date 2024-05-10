@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"log/slog"
+	"os"
 	"time"
 
 	"github.com/filevich/combinatronics"
@@ -110,12 +110,15 @@ func recPlay(p *pdt.Partida, level uint) {
 
 			if terminoLaPartida := p.Terminada(); terminoLaPartida {
 				terminals++
-				mem := utils.GetMemUsage()
-				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v\n\t%s\n\tcount: %d",
-					topology,
-					dones,
-					mem,
-					len(infosets)))
+				if printer.ShouldPrint() {
+					slog.Info(
+						"REPORT",
+						"topo", topology,
+						"dones", dones,
+						"count", len(infosets),
+						"mem", utils.GetMemUsage())
+					printer.Check()
+				}
 			} else if pdt.IsDone(pkts) {
 				// simular todos repartos de manojos posibles
 				todasLasAristasChancePosibles(p, level+1)
@@ -134,6 +137,15 @@ func recPlay(p *pdt.Partida, level uint) {
 	delete(dones, level)
 }
 
+func init() {
+	// logging
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
+	slog.Info(
+		"START")
+}
+
 func main() {
 	start := time.Now()
 	n := 2
@@ -143,7 +155,7 @@ func main() {
 	// p, err := pdt.NuevaMiniPartida(azules[:n>>1], rojos[:n>>1], verbose)
 
 	p, _ := pdt.NuevaPartida(
-		pdt.A40, // 10 pts
+		pdt.A10, // 10 pts
 		true,
 		deck,
 		azules[:n>>1],
@@ -151,11 +163,13 @@ func main() {
 		0, // limiteEnvido
 		verbose)
 
-	p.Puntajes[pdt.Azul] = 4
-	p.Puntajes[pdt.Rojo] = 4
+	p.Puntajes[pdt.Azul] = 9
+	p.Puntajes[pdt.Rojo] = 9
 
-	log.Println("total aristas nivel 0:", todasLasAristasChancePosibles(p, 0))
-	log.Println("terminals:", terminals)
-	log.Println("infosets:", len(infosets))
-	log.Println("finished:", time.Since(start))
+	slog.Info(
+		"RESULTS",
+		"totalAristasNivel0", todasLasAristasChancePosibles(p, 0),
+		"terminals:", terminals,
+		"infosets:", len(infosets),
+		"finished", time.Since(start))
 }
