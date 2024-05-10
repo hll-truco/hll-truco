@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"log"
+	"log/slog"
 	"math/rand"
+	"os"
 	"time"
 
 	"github.com/filevich/combinatronics"
@@ -37,22 +37,30 @@ var (
 func init() {
 	flag.Parse()
 
-	log.Println("deckSize", *deckSizeFlag)
-	log.Println("track", *trackFlag)
-	log.Println("absId", *absIDFlag)
-	log.Println("infoset", *infosetFlag)
-	log.Println("hash", *hashIDFlag)
-	log.Println("report", *reportFlag)
+	// logging
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
+	slog.Info(
+		"START",
+		"deckSize", *deckSizeFlag,
+		"track", *trackFlag,
+		"absId", *absIDFlag,
+		"infoset", *infosetFlag,
+		"hash", *hashIDFlag,
+		"report", *reportFlag)
 
 	deck = utils.Deck(*deckSizeFlag)
 	infoBuilder = info.BuilderFactory(*hashIDFlag, *infosetFlag, *absIDFlag)
 	printer = utils.NewCronoPrinter(time.Second * time.Duration(*reportFlag))
 }
 
+// retorna todas las aristas chance posibles
 func todasLasAristasChancePosibles(p *pdt.Partida, level uint) uint64 {
 
 	var totalAristasPosibles uint64 = 0
 
+	// backup
 	bs, _ := p.MarshalJSON()
 
 	// todas las muestras posibles
@@ -128,12 +136,15 @@ func recPlay(p *pdt.Partida, level uint) {
 
 			if pdt.IsDone(pkts) || p.Terminada() {
 				terminals++
-				mem := utils.GetMemUsage()
-				printer.Print(fmt.Sprintf("\n\ttopo: %v\n\tdone: %v\n\t%s\n\tcount: %d",
-					topology,
-					dones,
-					mem,
-					len(infosets)))
+				if printer.ShouldPrint() {
+					slog.Info(
+						"REPORT",
+						"topo", topology,
+						"dones", dones,
+						"count", len(infosets),
+						"mem", utils.GetMemUsage())
+					printer.Check()
+				}
 			} else {
 				// sigue
 				recPlay(p, level+1)
@@ -169,10 +180,12 @@ func main() {
 		limEnvite, // limiteEnvido
 		verbose)
 
-	log.Println("total aristas nivel 0:", todasLasAristasChancePosibles(p, 0))
-	log.Println("terminals:", terminals)
-	log.Println("infosets:", len(infosets))
-	log.Println("finished:", time.Since(start))
+	slog.Info(
+		"RESULTS",
+		"totalAristasNivel0", todasLasAristasChancePosibles(p, 0),
+		"terminals:", terminals,
+		"infosets:", len(infosets),
+		"finished", time.Since(start))
 }
 
 /*

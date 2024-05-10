@@ -22,6 +22,12 @@
   in `GOMEMLIMIT=600000000 go run cmd/stressmem-test/main.go -n 500` now 
   activity monitor shows a memory consumption of about `564 MiB`
 
+#### `cmd/ronda-infosets-count`
+
+- deterministically count the number of infoset for a given deck size **at round
+  level**.
+- e.g.: `go run cmd/ronda-infosets-count -deck=7 -hash=sha160 -info=InfosetRondaBase -abs=a1 -track=true -report=10`
+
 ### args
 
 #### supported hashes
