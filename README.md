@@ -9,13 +9,13 @@
 - e.g.: `go run cmd/ronda-infosets-hll-count/main.go -deck=7 -hash=sha160 -limit
   =120 -report=10`
 
-#### `cmd/stressmem-test`
+#### `cmd/stress-mem`
 
-- a memory benchmark / stress-test / experiment comparing dynamic vs fixed 
+- a memory benchmark / stress / experiment comparing dynamic vs fixed 
   slices and its memory consumption
 - program takes parameter `-n` (int) which represent the targeted memory 
   consumption / buffer size in MiB (e.g., `-n-500` ~ 500 MiB buffer)
-- e.g.: `go run cmd/stressmem-test/main.go -n 500`
+- e.g.: `go run cmd/stress-mem/main.go -n 500`
 - for `-n=500` + dynamic slice activity monitor shows a memory consumption of 
   about `1 GiB` but go's runtime shows a `HeapAlloc` usage of `520 MiB` (this 
   is expected)
