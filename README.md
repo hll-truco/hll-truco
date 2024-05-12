@@ -68,3 +68,7 @@
 #### supported hashes
 
 `adler32`, `sha160`, `sha256`, `sha512`
+
+#### supported abstractions
+
+`a1`, `b`, `a2`, `a3`, `null`
