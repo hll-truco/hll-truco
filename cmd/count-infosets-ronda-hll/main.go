@@ -15,7 +15,7 @@ import (
 
 // flags/parametros:
 var (
-	deckSizeFlag = flag.Int("deck", 14, "Deck size")
+	deckSizeFlag = flag.Int("deck", 7, "Deck size")
 	absIDFlag    = flag.String("abs", "a1", "Abstractor ID")
 	infosetFlag  = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
 	hashIDFlag   = flag.String("hash", "sha160", "Infoset hashing function")
@@ -29,9 +29,10 @@ var (
 	verbose     bool                = true
 	terminals   uint64              = 0
 	printer     *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 10)
-	axiom                           = hyperloglog.New16()
-	start       time.Time           = time.Now()
-	limit       time.Duration       = 0
+	// axiom                           = hyperloglog.New16()
+	axiom               = hyperloglog.New16NoSparse()
+	start time.Time     = time.Now()
+	limit time.Duration = 0
 )
 
 func init() {
