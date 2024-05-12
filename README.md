@@ -1,12 +1,12 @@
 
 ## cmds
 
-#### `cmd/count-infosets-ronda-hll`
+#### `cmd/count-infosets-ronda-hll-axiom`
 
 - for a given time limit (`l`) approximates the number of information sets **AT 
   ROUND LEVEL** using axiomhq's HLL.
 - it outputs the estimated number of infosets + total terminal nodes visited
-- e.g.: `go run cmd/count-infosets-ronda-hll/main.go -deck=7 -hash=sha160 -limit
+- e.g.: `go run cmd/count-infosets-ronda-hll-axiom/main.go -deck=7 -hash=sha160 -limit
   =120 -report=10`
 
 #### `cmd/stress-mem`
