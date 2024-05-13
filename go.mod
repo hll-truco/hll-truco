@@ -1,9 +1,10 @@
 module github.com/hll-truco/hll-truco
 
-go 1.18
+go 1.21.5
 
 require (
 	github.com/axiomhq/hyperloglog v0.0.0-20240124082744-24bca3a5b39b
+	github.com/clarkduvall/hyperloglog v0.0.0-20171127014514-a0107a5d8004
 	github.com/truquito/gotruco v0.1.0
 )
 
@@ -20,3 +21,7 @@ replace github.com/truquito/gotruco => ../minitruco
 // replace github.com/truquito/gotruco => ../gotruco
 
 replace github.com/filevich/truco-ai => ../truco-ai
+
+replace github.com/axiomhq/hyperloglog => ../axiom-hyperloglog
+
+replace github.com/clarkduvall/hyperloglog => ../clarkduvall-hyperloglog
