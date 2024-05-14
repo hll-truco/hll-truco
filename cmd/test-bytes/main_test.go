@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/hll-truco/hll-truco"
+	"golang.org/x/crypto/sha3"
 )
 
 func TestByteSlice(t *testing.T) {
@@ -133,4 +134,28 @@ func TestFullRho(t *testing.T) {
 	if ok := i == 15 && totalRho == 60+1+64+15; !ok {
 		t.Error("got something diff than expected")
 	}
+}
+
+func TestSha3(t *testing.T) {
+
+	data := []byte("your data here")
+
+	// 1 = (1 byte / 8 bits) = (8b/1B) = 1
+	// so...
+	// if we want a 600 bits hash,
+	// 600 bits =  600b / (8b/1B) = 600/8 B = 75B
+
+	// if we want a 256 bits hash, 256/8 = 32B
+
+	hash256bits := make([]byte, 32)
+	hash640bits := make([]byte, 80)
+	hash1024bits := make([]byte, 128)
+
+	sha3.ShakeSum256(hash256bits, data)
+	sha3.ShakeSum256(hash640bits, data)
+	sha3.ShakeSum256(hash1024bits, data)
+
+	t.Logf("hash256bits: %x\n", hash256bits)
+	t.Logf("hash640bits: %x\n", hash640bits)
+	t.Logf("hash1024bits: %x\n", hash1024bits)
 }

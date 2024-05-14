@@ -8,12 +8,16 @@ require (
 	github.com/truquito/gotruco v0.1.0
 )
 
-require github.com/dgryski/go-metro v0.0.0-20180109044635-280f6062b5bc // indirect
+require (
+	github.com/dgryski/go-metro v0.0.0-20180109044635-280f6062b5bc // indirect
+	golang.org/x/sys v0.20.0 // indirect
+)
 
 require (
 	github.com/filevich/canvas v0.0.0 // indirect
 	github.com/filevich/combinatronics v0.0.0-20220316214652-26aa6db09482
 	github.com/filevich/truco-ai v0.0.0
+	golang.org/x/crypto v0.23.0
 )
 
 replace github.com/truquito/gotruco => ../minitruco
