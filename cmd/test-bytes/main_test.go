@@ -123,3 +123,63 @@ func TestBytes(t *testing.T) {
 		}
 	}
 }
+
+func getPosValDynamic(hash []byte, p uint8) (uint64, uint) {
+
+	var (
+		i        = uint64(0)
+		totalRho = uint(0)
+	)
+
+	// uint64 are 8 bytes
+	// so i break the hash in chunks of 8 bytes
+	for offset := 0; offset < len(hash)/8; offset++ {
+
+		ix := 8 * offset // 8 porque 1 uint64 = 8 bytes
+		x := cast8BytesAsUInt64(hash[ix : ix+8])
+
+		if isFirstInt := offset == 0; isFirstInt {
+
+			pos, rho := getPosVal(x, p)
+
+			i = pos
+			totalRho += uint(rho)
+
+			if shouldBreak := rho < (64-p)+1; shouldBreak {
+				break
+			}
+
+		} else {
+			rho := uint(bits.LeadingZeros64(x))
+			totalRho += rho
+			if shouldBreak := rho < 64; shouldBreak {
+				break
+			}
+		}
+
+	}
+
+	return i, totalRho
+}
+
+func TestFullRho(t *testing.T) {
+	// test: para un uint64 que se le aplica `getPosVal` (i.e., el primer ui64)
+	//       su "Val"/Rho es todo nulo sii Rho == (64-p)+1 (ya que siempre se le suma 1)
+
+	hash := []byte{
+		// primer uint64 ~ 8 bytes (su rho es 61, por lo que es todo nulo)
+		//                                                                                    ****
+		//                                                                                    ||||
+		0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b11110000, // 4+7*8=60 (+1)
+		// segundo uint64 ~ 8 bytes (su `bits.LeadingZeros64` es 64 por lo que es todo nulo, se suma a rho, y se pasa al siguiente)
+		0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, // + 64
+		0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000001, 0b00000000, // + (8 + 7) = 15 BREAK
+		//                                                     le agrego un 1 acá -------^
+		0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000,
+	}
+
+	// number of bits to interpret as the bucket index
+	p := uint8(4)
+	i, totalRho := getPosValDynamic(hash, p)
+	t.Logf("i:%d, totalRho:%d\n", i, totalRho)
+}
