@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/md5"
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/json"
@@ -10,8 +11,20 @@ import (
 	"time"
 
 	"github.com/hll-truco/hll-truco"
+	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/sha3"
 )
+
+func MD5(data []byte) []byte {
+	hasher := md5.New()
+	hasher.Write(data)
+	return hasher.Sum(nil)
+}
+
+func Blake2b512(data []byte) []byte {
+	hash := blake2b.Sum512(data)
+	return hash[:]
+}
 
 func Sha3(data []byte) []byte {
 	hash1024bits := make([]byte, 128)
@@ -92,6 +105,28 @@ func main() {
 	// }
 	// save(sha512Dist, "sha512dist-1B.json")
 
+	// Blake2b512Dist := newDist(100)
+	// for i := 0; i < n; i++ {
+	// 	if i%reportEvery == 0 {
+	// 		log.Println(i, float64(i)/float64(n))
+	// 	}
+	// 	hashSah256 := Blake2b512(toBytes(i))
+	// 	_, val := hll.GetPosValDynamic(hashSah256, p)
+	// 	Blake2b512Dist[int(val)-1] += 1
+	// }
+	// save(Blake2b512Dist, "Blake2b512dist-1B.json")
+
+	MD5Dist := newDist(100)
+	for i := 0; i < n; i++ {
+		if i%reportEvery == 0 {
+			log.Println(i, float64(i)/float64(n))
+		}
+		hashSah256 := MD5(toBytes(i))
+		_, val := hll.GetPosValDynamic(hashSah256, p)
+		MD5Dist[int(val)-1] += 1
+	}
+	save(MD5Dist, "md5dist-1B.json")
+
 	// sha3 1024
 	// sha3_1024_Dist := newDist(100)
 	// for i := 0; i < n; i++ {
@@ -105,17 +140,17 @@ func main() {
 	// save(sha3_1024_Dist, "sha3-1024-dist-1B.json")
 
 	// Sha3Optimized 1024
-	sha3_1024_Dist := newDist(100)
-	hashSah3_1024 := make([]byte, 128)
-	for i := 0; i < n; i++ {
-		if i%reportEvery == 0 {
-			log.Println(i, float64(i)/float64(n))
-		}
-		Sha3Optimized(hashSah3_1024, toBytes(i))
-		_, val := hll.GetPosValDynamic(hashSah3_1024, p)
-		sha3_1024_Dist[int(val)-1] += 1
-	}
-	save(sha3_1024_Dist, "sha3-1024-dist-1B.json")
+	// sha3_1024_Dist := newDist(100)
+	// hashSah3_1024 := make([]byte, 128)
+	// for i := 0; i < n; i++ {
+	// 	if i%reportEvery == 0 {
+	// 		log.Println(i, float64(i)/float64(n))
+	// 	}
+	// 	Sha3Optimized(hashSah3_1024, toBytes(i))
+	// 	_, val := hll.GetPosValDynamic(hashSah3_1024, p)
+	// 	sha3_1024_Dist[int(val)-1] += 1
+	// }
+	// save(sha3_1024_Dist, "sha3-1024-dist-1B.json")
 
 	log.Println("total time", time.Since(start))
 }
@@ -123,4 +158,6 @@ func main() {
 // bench
 // sha3 1024 4B (unoptimized) = 61 mins
 // sha512 1B = 301 s = 5,017 mins
+// blake512 1B = 6m50.655153375s
+// md5 1B = 4m58.667003917s
 // sha3 1024 1B optimized = 14m43.369908542s
