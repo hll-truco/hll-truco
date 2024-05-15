@@ -26,7 +26,7 @@ ax0.bar(keys, values, label="bar")
 ax0.set_yscale('log', base=10)
 ax0.set_xlabel('Number of consecutive zeros')
 ax0.set_ylabel('Freq.')
-ax0.set_title('Dist. of consecutive zeros in sha256 hashes of the first 1B integers')
+ax0.set_title('Dist. of consecutive zeros in sha256 hashes \nfor the first 1B integers')
 
 # Plot the line plots on the right subplot
 ax1.plot([sha256[k] for k in sorted(sha256.keys())[:n]], label="sha256")
@@ -36,7 +36,7 @@ ax1.plot([sha3_1024[k] for k in sorted(sha3_1024.keys())[:n]], label="sha3_1024"
 ax1.set_yscale('log', base=10)
 ax1.set_xlabel('Number of consecutive zeros')
 ax1.set_ylabel('Freq.')
-ax1.set_title('Dist. of consecutive zeros in multiple hashes of the first 1B integers')
+ax1.set_title('Dist. of consecutive zeros in multiple hashes \nfor the first 1B integers')
 ax1.legend()
 
 # Adjust the spacing between subplots
