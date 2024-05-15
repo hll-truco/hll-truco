@@ -11,28 +11,37 @@ sha256 = load_dist("sha256dist-1B.json")
 sha512 = load_dist("sha512dist-1B.json")
 sha3_1024 = load_dist("sha3-1024-dist-1B.json")
 
-# sha3_1024_4B = load_dist("sha3-1024-dist-4B.json")
+sha3_1024_4B = load_dist("sha3-1024-dist-4B.json")
 
 # Extract keys and values from the dictionary
-keys = list(sha256.keys())
-values = list(sha256.values())
 n = 30
+keys = list(sorted(sha256.keys()))[:n]
+values = [sha256[k] for k in keys][:n]
 
-# Plot the histogram
-# plt.bar(keys, values)
+# Create a figure with two subplots
+fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(12, 5))
 
-plt.plot([sha256[k] for k in sorted(sha256.keys())[:n]], label="sha256")
-plt.plot([sha512[k] for k in sorted(sha512.keys())[:n]], label="sha512")
-plt.plot([sha3_1024[k] for k in sorted(sha3_1024.keys())[:n]], label="sha3_1024")
+# Plot the histogram on the left subplot
+ax0.bar(keys, values, label="bar")
+ax0.set_yscale('log', base=10)
+ax0.set_xlabel('Number of consecutive zeros')
+ax0.set_ylabel('Freq.')
+ax0.set_title('Dist. of consecutive zeros in sha256 hashes of the first 1B integers')
 
-# plt.plot([sha3_1024_4B[k] for k in sorted(sha3_1024_4B.keys())[:n]], label="sha3_1024_4B")
+# Plot the line plots on the right subplot
+ax1.plot([sha256[k] for k in sorted(sha256.keys())[:n]], label="sha256")
+ax1.plot([sha512[k] for k in sorted(sha512.keys())[:n]], label="sha512")
+ax1.plot([sha3_1024[k] for k in sorted(sha3_1024.keys())[:n]], label="sha3_1024")
+# ax1.plot([sha3_1024_4B[k] for k in sorted(sha3_1024_4B.keys())[:n]], label="sha3_1024_4B")
+ax1.set_yscale('log', base=10)
+ax1.set_xlabel('Number of consecutive zeros')
+ax1.set_ylabel('Freq.')
+ax1.set_title('Dist. of consecutive zeros in multiple hashes of the first 1B integers')
+ax1.legend()
 
-plt.legend()
-plt.yscale('log', base=10)
-
-plt.xlabel('Keys')
-plt.ylabel('Values')
-plt.title('Histogram from Dictionary')
+# Adjust the spacing between subplots
+# plt.subplots_adjust(wspace=0.4)
+plt.tight_layout()
 
 # Display the plot
 plt.show()
