@@ -7,10 +7,10 @@ import parse_utils
 title = "HLL estimate for mini-Truco with -deck=14 -info=InfosetRondaBase -abs=null"
 real = 248_732
 
-hll_axiom = parse_utils.parse_structured_log("cmd/plots/count-infosets-ronda-hll/axiom-d14-anull-irb-l600.log")
-hll_duvall_pp = parse_utils.parse_structured_log("cmd/plots/count-infosets-ronda-hll/clarkduvall-++-d14-anull-irb-l600.log")
-hll_duvall = parse_utils.parse_structured_log("cmd/plots/count-infosets-ronda-hll/clarkduvall-d14-anull-irb-l600.log")
-hll_hll = parse_utils.parse_structured_log("cmd/plots/count-infosets-ronda-hll/hll-d14-anull-irb-l600.log")
+hll_axiom = parse_utils.parse_structured_log("cmd/plots/count-infosets-ronda-hll/data/axiom-d14-anull-irb-l600.log")
+hll_duvall_pp = parse_utils.parse_structured_log("cmd/plots/count-infosets-ronda-hll/data/clarkduvall-++-d14-anull-irb-l600.log")
+hll_duvall = parse_utils.parse_structured_log("cmd/plots/count-infosets-ronda-hll/data/clarkduvall-d14-anull-irb-l600.log")
+hll_hll = parse_utils.parse_structured_log("cmd/plots/count-infosets-ronda-hll/data/hll-d14-anull-irb-l600.log")
 
 hll_axiom = parse_utils.keep(hll_axiom)
 hll_duvall = parse_utils.keep(hll_duvall)
