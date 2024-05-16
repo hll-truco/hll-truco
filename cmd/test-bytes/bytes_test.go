@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hll-truco/hll-truco"
+	"github.com/hll-truco/hll-truco/hll"
 )
 
 func TestByteSlice(t *testing.T) {
