@@ -58,13 +58,12 @@ func init() {
 	limit = time.Second * time.Duration(*limitFlag)
 	printer = utils.NewCronoPrinter(time.Second * time.Duration(*reportFlag))
 
-	if *hashIDFlag == "sha3" || true {
+	if *hashIDFlag == "sha3" {
 		hashFn = hll.NewSha3Hash(128)
+		slog.Warn("USING_SHA3SHAKE", "size", 128)
 	} else {
 		hashFn = utils.ParseHashFn(*hashIDFlag)
-		if true {
-			panic("euro-pa-pa")
-		}
+		slog.Warn("USING_FIXED_HASH", "hash", *hashIDFlag)
 	}
 
 	// start timer
