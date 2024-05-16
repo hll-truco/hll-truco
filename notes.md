@@ -172,3 +172,20 @@ bin(int(hashlib.sha256(str("123").encode('utf-8')).hexdigest(), 16))
 {"time":"2024-05-12T19:26:08.895935-03:00","level":"INFO","msg":"REPORT","delta":55.001768709,"estimate":4689}
 {"time":"2024-05-12T19:26:13.894317-03:00","level":"INFO","msg":"RESULTS","finalEstimate":4689,"terminals:":1934101,"finished":60.000183625}
 ```
+
+# configs
+
+jugadores: 2p, 4p, 6p
+envido: 2, -1
+pts: 20, 40
+
+3 * 2 * 2 = 12 configs en total
+
+{p:{2,4,6}, e:2, pts:{20,40}} = 3*1*2= 6 casos
+{p:{2,4,6}, e:-1, pts:{20,40}} = 3*1*2= 6 casos
+
+# road
+
+- track number of nodes visited
+- por ronda y por partida ?
+- resolver ecuacion simbólica/numéricamente
