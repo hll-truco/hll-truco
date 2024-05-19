@@ -1,13 +1,16 @@
 package main
 
 import (
+	"bufio"
 	"crypto/md5"
 	"crypto/sha256"
 	"crypto/sha512"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/hll-truco/hll-truco/hll"
@@ -74,6 +77,40 @@ func save(data any, path string) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func bytesToHexString(bytes []byte) string {
+	hexString := hex.EncodeToString(bytes)
+	return strings.TrimPrefix(hexString, "0x")
+}
+
+// SaveStringsToFile saves a slice of strings to a file, each string on a new line.
+func SaveStringsToFile(filename string, lines []string) error {
+	// Open the file for writing. Create it if it doesn't exist.
+	file, err := os.Create(filename)
+	if err != nil {
+		return fmt.Errorf("could not create file: %w", err)
+	}
+	defer file.Close()
+
+	// Create a new writer.
+	writer := bufio.NewWriter(file)
+
+	// Write each string to the file, followed by a newline.
+	for _, line := range lines {
+		_, err := writer.WriteString(line + "\n")
+		if err != nil {
+			return fmt.Errorf("could not write to file: %w", err)
+		}
+	}
+
+	// Flush the writer to ensure all data is written to the file.
+	err = writer.Flush()
+	if err != nil {
+		return fmt.Errorf("could not flush writer: %w", err)
+	}
+
 	return nil
 }
 
@@ -155,6 +192,7 @@ func main() {
 	// hll.Sha3 1024
 	newsha3_1024_Dist := newDist(100)
 	fn := hll.NewSha3Hash(128)
+	hashes := make([]string, 1_000_000)
 
 	for i := 0; i < n; i++ {
 		if i%reportEvery == 0 {
@@ -165,10 +203,17 @@ func main() {
 		hashSah3_1024 := fn.Sum(nil)
 		fn.Reset()
 
+		if i < 1_000_000 {
+			hashes[i] = bytesToHexString(hashSah3_1024)
+		} else {
+			break
+		}
+
 		_, val := hll.GetPosValDynamic(hashSah3_1024, p)
 		newsha3_1024_Dist[int(val)-1] += 1
 	}
-	save(newsha3_1024_Dist, "newsha3-1024-dist-1B.json")
+	// save(newsha3_1024_Dist, "newsha3-1024-dist-1B.json")
+	SaveStringsToFile("1M_go_sha3_1024_random.log", hashes)
 
 	log.Println("total time", time.Since(start))
 }
