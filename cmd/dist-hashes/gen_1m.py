@@ -1,5 +1,8 @@
-import random
-from ks import num_samples, compute_sha256_hash
+# import random
+import hashlib
+from ks import compute_any_hash
+
+num_samples = 1_000_000
 
 with open("1M_py_sha256_random.log2", "x+") as f:
     for i in range(num_samples):
@@ -7,7 +10,7 @@ with open("1M_py_sha256_random.log2", "x+") as f:
         # x = random.randint(0, num_samples) # random
         x = i # serie
 
-        h = compute_sha256_hash(x)
+        h = compute_any_hash(x, hasher=hashlib.sha256)
         f.write(h + "\n")
 
 print("done")
