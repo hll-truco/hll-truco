@@ -32,38 +32,88 @@ def extract_zero_positions_from_hashes(num_hashes:int, hash_func: Callable[[],st
         all_zero_positions.extend(zero_positions)
     return np.array(all_zero_positions) / 255.0  # Normalize positions to [0, 1]
 
+def read_hashes(file:str) -> list[str]:
+    res = []
+    with open(file) as f:
+        for i,l in enumerate(f.readlines()):
+            res += [l.strip()]
+    return res
+
 # Generate actual SHA-256 hashes and extract zero positions
 num_samples = 1_000_000
-actual_zero_positions_normalized = extract_zero_positions_from_hashes(num_samples, lambda: compute_sha256_hash(random.randint(0, num_samples)))
 
-# Generate simulated 256-bit hashes and extract zero positions
-simulated_zero_positions_normalized = extract_zero_positions_from_hashes(num_samples, generate_random_256_bit_hash)
+if __name__ == "__main__":
 
-# Perform the 2-sample K-S test
-ks_statistic, p_value = kstest(actual_zero_positions_normalized, simulated_zero_positions_normalized)
+    # randomly generated
+    # computed = [
+    #     compute_sha256_hash(random.randint(0, num_samples))
+    #     for _ in range(num_samples)
+    # ]
+    # sequential
+    # computed = [compute_sha256_hash(i) for i in range(num_samples)]
 
-# Output the results
-print(f"KS Statistic: {ks_statistic}")
-print(f"P-Value: {p_value}")
+    # read sequential
+    computed = read_hashes(file="1M_py_sha256_random.log2")
 
-# Interpret the result
-if p_value > 0.05:
-    print("The distributions of zero positions are similar (fail to reject H0).")
-else:
-    print("The distributions of zero positions are different (reject H0).")
+    it = iter(computed)
+    next_computed_hash = lambda: next(it)
 
-# plot
+    actual_zero_positions_normalized = extract_zero_positions_from_hashes(
+                                            num_samples,
+                                            next_computed_hash)
 
-import matplotlib.pyplot as plt
+    # Generate simulated 256-bit hashes and extract zero positions
+    simulated_zero_positions_normalized = extract_zero_positions_from_hashes(
+                                            num_samples,
+                                            generate_random_256_bit_hash)
 
-# Histogram of zero bit positions
-plt.hist(actual_zero_positions_normalized, bins=256, density=True, alpha=0.75, color='blue')
-plt.title('Distribution of Zero Bit Positions in One Billion SHA-256 Hashes')
-plt.xlabel('Normalized Bit Position')
-plt.ylabel('Density')
-plt.show()
+    # Perform the 2-sample K-S test
+    ks_statistic, p_value = kstest(
+                                actual_zero_positions_normalized,
+                                simulated_zero_positions_normalized)
 
-# sha256
-# KS Statistic: 6.998626494669757e-05
-# P-Value: 0.9125131694719305
-# The distributions of zero positions are similar (fail to reject H0).
+    # Output the results
+    print(f"KS Statistic: {ks_statistic}")
+    print(f"P-Value: {p_value}")
+
+    # Interpret the result
+    if p_value > 0.05:
+        print("The distributions of zero positions are similar (fail to reject H0).")
+    else:
+        print("The distributions of zero positions are different (reject H0).")
+
+    # plot
+
+    import matplotlib.pyplot as plt
+
+    # Histogram of zero bit positions
+    plt.hist(actual_zero_positions_normalized, bins=256, density=True, alpha=0.75, color='blue')
+    plt.title('Distribution of Zero Bit Positions in One Billion SHA-256 Hashes')
+    plt.xlabel('Normalized Bit Position')
+    plt.ylabel('Density')
+    plt.show()
+
+    # sha256
+    # KS Statistic: 6.998626494669757e-05
+    # P-Value: 0.9125131694719305
+    # The distributions of zero positions are similar (fail to reject H0).
+
+    # random-sha256
+    # KS Statistic: 6.575667544847508e-05
+    # P-Value: 0.9447675180662787
+
+    # random-sha256
+    # KS Statistic: 7.9673563030902e-05
+    # P-Value: 0.8112103087681888
+
+    # sequential-sha256
+    # KS Statistic: 6.470931814273051e-05
+    # P-Value: 0.9514827707727992
+
+    # KS Statistic: 0.00014691937639882413
+    # P-Value: 0.12616106744044997
+    # The distributions of zero positions are similar (fail to reject H0).
+
+    # KS Statistic: 9.152486883529098e-05
+    # P-Value: 0.6570888929927498
+    # The distributions of zero positions are similar (fail to reject H0).
