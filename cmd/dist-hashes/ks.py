@@ -50,22 +50,29 @@ def read_hashes(file:str) -> list[str]:
 if __name__ == "__main__":
 
     num_samples    = 1_000_000
-    hasher         = hashlib.sha256
-    hash_bits_size = 256
+    hasher         = hashlib.sha512
+    hash_bits_size = 512
 
-    # randomly generated
+    # randomly generated sha256
     # computed = [
     #     compute_any_hash(random.randint(0, num_samples), hasher=hashlib.sha256)
     #     for _ in range(num_samples)
     # ]
-    # sequential
+
+    # sequentially generated sha256
+    # computed = [
+    #     compute_any_hash(i, hasher)
+    #     for i in range(num_samples)
+    # ]
+
+    # sequentially generated sha512
     computed = [
         compute_any_hash(i, hasher)
         for i in range(num_samples)
     ]
 
-    # read sequential
-    # computed = read_hashes(file="1M_py_sha256_random.log2")
+    # read sequential sha256 genereted with `gen_1m.py`
+    # computed = read_hashes(file="1M_py_sha256_random.log")
 
     it = iter(computed)
     next_computed_hash = lambda: next(it)
