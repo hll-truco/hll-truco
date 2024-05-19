@@ -51,7 +51,9 @@ if __name__ == "__main__":
 
     num_samples    = 1_000_000
     hasher         = hashlib.sha512
-    hash_bits_size = 512
+    hash_bits_size = 1024
+
+    print(num_samples, hasher, hash_bits_size)
 
     # randomly generated sha256
     # computed = [
@@ -66,13 +68,14 @@ if __name__ == "__main__":
     # ]
 
     # sequentially generated sha512
-    computed = [
-        compute_any_hash(i, hasher)
-        for i in range(num_samples)
-    ]
+    # computed = [
+    #     compute_any_hash(i, hasher)
+    #     for i in range(num_samples)
+    # ]
 
     # read sequential sha256 genereted with `gen_1m.py`
     # computed = read_hashes(file="1M_py_sha256_random.log")
+    computed = read_hashes(file="1M_go_sha3_1024_random.log")
 
     it = iter(computed)
     next_computed_hash = lambda: next(it)
@@ -87,12 +90,14 @@ if __name__ == "__main__":
                                             num_samples,
                                             lambda: generate_random_n_bit_hash(n=hash_bits_size),
                                             hash_bits_size)
-
+    from datetime import datetime
+    start = datetime.now()
     # Perform the 2-sample K-S test
     ks_statistic, p_value = kstest(
                                 actual_zero_positions_normalized,
                                 simulated_zero_positions_normalized)
-
+    
+    print(f"KS test delta: {datetime.now() - start}")
     # Output the results
     print(f"KS Statistic: {ks_statistic}")
     print(f"P-Value: {p_value}")
@@ -109,7 +114,7 @@ if __name__ == "__main__":
 
     # Histogram of zero bit positions
     plt.hist(actual_zero_positions_normalized, bins=256, density=True, alpha=0.75, color='blue')
-    plt.title('Distribution of Zero Bit Positions in One Billion SHA-256 Hashes')
+    plt.title('Distribution of Zero Bit Positions in One Million SHA3-SHAKE256 1024 bit Hashes')
     plt.xlabel('Normalized Bit Position')
     plt.ylabel('Density')
     plt.show()
@@ -142,4 +147,15 @@ if __name__ == "__main__":
     # parametric (dynamic) hash length
     # KS Statistic: 6.590226494451734e-05
     # P-Value: 0.9438012713093233
+    # The distributions of zero positions are similar (fail to reject H0).
+
+    # go sha3-shake 1024
+    # KS Statistic: 3.0288717852267055e-05
+    # P-Value: 0.97293401750096
+    # The distributions of zero positions are similar (fail to reject H0).
+
+    # go sha3-shake 1024 run 2
+    # KS test delta: 0:13:36.648892
+    # KS Statistic: 1.6849012422992526e-05
+    # P-Value: 0.9999996049086937
     # The distributions of zero positions are similar (fail to reject H0).
