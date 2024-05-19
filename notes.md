@@ -188,4 +188,3 @@ pts: 20, 40
 
 - track number of nodes visited
 - por ronda y por partida ?
-- resolver ecuacion simbólica/numéricamente
