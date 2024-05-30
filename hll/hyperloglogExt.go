@@ -57,17 +57,20 @@ func (h *HyperLogLogExt) Add(hash []byte) bool {
 }
 
 // Merge takes another HyperLogLogExt and combines it with HyperLogLogExt h.
-func (h *HyperLogLogExt) Merge(other *HyperLogLogExt) error {
+// returns true if there's bump in any of its regs after the merge
+func (h *HyperLogLogExt) Merge(other *HyperLogLogExt) (bool, error) {
 	if h.p != other.p {
-		return errors.New("precisions must be equal")
+		return false, errors.New("precisions must be equal")
 	}
 
+	bump := false
 	for i, v := range other.reg {
 		if v > h.reg[i] {
 			h.reg[i] = v
+			bump = true
 		}
 	}
-	return nil
+	return bump, nil
 }
 
 // Count returns the cardinality estimate.
