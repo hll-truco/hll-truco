@@ -32,8 +32,6 @@ func init() {
 
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/version", root.VersionHandler)
-	mux.HandleFunc("/update", root.UpdateHandler)
 
 	// Create the server with the mux
 	server := &http.Server{
@@ -41,7 +39,8 @@ func main() {
 		Handler: mux,
 	}
 
-	// Add the /exit handler
+	mux.HandleFunc("/version", root.VersionHandler)
+	mux.HandleFunc("/update", root.UpdateHandler)
 	mux.HandleFunc("/exit", root.ExitHandler(server, exitChan))
 
 	go func() {
