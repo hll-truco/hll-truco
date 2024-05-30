@@ -2,3 +2,4 @@ go.sum
 __pycache__/
 vendor/
 .DS_Store
+*.log
