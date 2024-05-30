@@ -157,6 +157,9 @@ func main() {
 		// termino la partida o se acabó el tiempo
 	}
 
+	// a final update
+	update()
+
 	slog.Info(
 		"RESULTS",
 		"finalEstimate", h.Count(),
