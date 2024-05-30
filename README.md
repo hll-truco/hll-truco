@@ -60,7 +60,12 @@
 - it should obey the equation $...$
 - run as `go run cmd/count-root-edges-deterministically/main.go`
 
+#### `cmd/count-infosets-hll-http-dist/`
 
+- root server: `go run cmd/count-infosets-hll-http-dist/root/cmd/main.go -port=8080 | tee logs/hll-dist-http/http-w2-d14-anull-hsha3_6.log`
+- single worker `go run cmd/count-infosets-hll-http-dist/worker/*.go -hash=sha3 -deck=14 -abs=null -report=10 -limit=600 -root=http://localhost:8080`
+- single worker + exit: `curl -X GET http://localhost:8080/exit`
+- multiple workers: `for i in {1..16}; do go run cmd/count-infosets-hll-http-dist/worker/*.go -hash=sha3 -deck=14 -abs=null -report=10 -limit=600 -root=http://localhost:8080 &>/dev/null & done`
 
 
 ## notes
