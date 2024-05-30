@@ -29,8 +29,6 @@ func VersionHandler(w http.ResponseWriter, _ *http.Request) {
 	// Setting response headers
 	w.Header().Set("Content-Type", "application/json")
 
-	total++
-
 	// Writing the JSON response with status code 200
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonResponse)

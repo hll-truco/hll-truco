@@ -6,18 +6,15 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/hll-truco/hll-truco/cmd/count-infosets-hll-http-dist/root"
+	"github.com/hll-truco/hll-truco/utils"
 )
 
 // flags/parametros:
 var (
 	portFlag = flag.Int("port", 8080, "HTTP port")
-)
-
-// global state
-var (
-	exitChan = make(chan bool)
 )
 
 func init() {
@@ -31,17 +28,20 @@ func init() {
 }
 
 func main() {
-	mux := http.NewServeMux()
-
-	// Create the server with the mux
-	server := &http.Server{
-		Addr:    fmt.Sprintf("0.0.0.0:%d", *portFlag),
-		Handler: mux,
-	}
+	var (
+		state    = root.NewState()
+		printer  = utils.NewCronoPrinter(time.Second * 10)
+		mux      = http.NewServeMux()
+		exitChan = make(chan bool)
+		server   = &http.Server{
+			Addr:    fmt.Sprintf("0.0.0.0:%d", *portFlag),
+			Handler: mux,
+		}
+	)
 
 	mux.HandleFunc("/version", root.VersionHandler)
-	mux.HandleFunc("/update", root.UpdateHandler)
-	mux.HandleFunc("/exit", root.ExitHandler(server, exitChan))
+	mux.HandleFunc("/update", root.UpdateHandler(state, printer))
+	mux.HandleFunc("/exit", root.ExitHandler(server, exitChan, state, printer))
 
 	go func() {
 		slog.Info("UP", "addr", server.Addr)
