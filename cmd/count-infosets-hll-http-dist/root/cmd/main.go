@@ -60,13 +60,13 @@ func main() {
 	mux.HandleFunc("/exit", ExitHandler(server, exitChan))
 
 	go func() {
-		slog.Info("SERVER_UP", "addr", server.Addr)
+		slog.Info("UP", "addr", server.Addr)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			fmt.Printf("Could not listen on %s: %v\n", server.Addr, err)
 		}
 	}()
 
 	<-exitChan // Wait for signal to exit
-	slog.Info("SERVER_DOWN")
+	slog.Info("DOWN")
 	os.Exit(0) // Exit the program
 }
