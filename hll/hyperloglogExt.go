@@ -45,12 +45,15 @@ func (h *HyperLogLogExt) Clear() {
 }
 
 // Add adds a new item to HyperLogLogExt h.
-func (h *HyperLogLogExt) Add(hash []byte) {
+func (h *HyperLogLogExt) Add(hash []byte) bool {
 	i, zeroBits := GetPosValDynamic(hash, h.p)
 
 	if zeroBits > h.reg[i] {
 		h.reg[i] = zeroBits
+		return true
 	}
+
+	return false
 }
 
 // Merge takes another HyperLogLogExt and combines it with HyperLogLogExt h.
