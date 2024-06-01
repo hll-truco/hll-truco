@@ -53,7 +53,7 @@ func SendUpdateRequest(baseURL string, gobString string) {
 	SendPOSTJsonData(url, update)
 }
 
-func SendReportRequest(baseURL string, report state.WorkerReport) {
+func SendReportRequest(baseURL string, report state.WorkerResult) {
 	url := baseURL + "/report"
 	SendPOSTJsonData(url, report)
 }

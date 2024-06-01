@@ -86,7 +86,7 @@ func update() {
 }
 
 func report() {
-	data := state.WorkerReport{
+	data := state.WorkerResult{
 		NodesVisited: terminals,
 		GamesPlayed:  2,
 		Delta:        uint64(time.Since(start).Seconds()),

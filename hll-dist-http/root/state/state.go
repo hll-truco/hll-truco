@@ -8,7 +8,7 @@ import (
 	"github.com/hll-truco/hll-truco/hll"
 )
 
-type WorkerReport struct {
+type WorkerResult struct {
 	NodesVisited uint64 `json:"nodesVisited"`
 	GamesPlayed  uint64 `json:"gamesPlayed"`
 	Delta        uint64 `json:"delta"`
@@ -18,8 +18,8 @@ type State struct {
 	start  time.Time
 	Global *hll.HyperLogLogExt
 	Total  uint64
-	// reports
-	Reports []*WorkerReport
+	// workers' results
+	WorkersResults []*WorkerResult
 	// multi
 	mu *sync.Mutex
 }
@@ -30,7 +30,7 @@ func NewState() *State {
 		Global: GetNewExt(),
 		Total:  0,
 		// reports
-		Reports: make([]*WorkerReport, 0),
+		WorkersResults: make([]*WorkerResult, 0),
 		// mutli
 		mu: &sync.Mutex{},
 	}
@@ -58,10 +58,10 @@ func (state *State) Merge(other *hll.HyperLogLogExt) (bool, error) {
 	return bump, nil
 }
 
-func (state *State) AddReport(r *WorkerReport) {
+func (state *State) AddWorkerResult(r *WorkerResult) {
 	state.mu.Lock()
 	defer state.mu.Unlock()
-	state.Reports = append(state.Reports, r)
+	state.WorkersResults = append(state.WorkersResults, r)
 }
 
 func (state *State) Report(delta float64) {
@@ -84,7 +84,7 @@ func (state *State) Results() {
 	slog.Info(
 		"RESULTS",
 		"delta", time.Since(state.start).Seconds(),
-		"reports", state.Reports,
+		"reports", state.WorkersResults,
 		"estimate", estimate,
 		"total", state.Total)
 }

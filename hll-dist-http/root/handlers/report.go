@@ -8,7 +8,7 @@ import (
 )
 
 // ReportRequest represents the request body for the /Report endpoint
-type ReportRequest state.WorkerReport
+type ReportRequest state.WorkerResult
 
 // ReportHandler handles requests to the /Report endpoint
 func ReportHandler(
@@ -22,7 +22,7 @@ func ReportHandler(
 			return
 		}
 
-		s.AddReport((*state.WorkerReport)(&reportReq))
+		s.AddWorkerResult((*state.WorkerResult)(&reportReq))
 
 		// Responding with status code 201
 		w.WriteHeader(http.StatusCreated)
