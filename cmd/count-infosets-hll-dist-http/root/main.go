@@ -62,6 +62,6 @@ func main() {
 
 E.g.,
 
-go run cmd/count-infosets-hll-http-dist/root/main.go -port=8080 | tee logs/hll-dist-http/example.log
+go run cmd/count-infosets-hll-dist-http/root/main.go -port=8080 | tee logs/hll-dist-http/example.log
 
 */
