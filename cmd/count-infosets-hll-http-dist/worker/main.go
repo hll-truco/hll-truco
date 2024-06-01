@@ -167,3 +167,9 @@ func main() {
 		"terminals:", terminals,
 		"finished", time.Since(start).Seconds())
 }
+
+/*
+
+go run cmd/count-infosets-hll-http-dist/worker/*.go -hash=sha3 -deck=14 -abs=null -report=5 -limit=20 -root=http://localhost:8080 && curl -X GET http://localhost:8080/exit
+
+*/

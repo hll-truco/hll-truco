@@ -57,3 +57,11 @@ func main() {
 	slog.Info("DOWN")
 	os.Exit(0) // Exit the program
 }
+
+/*
+
+E.g.,
+
+go run cmd/count-infosets-hll-http-dist/root/main.go -port=8080 | tee logs/hll-dist-http/example.log
+
+*/
