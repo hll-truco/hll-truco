@@ -1,4 +1,4 @@
-package main
+package worker
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ type UpdateRequest struct {
 	Gob string `json:"gob"`
 }
 
-func sendUpdateRequest(baseURL string, gobString string) {
+func SendUpdateRequest(baseURL string, gobString string) {
 	url := baseURL + "/update"
 	// Create the UpdateRequest struct
 	update := UpdateRequest{Gob: gobString}

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/hll-truco/hll-truco/cmd/count-infosets-hll-http-dist/root/state"
+	"github.com/hll-truco/hll-truco/hll-dist-http/root/state"
 )
 
 // ReportRequest represents the request body for the /Report endpoint

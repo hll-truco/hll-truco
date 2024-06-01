@@ -11,6 +11,7 @@ import (
 
 	"github.com/filevich/truco-ai/info"
 	"github.com/hll-truco/hll-truco/hll"
+	"github.com/hll-truco/hll-truco/hll-dist-http/worker"
 	"github.com/hll-truco/hll-truco/utils"
 	"github.com/truquito/gotruco/pdt"
 )
@@ -80,7 +81,7 @@ func update() {
 		panic(err)
 	}
 	base64Data := base64.StdEncoding.EncodeToString(data)
-	sendUpdateRequest(*rootFlag, base64Data)
+	worker.SendUpdateRequest(*rootFlag, base64Data)
 }
 
 func uniformPick(chis [][]pdt.IJugada) pdt.IJugada {

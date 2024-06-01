@@ -8,8 +8,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/hll-truco/hll-truco/cmd/count-infosets-hll-http-dist/root/handlers"
-	"github.com/hll-truco/hll-truco/cmd/count-infosets-hll-http-dist/root/state"
+	"github.com/hll-truco/hll-truco/hll-dist-http/root/handlers"
+	"github.com/hll-truco/hll-truco/hll-dist-http/root/state"
 	"github.com/hll-truco/hll-truco/utils"
 )
 
