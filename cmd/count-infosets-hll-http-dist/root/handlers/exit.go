@@ -1,4 +1,4 @@
-package root
+package handlers
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/hll-truco/hll-truco/cmd/count-infosets-hll-http-dist/root/state"
 	"github.com/hll-truco/hll-truco/utils"
 )
 
@@ -13,7 +14,7 @@ import (
 func ExitHandler(
 	server *http.Server,
 	exitChan chan bool,
-	state *State,
+	state *state.State,
 	crono *utils.CronoPrinter,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

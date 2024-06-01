@@ -1,10 +1,11 @@
-package root
+package handlers
 
 import (
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
 
+	"github.com/hll-truco/hll-truco/cmd/count-infosets-hll-http-dist/root/state"
 	"github.com/hll-truco/hll-truco/utils"
 )
 
@@ -15,7 +16,7 @@ type UpdateRequest struct {
 
 // updateHandler handles requests to the /update endpoint
 func UpdateHandler(
-	state *State,
+	state *state.State,
 	crono *utils.CronoPrinter,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -32,15 +33,15 @@ func UpdateHandler(
 			return
 		}
 
-		state.decoder.GobDecode(data)
-		bump, err := state.global.Merge(state.decoder)
+		state.Decoder.GobDecode(data)
+		bump, err := state.Global.Merge(state.Decoder)
 
 		if err != nil {
 			handleError(err, w)
 			return
 		}
 
-		state.total++
+		state.Total++
 
 		if bump || crono.ShouldPrint() {
 			if crono.ShouldPrint() {

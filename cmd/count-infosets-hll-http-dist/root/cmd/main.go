@@ -8,7 +8,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/hll-truco/hll-truco/cmd/count-infosets-hll-http-dist/root"
+	"github.com/hll-truco/hll-truco/cmd/count-infosets-hll-http-dist/root/handlers"
+	"github.com/hll-truco/hll-truco/cmd/count-infosets-hll-http-dist/root/state"
 	"github.com/hll-truco/hll-truco/utils"
 )
 
@@ -29,7 +30,7 @@ func init() {
 
 func main() {
 	var (
-		state    = root.NewState()
+		state    = state.NewState()
 		printer  = utils.NewCronoPrinter(time.Second * 10)
 		mux      = http.NewServeMux()
 		exitChan = make(chan bool)
@@ -39,9 +40,10 @@ func main() {
 		}
 	)
 
-	mux.HandleFunc("/version", root.VersionHandler)
-	mux.HandleFunc("/update", root.UpdateHandler(state, printer))
-	mux.HandleFunc("/exit", root.ExitHandler(server, exitChan, state, printer))
+	mux.HandleFunc("/version", handlers.VersionHandler)
+	mux.HandleFunc("/update", handlers.UpdateHandler(state, printer))
+	mux.HandleFunc("/report", handlers.ReportHandler(state))
+	mux.HandleFunc("/exit", handlers.ExitHandler(server, exitChan, state, printer))
 
 	go func() {
 		slog.Info("UP", "addr", server.Addr)

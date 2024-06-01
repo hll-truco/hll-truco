@@ -1,4 +1,4 @@
-package root
+package state
 
 import (
 	"log/slog"
@@ -7,20 +7,20 @@ import (
 )
 
 type State struct {
-	global  *hll.HyperLogLogExt
-	decoder *hll.HyperLogLogExt
-	total   uint64
+	Global  *hll.HyperLogLogExt
+	Decoder *hll.HyperLogLogExt
+	Total   uint64
 }
 
 func NewState() *State {
 	return &State{
-		global:  getNewExt(),
-		decoder: getNewExt(),
-		total:   0,
+		Global:  GetNewExt(),
+		Decoder: GetNewExt(),
+		Total:   0,
 	}
 }
 
-func getNewExt() *hll.HyperLogLogExt {
+func GetNewExt() *hll.HyperLogLogExt {
 	h1, err := hll.NewExt(16)
 	if err != nil {
 		panic(err)
@@ -29,10 +29,10 @@ func getNewExt() *hll.HyperLogLogExt {
 }
 
 func (state *State) Report(delta float64) {
-	estimate := state.global.Count()
+	estimate := state.Global.Count()
 	slog.Info(
 		"REPORT",
 		"delta", delta,
 		"estimate", estimate,
-		"total", state.total)
+		"total", state.Total)
 }
