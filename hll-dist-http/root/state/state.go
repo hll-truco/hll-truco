@@ -15,9 +15,10 @@ type WorkerResult struct {
 }
 
 type State struct {
-	start  time.Time
-	Global *hll.HyperLogLogExt
-	Total  uint64
+	start   time.Time
+	Global  *hll.HyperLogLogExt
+	decoder *hll.HyperLogLogExt
+	Total   uint64
 	// workers' results
 	WorkersResults []*WorkerResult
 	// multi
@@ -26,9 +27,10 @@ type State struct {
 
 func NewState() *State {
 	return &State{
-		start:  time.Now(),
-		Global: GetNewExt(),
-		Total:  0,
+		start:   time.Now(),
+		Global:  GetNewExt(),
+		decoder: GetNewExt(),
+		Total:   0,
 		// reports
 		WorkersResults: make([]*WorkerResult, 0),
 		// mutli
@@ -44,17 +46,20 @@ func GetNewExt() *hll.HyperLogLogExt {
 	return h1
 }
 
-func (state *State) Merge(other *hll.HyperLogLogExt) (bool, error) {
+func (state *State) Merge(data []byte) (bool, error) {
 	state.mu.Lock()
 	defer state.mu.Unlock()
 
-	bump, err := state.Global.Merge(other)
+	if err := state.decoder.GobDecode(data); err != nil {
+		return false, err
+	}
+
+	bump, err := state.Global.Merge(state.decoder)
 	if err != nil {
 		return false, err
 	}
 
 	state.Total++
-
 	return bump, nil
 }
 
@@ -64,14 +69,14 @@ func (state *State) AddWorkerResult(r *WorkerResult) {
 	state.WorkersResults = append(state.WorkersResults, r)
 }
 
-func (state *State) Report(delta float64) {
+func (state *State) Report() {
 	state.mu.Lock()
 	defer state.mu.Unlock()
 
 	estimate := state.Global.Count()
 	slog.Info(
 		"REPORT",
-		"delta", delta,
+		"delta", time.Since(state.start).Seconds(),
 		"estimate", estimate,
 		"total", state.Total)
 }

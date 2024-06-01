@@ -20,8 +20,6 @@ func UpdateHandler(
 	crono *utils.CronoPrinter,
 ) http.HandlerFunc {
 
-	decoder := state.GetNewExt()
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Decoding the request body into an UpdateRequest object
 		var updateReq UpdateRequest
@@ -36,8 +34,7 @@ func UpdateHandler(
 			return
 		}
 
-		decoder.GobDecode(data)
-		bump, err := s.Global.Merge(decoder)
+		bump, err := s.Merge(data)
 
 		if err != nil {
 			handleError(err, w)
@@ -46,8 +43,8 @@ func UpdateHandler(
 
 		if bump || crono.ShouldPrint() {
 			if crono.ShouldPrint() {
-				delta := crono.Check().Seconds()
-				s.Report(delta)
+				_ = crono.Check().Seconds()
+				s.Report()
 			}
 		}
 
