@@ -26,7 +26,7 @@ func ExitHandler(
 					"SHUTDOWN_ERR",
 					"err", err)
 			}
-			state.FinalReport()
+			state.Results()
 			exitChan <- true // Signal the main function to exit
 		}()
 	}

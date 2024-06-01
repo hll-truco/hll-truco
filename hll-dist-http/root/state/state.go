@@ -76,13 +76,13 @@ func (state *State) Report(delta float64) {
 		"total", state.Total)
 }
 
-func (state *State) FinalReport() {
+func (state *State) Results() {
 	state.mu.Lock()
 	defer state.mu.Unlock()
 
 	estimate := state.Global.Count()
 	slog.Info(
-		"FINAL_REPORT",
+		"RESULTS",
 		"delta", time.Since(state.start).Seconds(),
 		"reports", state.Reports,
 		"estimate", estimate,
