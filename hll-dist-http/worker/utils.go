@@ -5,28 +5,22 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+
+	"github.com/hll-truco/hll-truco/hll-dist-http/root/state"
 )
 
-type UpdateRequest struct {
-	Gob string `json:"gob"`
-}
-
-func SendUpdateRequest(baseURL string, gobString string) {
-	url := baseURL + "/update"
-	// Create the UpdateRequest struct
-	update := UpdateRequest{Gob: gobString}
-
+func SendPOSTJsonData(url string, data any) {
 	// Marshal the struct to JSON
-	jsonData, err := json.Marshal(update)
+	jsonData, err := json.Marshal(data)
 	if err != nil {
-		slog.Warn("JSON_ERR", "error", err)
+		slog.Error("JSON_ERR", "error", err)
 		return
 	}
 
 	// Create the HTTP POST request
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
-		slog.Warn("HTTP_CREATE_ERR", "error", err)
+		slog.Error("HTTP_CREATE_ERR", "error", err)
 		return
 	}
 
@@ -37,13 +31,29 @@ func SendUpdateRequest(baseURL string, gobString string) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		slog.Warn("HTTP_SEND_ERR", "error", err)
+		slog.Error("HTTP_SEND_ERR", "error", err)
 		return
 	}
 	defer resp.Body.Close()
 
 	// Check if the response status code is 201 Created
 	if resp.StatusCode != http.StatusCreated {
-		slog.Warn("UNEXPECTED_RES", "status", resp.StatusCode)
+		slog.Error("UNEXPECTED_RES", "status", resp.StatusCode)
 	}
+}
+
+type UpdateRequest struct {
+	Gob string `json:"gob"`
+}
+
+func SendUpdateRequest(baseURL string, gobString string) {
+	url := baseURL + "/update"
+	// Create the UpdateRequest struct
+	update := UpdateRequest{Gob: gobString}
+	SendPOSTJsonData(url, update)
+}
+
+func SendReportRequest(baseURL string, report state.WorkerReport) {
+	url := baseURL + "/report"
+	SendPOSTJsonData(url, report)
 }

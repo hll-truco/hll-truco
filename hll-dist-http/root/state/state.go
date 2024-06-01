@@ -2,21 +2,37 @@ package state
 
 import (
 	"log/slog"
+	"sync"
+	"time"
 
 	"github.com/hll-truco/hll-truco/hll"
 )
 
+type WorkerReport struct {
+	NodesVisited uint64 `json:"nodesVisited"`
+	GamesPlayed  uint64 `json:"gamesPlayed"`
+	Delta        uint64 `json:"delta"`
+}
+
 type State struct {
-	Global  *hll.HyperLogLogExt
-	Decoder *hll.HyperLogLogExt
-	Total   uint64
+	start  time.Time
+	Global *hll.HyperLogLogExt
+	Total  uint64
+	// reports
+	Reports []*WorkerReport
+	// multi
+	mu *sync.Mutex
 }
 
 func NewState() *State {
 	return &State{
-		Global:  GetNewExt(),
-		Decoder: GetNewExt(),
-		Total:   0,
+		start:  time.Now(),
+		Global: GetNewExt(),
+		Total:  0,
+		// reports
+		Reports: make([]*WorkerReport, 0),
+		// mutli
+		mu: &sync.Mutex{},
 	}
 }
 
@@ -28,11 +44,47 @@ func GetNewExt() *hll.HyperLogLogExt {
 	return h1
 }
 
+func (state *State) Merge(other *hll.HyperLogLogExt) (bool, error) {
+	state.mu.Lock()
+	defer state.mu.Unlock()
+
+	bump, err := state.Global.Merge(other)
+	if err != nil {
+		return false, err
+	}
+
+	state.Total++
+
+	return bump, nil
+}
+
+func (state *State) AddReport(r *WorkerReport) {
+	state.mu.Lock()
+	defer state.mu.Unlock()
+	state.Reports = append(state.Reports, r)
+}
+
 func (state *State) Report(delta float64) {
+	state.mu.Lock()
+	defer state.mu.Unlock()
+
 	estimate := state.Global.Count()
 	slog.Info(
 		"REPORT",
 		"delta", delta,
+		"estimate", estimate,
+		"total", state.Total)
+}
+
+func (state *State) FinalReport() {
+	state.mu.Lock()
+	defer state.mu.Unlock()
+
+	estimate := state.Global.Count()
+	slog.Info(
+		"FINAL_REPORT",
+		"delta", time.Since(state.start).Seconds(),
+		"reports", state.Reports,
 		"estimate", estimate,
 		"total", state.Total)
 }

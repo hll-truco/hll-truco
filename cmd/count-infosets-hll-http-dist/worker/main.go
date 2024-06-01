@@ -11,6 +11,7 @@ import (
 
 	"github.com/filevich/truco-ai/info"
 	"github.com/hll-truco/hll-truco/hll"
+	"github.com/hll-truco/hll-truco/hll-dist-http/root/state"
 	"github.com/hll-truco/hll-truco/hll-dist-http/worker"
 	"github.com/hll-truco/hll-truco/utils"
 	"github.com/truquito/gotruco/pdt"
@@ -82,6 +83,15 @@ func update() {
 	}
 	base64Data := base64.StdEncoding.EncodeToString(data)
 	worker.SendUpdateRequest(*rootFlag, base64Data)
+}
+
+func report() {
+	data := state.WorkerReport{
+		NodesVisited: terminals,
+		GamesPlayed:  2,
+		Delta:        uint64(time.Since(start).Seconds()),
+	}
+	worker.SendReportRequest(*rootFlag, data)
 }
 
 func uniformPick(chis [][]pdt.IJugada) pdt.IJugada {
@@ -158,8 +168,9 @@ func main() {
 		// termino la partida o se acabó el tiempo
 	}
 
-	// a final update
+	// a final update + report
 	update()
+	report()
 
 	slog.Info(
 		"RESULTS",

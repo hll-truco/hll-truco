@@ -26,8 +26,7 @@ func ExitHandler(
 					"SHUTDOWN_ERR",
 					"err", err)
 			}
-			// delta := crono.Check().Seconds()
-			state.Report(0)
+			state.FinalReport()
 			exitChan <- true // Signal the main function to exit
 		}()
 	}

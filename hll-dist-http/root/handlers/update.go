@@ -16,9 +16,12 @@ type UpdateRequest struct {
 
 // updateHandler handles requests to the /update endpoint
 func UpdateHandler(
-	state *state.State,
+	s *state.State,
 	crono *utils.CronoPrinter,
 ) http.HandlerFunc {
+
+	decoder := state.GetNewExt()
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Decoding the request body into an UpdateRequest object
 		var updateReq UpdateRequest
@@ -33,20 +36,18 @@ func UpdateHandler(
 			return
 		}
 
-		state.Decoder.GobDecode(data)
-		bump, err := state.Global.Merge(state.Decoder)
+		decoder.GobDecode(data)
+		bump, err := s.Global.Merge(decoder)
 
 		if err != nil {
 			handleError(err, w)
 			return
 		}
 
-		state.Total++
-
 		if bump || crono.ShouldPrint() {
 			if crono.ShouldPrint() {
 				delta := crono.Check().Seconds()
-				state.Report(delta)
+				s.Report(delta)
 			}
 		}
 
