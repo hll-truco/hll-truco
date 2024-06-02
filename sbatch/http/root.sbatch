@@ -10,8 +10,8 @@
 #SBATCH --time=0-00:15:00
 #SBATCH --partition=normal
 #SBATCH --qos=normal
-#SBATCH --output=/clusteruy/home/juan.filevich/batches/out/hll-http/w4/%x.%j.out
-#SBATCH --error=/clusteruy/home/juan.filevich/batches/out/hll-http/w4/%x.%j.out
+#SBATCH --output=/clusteruy/home/juan.filevich/batches/out/hll-http/w64/%x.%j.out
+#SBATCH --error=/clusteruy/home/juan.filevich/batches/out/hll-http/w64/%x.%j.out
 #SBATCH --mail-type=NONE # options: NONE, BEGIN, END, FAIL, REQUEUE, ALL
 #SBATCH --mail-user=juan.filevich@fing.edu.uy 
 
