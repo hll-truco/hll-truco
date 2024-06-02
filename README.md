@@ -82,7 +82,7 @@
 
 ### Upload
 
-`rsync -avz --copy-links --progress -e 'ssh -p 10022 -i ~/.ssh/id_rsa' --exclude '*.out' --exclude '*.log' --exclude '.git/' ~/Workspace/facu/hll-truco 'cluster.uy:Workspace/facu'`
+`rsync -avz --copy-links --progress -e 'ssh -p 10022 -i ~/.ssh/id_rsa' --exclude '__pycache__/' --exclude '*.out' --exclude '*.log' --exclude '.git/' ~/Workspace/facu/hll-truco 'cluster.uy:Workspace/facu'`
 
 ### Download
 
@@ -96,10 +96,12 @@
 
 ## run
 
+Make sure both the logs dirs `--output` and `--error` exist before execution!
+
 ```bash
-sbatch -J hllroot --begin=now+30seconds ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/root.sbatch
+mkdir -p batches/out/hll-http/w2 && sbatch -J hllroot --begin=now+30 ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/root.sbatch
 ```
 
 ```bash
-rootname=hllroot sbatch -J hllworkers --dependency=after:$(squeue -u $(whoami) --name=${rootname} -h -o "%i") ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/workers.sbatch
+rootname=hllroot && sbatch -J hllworkers --dependency=after:$(squeue -u $(whoami) --name=${rootname} -h -o "%i") ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/workers.sbatch
 ```
