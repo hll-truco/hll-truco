@@ -4,8 +4,8 @@
 # `sbatch -J hllworkers ~/Workspace/facu/hll-truco/sbatch/http/workers.sbatch [<hash> <deck> <abs> <report> <limit>]`
 
 #SBATCH --job-name=hllworkers
-#SBATCH --nodes=1 # nodes to use in total, per job or subjob
-#SBATCH --ntasks=8 # when doing `srun` launch `ntaks` parallel jobs across `nodes`
+#SBATCH --nodes=4 # nodes to use in total, per job or subjob
+#SBATCH --ntasks=64 # when doing `srun` launch `ntaks` parallel jobs across `nodes`
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=128M
 #SBATCH --time=0-00:15:00
@@ -28,11 +28,12 @@ printf "starts: $(date)\n"
 echo "args: ${@}"
 hr
 
-project=$HOME/Workspace/facu/hll-truco/hll-truco
+task_log=$HOME/batches/out/hll-http/%x.%j_%t.out # edit this!
+project=$HOME/Workspace/facu/hll-truco/hll-truco # edit this!
+main=$project/cmd/count-infosets-hll-dist-http/worker/main.go
 worker_name="bot_${SLURM_ARRAY_JOB_ID}_${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
-task_log=$HOME/batches/out/chat/%x.%j_%t.out
 
-rootname=hllroot
+rootname=hllroot # edit this!
 root=http://$(squeue -u $(whoami) --name=${rootname} --states=R -h -o "%N:%k")
 
 hash=${1:-'sha3'}
@@ -44,14 +45,18 @@ limit=${5:-'600'} # 600 seconds = 10 min
 echo "using: root:${root} worker:${worker_name} logs:${task_log} hash:${hash} deck:${deck} abs:${abs} report:${report} limit:${limit}"
 
 # srun will run this cmd `nodes` times in parallel
+cd ${project}
 srun -l --output=$task_log --error=$task_log \
-  $project/bin/http/worker \
-      -hash=${hash} \
-      -deck=${deck} \
-      -abs=${abs} \
-      -report=${report} \
-      -limit=${limit} \
-      -root=${root}
+  go run $main \
+    -hash=${hash} \
+    -deck=${deck} \
+    -abs=${abs} \
+    -report=${report} \
+    -limit=${limit} \
+    -root=${root}
+
+# shutdown root server
+curl -X GET ${root}/exit
 
 hr
 printf "done: $(date)\n"

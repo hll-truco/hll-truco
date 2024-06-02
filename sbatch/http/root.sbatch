@@ -27,9 +27,15 @@ echo "Starting srv on port $PORT at host $(hostname) for jobid:${SLURM_JOB_ID}"
 scontrol update JobId="${SLURM_JOB_ID}" Comment="$PORT"
 
 project=$HOME/Workspace/facu/hll-truco/hll-truco
+main=$project/cmd/count-infosets-hll-dist-http/root/main.go
 
-$project/bin/http/root \
+echo "using main:$main"
+
+go run $main \
   -port=$PORT
+
+# or if you have an already compiled binary you could just:
+# $project/bin/http/root -port=$PORT
 
 hr
 printf "done: $(date)\n"
