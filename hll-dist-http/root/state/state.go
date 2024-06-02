@@ -73,7 +73,7 @@ func (state *State) Report() {
 	state.mu.Lock()
 	defer state.mu.Unlock()
 
-	estimate := state.Global.Count()
+	estimate := state.Global.CountBig()
 	slog.Info(
 		"REPORT",
 		"delta", time.Since(state.start).Seconds(),
@@ -85,7 +85,7 @@ func (state *State) Results() {
 	state.mu.Lock()
 	defer state.mu.Unlock()
 
-	estimate := state.Global.Count()
+	estimate := state.Global.CountBig()
 	slog.Info(
 		"RESULTS",
 		"finished", time.Since(state.start).Seconds(),

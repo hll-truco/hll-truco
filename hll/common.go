@@ -1,6 +1,11 @@
 package hll
 
-import "math"
+import (
+	"math"
+	"math/big"
+
+	"github.com/ALTree/bigfloat"
+)
 
 type Hash32 interface {
 	Sum32() uint32
@@ -108,6 +113,22 @@ func linearCounting(m uint32, v uint32) float64 {
 	return fm * math.Log(fm/float64(v))
 }
 
+func linearCountingBig(m uint32, v uint32) *big.Float {
+	fm := new(big.Float).SetUint64(uint64(m))
+	fv := new(big.Float).SetUint64(uint64(v))
+
+	// Calculate fm / fv
+	division := new(big.Float).Quo(fm, fv)
+
+	// Calculate ln(fm / fv)
+	logarithm := bigfloat.Log(division)
+
+	// fm * log(fm / fv)
+	result := new(big.Float).Mul(fm, logarithm)
+
+	return result
+}
+
 func countZeros(s []uint8) uint32 {
 	var c uint32
 	for _, v := range s {
@@ -148,4 +169,46 @@ func calculateEstimateExt(s []uint) float64 {
 	m := uint32(len(s))
 	fm := float64(m)
 	return alpha(m) * fm * fm / sum
+}
+
+var (
+	one = new(big.Float).SetInt64(1)
+	two = big.NewInt(2)
+)
+
+func calculateEstimateExtBig(s []uint) *big.Float {
+	// use big.Float to represent sum
+	sum := new(big.Float).SetFloat64(0.0)
+
+	// temporary big.Float variables for calculations
+	tmp := new(big.Float)
+
+	for _, val := range s {
+		// compute 2**val as a big.Float
+		exp := new(big.Float).SetInt(new(big.Int).Exp(two, big.NewInt(int64(val)), nil))
+
+		// compute 1.0 / (2**val)
+		tmp.Quo(one, exp)
+
+		// sum up all the 1 / (2**val)
+		sum.Add(sum, tmp)
+	}
+
+	// convert len(s) to a big.Float
+	m := big.NewFloat(float64(len(s)))
+
+	// compute m * m using big.Float
+	mm := new(big.Float).Mul(m, m)
+
+	// alpha can be represented as a big.Float
+	a := alpha(uint32(len(s)))
+	alpha := big.NewFloat(a)
+
+	// compute alpha * m * m
+	numerator := new(big.Float).Mul(alpha, mm)
+
+	// finally, compute (alpha * m * m) / sum
+	result := new(big.Float).Quo(numerator, sum)
+
+	return result
 }

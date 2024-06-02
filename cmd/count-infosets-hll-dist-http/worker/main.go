@@ -5,6 +5,7 @@ import (
 	"flag"
 	"hash"
 	"log/slog"
+	"math/big"
 	"math/rand"
 	"os"
 	"time"
@@ -38,7 +39,7 @@ var (
 	start       time.Time           = time.Now()
 	limit       time.Duration       = 0
 	hashFn      hash.Hash           = nil
-	totalLocal  uint64              = 0
+	totalLocal  *big.Float          = nil
 )
 
 func init() {
@@ -132,11 +133,11 @@ func randomWalk(p *pdt.Partida) {
 		}
 
 		if printer.ShouldPrint() {
-			e := h.Count()
+			e := h.CountBig()
 			delta := printer.Check().Seconds()
 			slog.Info("REPORT", "delta", delta, "estimate", e)
 
-			if e > totalLocal {
+			if totalLocal == nil || e.Cmp(totalLocal) == 1 {
 				totalLocal = e
 				update()
 			}
@@ -174,7 +175,7 @@ func main() {
 
 	slog.Info(
 		"RESULTS",
-		"finalEstimate", h.Count(),
+		"finalEstimate", h.CountBig(),
 		"terminals:", terminals,
 		"finished", time.Since(start).Seconds())
 }

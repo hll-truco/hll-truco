@@ -17,6 +17,9 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"math/big"
+
+	"github.com/ALTree/bigfloat"
 )
 
 type HyperLogLogExt struct {
@@ -85,6 +88,39 @@ func (h *HyperLogLogExt) Count() uint64 {
 		return uint64(est)
 	}
 	return uint64(-two32 * math.Log(1-est/two32))
+}
+
+var (
+	twoPointFive = big.NewFloat(2.5)
+	two32Big     = big.NewFloat(0).SetUint64(1 << 32)
+	two32Div30   = big.NewFloat(0).Quo(two32Big, big.NewFloat(30))
+	negative     = big.NewFloat(-1)
+)
+
+// Count returns the cardinality estimate.
+func (h *HyperLogLogExt) CountBig() *big.Float {
+	est := calculateEstimateExtBig(h.reg)
+
+	m := new(big.Float).SetInt64(int64(h.m))
+	tmp := new(big.Float).Mul(m, twoPointFive)
+
+	// [<,=,>] ~ [-1,0,1]
+	// so, since we need `<=` the cases we are intereted in are [-1,0]
+	// so, basically, we ask if `cmp is <= 0`
+	if estIsLesserOrEqualThanTmp := est.Cmp(tmp) <= 0; estIsLesserOrEqualThanTmp {
+		// `countZerosExt` just count the number of zeros in a slice
+		if v := countZerosExt(h.reg); v != 0 {
+			return linearCountingBig(h.m, v)
+		}
+		return est
+	} else if isLesser := est.Cmp(two32Div30) == -1; isLesser {
+		return est
+	}
+
+	return new(big.Float).Mul(
+		new(big.Float).Mul(negative, two32Big),
+		bigfloat.Log(new(big.Float).Quo(new(big.Float).Sub(big.NewFloat(1), est), two32Big)),
+	)
 }
 
 // Encode HyperLogLogExt into a gob
