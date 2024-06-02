@@ -77,3 +77,11 @@
 #### supported abstractions
 
 `a1`, `b`, `a2`, `a3`, `null`
+
+## Build
+
+### For x86
+
+`GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o bin/http/worker cmd/count-infosets-hll-dist-http/worker/main.go`
+
+`GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o bin/http/root cmd/count-infosets-hll-dist-http/root/main.go`
