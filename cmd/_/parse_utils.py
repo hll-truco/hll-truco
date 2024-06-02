@@ -25,7 +25,7 @@ def parse_structured_log(
             for line in f if line and line.startswith('{')
         ]
 
-def keep(lines :list[dict]) -> tuple[list[int],list[any]]:
+def keep(lines :list[dict], normalize=True) -> tuple[list[int],list[any]]:
     xs = []
     ys = []
     for l in lines:
@@ -36,4 +36,9 @@ def keep(lines :list[dict]) -> tuple[list[int],list[any]]:
             case "RESULTS":
                 xs += [l["finished"]]
                 ys += [l["finalEstimate"]]
+
+    if normalize:
+        for i in range(len(xs)):
+            xs[i] -= xs[0]
+
     return xs, ys
