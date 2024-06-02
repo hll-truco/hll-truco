@@ -8,9 +8,9 @@ title = "Distributed-HLL evol. with -deck=14 -info=InfosetRondaBase -abs=null"
 real = 248_732
 
 hll_hll = parse_utils.parse_structured_log("logs/count-infosets-ronda-hll/hll-d14-anull-irb-l600.log")
-hll_dist_http_w2 = parse_utils.parse_structured_log("logs/hll-dist-http/http-w2-d14-anull-hsha3.log")
-hll_dist_http_w4 = parse_utils.parse_structured_log("logs/hll-dist-http/http-w4-d14-anull-hsha3.log")
-hll_dist_http_w8 = parse_utils.parse_structured_log("logs/hll-dist-http/http-w8-d14-anull-hsha3.log")
+hll_dist_http_w2 = parse_utils.parse_structured_log("logs/hll-dist-http/local/http-w2-d14-anull-hsha3.log")
+hll_dist_http_w4 = parse_utils.parse_structured_log("logs/hll-dist-http/local/http-w4-d14-anull-hsha3.log")
+hll_dist_http_w8 = parse_utils.parse_structured_log("logs/hll-dist-http/local/http-w8-d14-anull-hsha3.log")
 
 hll_hll = parse_utils.keep(hll_hll)
 hll_dist_http_w2 = parse_utils.keep(hll_dist_http_w2)
