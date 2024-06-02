@@ -78,10 +78,28 @@
 
 `a1`, `b`, `a2`, `a3`, `null`
 
-## Build
+## Cluster
 
-### For x86
+### Upload
+
+`rsync -avz --copy-links --progress -e 'ssh -p 10022 -i ~/.ssh/id_rsa' --exclude '*.out' --exclude '*.log' --exclude '.git/' ~/Workspace/facu/hll-truco 'cluster.uy:Workspace/facu'`
+
+### Download
+
+`rsync -avz -e 'ssh -p 10022 -i ~/.ssh/id_rsa' 'cluster.uy:batches/out/hll-http/hllroot.3629053.out' logs/hll-dist-http/slurm`
+
+## Build (local or remote) for x86-linux (i.e., slurm-cluster)
 
 `GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o bin/http/worker cmd/count-infosets-hll-dist-http/worker/main.go`
 
 `GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o bin/http/root cmd/count-infosets-hll-dist-http/root/main.go`
+
+## run
+
+```bash
+sbatch -J hllroot --begin=now+30seconds ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/root.sbatch
+```
+
+```bash
+rootname=hllroot sbatch -J hllworkers --dependency=after:$(squeue -u $(whoami) --name=${rootname} -h -o "%i") ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/workers.sbatch
+```
