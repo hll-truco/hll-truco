@@ -3,4 +3,5 @@ __pycache__/
 vendor/
 .DS_Store
 *.log
+*.out
 bin/
