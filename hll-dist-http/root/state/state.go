@@ -88,8 +88,8 @@ func (state *State) Results() {
 	estimate := state.Global.Count()
 	slog.Info(
 		"RESULTS",
-		"delta", time.Since(state.start).Seconds(),
-		"reports", state.WorkersResults,
-		"estimate", estimate,
-		"total", state.Total)
+		"finished", time.Since(state.start).Seconds(),
+		"finalEstimate", estimate,
+		"total", state.Total,
+		"reports", state.WorkersResults)
 }
