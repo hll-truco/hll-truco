@@ -5,7 +5,7 @@
 #SBATCH --job-name=hllroot
 #SBATCH --nodes=1 # nodes to use in total, per job or subjob
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=128M
 #SBATCH --time=0-00:15:00
 #SBATCH --partition=normal
