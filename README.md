@@ -78,6 +78,10 @@
 
 `a1`, `b`, `a2`, `a3`, `null`
 
+### supported infosets
+
+`InfosetRondaBase`, `InfosetRondaLarge`, `InfosetRondaXLarge`, `InfosetRondaXXLarge`, `InfosetPartidaXXLarge`
+
 ## Cluster
 
 ### Upload
