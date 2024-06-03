@@ -188,3 +188,9 @@ pts: 20, 40
 
 - track number of nodes visited
 - por ronda y por partida ?
+
+## core-hours
+
+- 9500 core-hours per day ~ 395 cores per day
+
+- 265 cores ~ 6144 core-hours per day

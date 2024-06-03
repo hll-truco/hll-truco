@@ -72,7 +72,7 @@
 
 #### supported hashes
 
-`adler32`, `sha160`, `sha256`, `sha512`
+`adler32`, `sha160`, `sha256`, `sha512`, `sha3`
 
 #### supported abstractions
 
@@ -103,9 +103,34 @@
 Make sure both the logs dirs `--output` and `--error` exist before execution!
 
 ```bash
-mkdir -p batches/out/hll-http/w2 && sbatch -J hllroot --begin=now+30 ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/root.sbatch
+mkdir -p batches/out/hll-http/2p/E1P40AnullIipxxlW256 && sbatch -J hllroot1 --time=3-00:00:00 --begin=now+30 ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/root.sbatch 10
 ```
 
+the positional args are:
+
+1. report (in seconds)
+
 ```bash
-rootname=hllroot && sbatch -J hllworkers --dependency=after:$(squeue -u $(whoami) --name=${rootname} -h -o "%i") ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/workers.sbatch
+jobname=hllworkers1 && \
+rootname=hllroot1 && \
+rootid=$(squeue -u $(whoami) --name=${rootname} -h -o "%i") && \
+roothost=$(squeue -u $(whoami) --name=${rootname} --states=R -h -o "%N:%k") && \
+sbatch \
+-J ${jobname} \
+--time=3-00:00:00 \
+--dependency=after:${rootid} \
+~/Workspace/facu/hll-truco/hll-truco/sbatch/http/workers.sbatch \
+2 1 40 null InfosetPartidaXXLarge sha3 257000 10 http://${roothost}
 ```
+
+the positional args are:
+
+1. Number of players `<2,4,6>`
+2. Envido limit (default 1)
+3. Game points limit
+4. Abstractor ID `<a1, b, a2, a3, null>`
+5. Infoset impl. to use
+6. Infoset hashing function
+7. Run time limit (in seconds) (600 = 10min, 259.200 = 3 days)
+8. Delta (in seconds) for printing log msgs
+9. HTTP root server

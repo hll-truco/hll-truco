@@ -3,18 +3,18 @@
 # make sure the logs directory `--output` and `--output` exist before execution
 
 # when using standard args launch it as:
-# `sbatch -J hllworkers ~/Workspace/facu/hll-truco/sbatch/http/workers.sbatch [<hash> <deck> <abs> <report> <limit>]`
+# `sbatch -J hllworkers ~/Workspace/facu/hll-truco/sbatch/http/workers.sbatch root [<hash> <deck> <abs> <report> <limit>]`
 
 #SBATCH --job-name=hllworkers
-#SBATCH --nodes=4 # nodes to use in total, per job or subjob
-#SBATCH --ntasks=64 # when doing `srun` launch `ntaks` parallel jobs across `nodes`
+#SBATCH --nodes=8 # nodes to use in total, per job or subjob
+#SBATCH --ntasks=98 # when doing `srun` launch `ntaks` parallel jobs across `nodes`
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=128M
 #SBATCH --time=0-00:15:00
-#SBATCH --partition=normal
-#SBATCH --qos=normal
-#SBATCH --output=/clusteruy/home/juan.filevich/batches/out/hll-http/big/w64/%x.%j.out
-#SBATCH --error=/clusteruy/home/juan.filevich/batches/out/hll-http/big/w64/%x.%j.out
+#SBATCH --partition=besteffort
+#SBATCH --qos=besteffort
+#SBATCH --output=/clusteruy/home/juan.filevich/batches/out/hll-http/2p/E1P40AnullIipxxlW256/%x.%j.out
+#SBATCH --error=/clusteruy/home/juan.filevich/batches/out/hll-http/2p/E1P40AnullIipxxlW256/%x.%j.out
 #SBATCH --mail-type=NONE # options: NONE, BEGIN, END, FAIL, REQUEUE, ALL
 #SBATCH --mail-user=juan.filevich@fing.edu.uy
 
@@ -30,31 +30,37 @@ printf "starts: $(date)\n"
 echo "args: ${@}"
 hr
 
-task_log=$HOME/batches/out/hll-http/big/w64/%x.%j_%t.out # edit this!
+task_log=$HOME/batches/out/hll-http/2p/E1P40AnullIipxxlW256/%x.%j_%t.out # edit this!
 project=$HOME/Workspace/facu/hll-truco/hll-truco # edit this!
 main=$project/cmd/count-infosets-hll-dist-http/worker/main.go
 worker_name="bot_${SLURM_ARRAY_JOB_ID}_${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
 
-rootname=hllroot # edit this!
-root=http://$(squeue -u $(whoami) --name=${rootname} --states=R -h -o "%N:%k")
+n=${1:-'2'} # Number of players <2,4,6>
+envido=${2:-'1'} # Envido limit (default 1)
+pts=${3:-'40'} # Game points limit
+absId=${4:-'null'} # Abstractor ID <a1, b, a2, a3, null>
+infoset=${5:-'InfosetRondaBase'} # Infoset impl. to use
+hash=${6:-'sha3'} # Infoset hashing function
+limit=${7:-'600'} # 600 seconds = 10 min # Run time limit (in seconds) (default 1m)
+report=${8:-'10'} # Delta (in seconds) for printing log msgs
+root=${9:-'http://localhost:8080'} # HTTP root server
 
-hash=${1:-'sha3'}
-deck=${2:-'14'}
-abs=${3:-'null'}
-report=${4:-'1'}
-limit=${5:-'600'} # 600 seconds = 10 min
-
-echo "using: root:${root} worker:${worker_name} logs:${task_log} hash:${hash} deck:${deck} abs:${abs} report:${report} limit:${limit}"
+echo "using: worker:${worker_name} logs:${task_log} n:${n} envido:${envido} \
+pts:${pts} absId:${absId} infoset:${infoset} hash:${hash} limit:${limit} \
+report:${report} root:${root}"
 
 # srun will run this cmd `nodes` times in parallel
 cd ${project}
 srun -l --output=${task_log} --error=${task_log} \
   go run ${main} \
+    -n=${n} \
+    -e=${envido} \
+    -p=${pts} \
+    -abs=${absId} \
+    -info=${infoset} \
     -hash=${hash} \
-    -deck=${deck} \
-    -abs=${abs} \
-    -report=${report} \
     -limit=${limit} \
+    -report=${report} \
     -root=${root}
 
 # shutdown root server

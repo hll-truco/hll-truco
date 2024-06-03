@@ -10,8 +10,8 @@
 #SBATCH --time=0-00:15:00
 #SBATCH --partition=normal
 #SBATCH --qos=normal
-#SBATCH --output=/clusteruy/home/juan.filevich/batches/out/hll-http/big/w64/%x.%j.out
-#SBATCH --error=/clusteruy/home/juan.filevich/batches/out/hll-http/big/w64/%x.%j.out
+#SBATCH --output=/clusteruy/home/juan.filevich/batches/out/hll-http/2p/E1P40AnullIipxxlW256/%x.%j.out
+#SBATCH --error=/clusteruy/home/juan.filevich/batches/out/hll-http/2p/E1P40AnullIipxxlW256/%x.%j.out
 #SBATCH --mail-type=NONE # options: NONE, BEGIN, END, FAIL, REQUEUE, ALL
 #SBATCH --mail-user=juan.filevich@fing.edu.uy 
 
@@ -31,11 +31,14 @@ scontrol update JobId="${SLURM_JOB_ID}" Comment="${PORT}"
 project=$HOME/Workspace/facu/hll-truco/hll-truco
 main=$project/cmd/count-infosets-hll-dist-http/root/main.go
 
-echo "using main:${main}"
+report=${1:-'10'} # Delta (in seconds) for printing log msgs
+
+echo "using main:${main} report:${report}"
 
 cd ${project}
 go run ${main} \
-  -port=${PORT}
+  -port=${PORT} \
+  -report=${report}
 
 # or if you have an already compiled binary you could just:
 # $project/bin/http/root -port=$PORT
