@@ -35,13 +35,13 @@ def keep(lines :list[dict], normalize=True) -> tuple[
     for l in lines:
         match l["msg"]:
             case "REPORT":
-                xs += [l["delta"]]
-                ys += [l["estimate"]]
-                zs += [l["total"]]
+                xs += [float(l["delta"])]
+                ys += [float(l["estimate"])]
+                zs += [float(l["total"])]
             case "RESULTS":
-                xs += [l["finished"]]
-                ys += [l["finalEstimate"]]
-                zs += [l["total"]]
+                xs += [float(l["finished"])]
+                ys += [float(l["finalEstimate"])]
+                zs += [float(l["total"])]
 
     if normalize:
         for i in range(len(xs)):
