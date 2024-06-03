@@ -101,9 +101,9 @@ func randomWalk(p *pdt.Partida) {
 		chis := pdt.Chis(p)
 		j := uniformPick(chis)
 
-		pkts, _ := j.Hacer(p)
+		pkts := j.Hacer(p)
 
-		if pdt.IsDone(pkts) || p.Terminada() {
+		if pdt.IsDone(pkts, true) || p.Terminada() {
 			terminals++
 		}
 
@@ -127,14 +127,20 @@ func main() {
 		if time.Since(start) > limit {
 			break
 		}
-		p, _ := pdt.NuevaPartida(
-			pdt.A40, // <----- no importa poque la condicion de parada es Ronda
-			true,
-			deck,
-			azules[:n>>1],
-			rojos[:n>>1],
-			limEnvite, // limiteEnvido
-			verbose)
+
+		// minitruco
+		// p, _ := pdt.NuevaPartida(
+		// 	pdt.A40, // <----- no importa poque la condicion de parada es Ronda
+		// 	true,
+		// 	deck,
+		// 	azules[:n>>1],
+		// 	rojos[:n>>1],
+		// 	limEnvite, // limiteEnvido
+		// 	verbose)
+
+		// gotruco
+		p, _ := pdt.NuevaPartida(pdt.A40, azules[:n>>1], rojos[:n>>1], limEnvite, verbose)
+
 		randomWalk(p)
 		// termino la partida o se acabó el tiempo
 	}

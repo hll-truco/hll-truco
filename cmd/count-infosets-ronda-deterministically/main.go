@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"log/slog"
-	"math/rand"
 	"os"
 	"time"
 
@@ -132,9 +131,9 @@ func recPlay(p *pdt.Partida, level uint) {
 				infosets[info.Hash(hashFn)] = true
 			}
 
-			pkts, _ := chis[mix][aix].Hacer(p)
+			pkts := chis[mix][aix].Hacer(p)
 
-			if pdt.IsDone(pkts) || p.Terminada() {
+			if pdt.IsDone(pkts, true) || p.Terminada() {
 				terminals++
 				if printer.ShouldPrint() {
 					slog.Info(
@@ -169,16 +168,20 @@ func main() {
 
 	// p, err := pdt.NuevaMiniPartida(azules[:n>>1], rojos[:n>>1], verbose)
 
-	rand.Seed(time.Now().UnixNano())
+	// rand.Seed(time.Now().UnixNano())
 
-	p, _ := pdt.NuevaPartida(
-		pdt.A40, // <----- no importa poque la condicion de parada es Ronda
-		true,
-		deck,
-		azules[:n>>1],
-		rojos[:n>>1],
-		limEnvite, // limiteEnvido
-		verbose)
+	// minitruco
+	// p, _ := pdt.NuevaPartida(
+	// 	pdt.A40, // <----- no importa poque la condicion de parada es Ronda
+	// 	true,
+	// 	deck,
+	// 	azules[:n>>1],
+	// 	rojos[:n>>1],
+	// 	limEnvite, // limiteEnvido
+	// 	verbose)
+
+	// gotruco
+	p, _ := pdt.NuevaPartida(pdt.A40, azules[:n>>1], rojos[:n>>1], limEnvite, verbose)
 
 	slog.Info(
 		"RESULTS",

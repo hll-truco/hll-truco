@@ -106,7 +106,7 @@ func recPlay(p *pdt.Partida, level uint) {
 			i := infoBuilder.Info(p, activePlayer, nil)
 			infosets[i.Hash(infoBuilder.Hash)] = true
 
-			pkts, _ := chis[mix][aix].Hacer(p)
+			pkts := chis[mix][aix].Hacer(p)
 
 			if terminoLaPartida := p.Terminada(); terminoLaPartida {
 				terminals++
@@ -119,7 +119,7 @@ func recPlay(p *pdt.Partida, level uint) {
 						"mem", utils.GetMemUsage())
 					printer.Check()
 				}
-			} else if pdt.IsDone(pkts) {
+			} else if pdt.IsDone(pkts, true) {
 				// simular todos repartos de manojos posibles
 				todasLasAristasChancePosibles(p, level+1)
 			} else {
@@ -154,14 +154,11 @@ func main() {
 
 	// p, err := pdt.NuevaMiniPartida(azules[:n>>1], rojos[:n>>1], verbose)
 
-	p, _ := pdt.NuevaPartida(
-		pdt.A10, // 10 pts
-		true,
-		deck,
-		azules[:n>>1],
-		rojos[:n>>1],
-		0, // limiteEnvido
-		verbose)
+	// mini truco
+	// p, _ := pdt.NuevaPartida(pdt.A10, true, deck, azules[:n>>1], rojos[:n>>1], 0, verbose)
+
+	// gotruco
+	p, _ := pdt.NuevaPartida(pdt.A20, azules[:n>>1], rojos[:n>>1], 0, verbose)
 
 	p.Puntajes[pdt.Azul] = 9
 	p.Puntajes[pdt.Rojo] = 9
