@@ -10,8 +10,11 @@ import (
 	"github.com/filevich/truco-ai/info"
 	"github.com/hll-truco/hll-truco/hll-dist-http/worker"
 	"github.com/hll-truco/hll-truco/utils"
+	"github.com/truquito/gotruco"
 	"github.com/truquito/gotruco/pdt"
 )
+
+// for game-level infosets use `-info=InfosetPartidaXXLarge`
 
 // flags/parametros:
 var (
@@ -37,7 +40,7 @@ var (
 	// hll params
 	infoBuilder *info.Builder       = nil
 	verbose     bool                = true
-	printer     *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 10)
+	printer     *utils.CronoPrinter = nil
 	hashFn      hash.Hash           = nil
 	// worker
 	w *worker.Worker = nil
@@ -104,14 +107,9 @@ func main() {
 
 	slog.Info(
 		"RESULTS",
+		"trucoVersion", gotruco.VERSION,
 		"finalEstimate", w.H.CountBig(),
 		"nodesVisited:", w.NodesVisited,
 		"gamesPlayed", w.GamesPlayed,
 		"finished", w.TimeSinceStarted().Seconds())
 }
-
-/*
-
-go run cmd/count-infosets-hll-dist-http/worker/*.go n", -n=2 -e=1 -p=20 -hash=sha3 -abs=null -report=5 -limit=20 -root=http://localhost:8080 && curl -X GET http://localhost:8080/exit
-
-*/
