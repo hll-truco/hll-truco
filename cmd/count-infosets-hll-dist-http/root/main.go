@@ -15,7 +15,8 @@ import (
 
 // flags/parametros:
 var (
-	portFlag = flag.Int("port", 8080, "HTTP port")
+	portFlag   = flag.Int("port", 8080, "HTTP port")
+	reportFlag = flag.Int("report", 1, "Delta (in seconds) for printing log msgs")
 )
 
 func init() {
@@ -31,7 +32,7 @@ func init() {
 func main() {
 	var (
 		state    = state.NewState()
-		printer  = utils.NewCronoPrinter(time.Second * 10)
+		printer  = utils.NewCronoPrinter(time.Second * time.Duration(*reportFlag))
 		mux      = http.NewServeMux()
 		exitChan = make(chan bool)
 		server   = &http.Server{
