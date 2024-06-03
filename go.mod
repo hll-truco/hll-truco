@@ -21,9 +21,9 @@ require (
 	golang.org/x/crypto v0.23.0
 )
 
-replace github.com/truquito/gotruco => ../minitruco
+// replace github.com/truquito/gotruco => ../minitruco
 
-// replace github.com/truquito/gotruco => ../gotruco
+replace github.com/truquito/gotruco => ../gotruco
 
 replace github.com/filevich/truco-ai => ../truco-ai
 
