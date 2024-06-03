@@ -13,8 +13,8 @@
 #SBATCH --time=0-00:15:00
 #SBATCH --partition=normal
 #SBATCH --qos=normal
-#SBATCH --output=/clusteruy/home/juan.filevich/batches/out/hll-http/w64/%x.%j.out
-#SBATCH --error=/clusteruy/home/juan.filevich/batches/out/hll-http/w64/%x.%j.out
+#SBATCH --output=/clusteruy/home/juan.filevich/batches/out/hll-http/big/w64/%x.%j.out
+#SBATCH --error=/clusteruy/home/juan.filevich/batches/out/hll-http/big/w64/%x.%j.out
 #SBATCH --mail-type=NONE # options: NONE, BEGIN, END, FAIL, REQUEUE, ALL
 #SBATCH --mail-user=juan.filevich@fing.edu.uy
 
@@ -30,7 +30,7 @@ printf "starts: $(date)\n"
 echo "args: ${@}"
 hr
 
-task_log=$HOME/batches/out/hll-http/w64/%x.%j_%t.out # edit this!
+task_log=$HOME/batches/out/hll-http/big/w64/%x.%j_%t.out # edit this!
 project=$HOME/Workspace/facu/hll-truco/hll-truco # edit this!
 main=$project/cmd/count-infosets-hll-dist-http/worker/main.go
 worker_name="bot_${SLURM_ARRAY_JOB_ID}_${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
