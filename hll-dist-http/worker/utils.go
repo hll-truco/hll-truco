@@ -3,9 +3,40 @@ package worker
 import (
 	"bytes"
 	"encoding/json"
+	"hash"
 	"log/slog"
+	"math/rand"
 	"net/http"
+
+	"github.com/hll-truco/hll-truco/hll"
+	"github.com/hll-truco/hll-truco/utils"
+	"github.com/truquito/gotruco/pdt"
 )
+
+func UniformPick(chis [][]pdt.IJugada) pdt.IJugada {
+	// hago un flatten del vector chis
+	n := len(chis) * 15
+	flatten := make([]pdt.IJugada, 0, n)
+
+	for _, chi := range chis {
+		flatten = append(flatten, chi...)
+	}
+
+	// elijo una jugada al azar
+	rfix := rand.Intn(len(flatten))
+
+	return flatten[rfix]
+}
+
+func ParseHashFn(hashFn string) hash.Hash {
+	if hashFn == "sha3" {
+		slog.Warn("USING_SHA3SHAKE", "size", 128)
+		return hll.NewSha3Hash(128)
+	} else {
+		slog.Warn("USING_FIXED_HASH", "hash", hashFn)
+		return utils.ParseHashFn(hashFn)
+	}
+}
 
 func sendPOSTJsonData(url string, data any) {
 	// Marshal the struct to JSON
