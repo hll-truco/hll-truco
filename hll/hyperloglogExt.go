@@ -92,9 +92,19 @@ func (h *HyperLogLogExt) Count() uint64 {
 
 var (
 	twoPointFive = big.NewFloat(2.5)
-	two32Big     = big.NewFloat(0).SetUint64(1 << 32)
-	two32Div30   = big.NewFloat(0).Quo(two32Big, big.NewFloat(30))
-	negative     = big.NewFloat(-1)
+
+	// deprecated
+	// two32Big   = big.NewFloat(0).SetUint64(1 << 32)
+	// two32Div30 = big.NewFloat(0).Quo(two32Big, big.NewFloat(30))
+
+	// new
+	// 2^1024
+	twoBig         = big.NewInt(2)
+	expBig         = big.NewInt(1024)
+	two1024Big     = new(big.Float).SetInt(new(big.Int).Exp(twoBig, expBig, nil))
+	two1024Div1022 = big.NewFloat(0).Quo(two1024Big, big.NewFloat(1022))
+
+	negative = big.NewFloat(-1)
 )
 
 // Count returns the cardinality estimate.
@@ -113,13 +123,18 @@ func (h *HyperLogLogExt) CountBig() *big.Float {
 			return linearCountingBig(h.m, v)
 		}
 		return est
-	} else if isLesser := est.Cmp(two32Div30) == -1; isLesser {
+	} else if isLesser := est.Cmp(two1024Div1022) == -1; isLesser {
 		return est
 	}
 
 	return new(big.Float).Mul(
-		new(big.Float).Mul(negative, two32Big),
-		bigfloat.Log(new(big.Float).Quo(new(big.Float).Sub(big.NewFloat(1), est), two32Big)),
+		new(big.Float).Mul(negative, two1024Big),
+		bigfloat.Log(
+			new(big.Float).Sub(
+				big.NewFloat(1),
+				new(big.Float).Quo(est, two1024Big),
+			),
+		),
 	)
 }
 
