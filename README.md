@@ -103,7 +103,7 @@
 Make sure both the logs dirs `--output` and `--error` exist before execution!
 
 ```bash
-mkdir -p batches/out/hll-http/2p/E1P40AnullIipxxlW256 && sbatch -J hllroot1 --time=3-00:00:00 --begin=now+30 ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/root.sbatch 10
+mkdir -p ~/batches/out/hll-http/2p/E1P40AnullIipxxlW256 && sbatch -J hllroot1 --time=3-00:00:00 --begin=now+0 ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/root.sbatch 10
 ```
 
 the positional args are:
@@ -120,7 +120,7 @@ sbatch \
 --time=3-00:00:00 \
 --dependency=after:${rootid} \
 ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/workers.sbatch \
-2 1 40 null InfosetPartidaXXLarge sha3 257000 10 http://${roothost}
+2 1 40 null InfosetPartidaXXLarge sha3 252000 10 http://${roothost}
 ```
 
 the positional args are:
