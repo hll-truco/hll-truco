@@ -7,7 +7,7 @@
 
 #SBATCH --job-name=hllworkers
 #SBATCH --nodes=8 # nodes to use in total, per job or subjob
-#SBATCH --ntasks=98 # when doing `srun` launch `ntaks` parallel jobs across `nodes`
+#SBATCH --ntasks=99 # when doing `srun` launch `ntaks` parallel jobs across `nodes`
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=128M
 #SBATCH --time=0-00:15:00
@@ -51,8 +51,11 @@ report:${report} root:${root}"
 
 # srun will run this cmd `nodes` times in parallel
 cd ${project}
+# compile
+go build -ldflags="-w -s" -o bin/http/worker cmd/count-infosets-hll-dist-http/worker/main.go
+# run
 srun -l --output=${task_log} --error=${task_log} \
-  go run ${main} \
+  bin/http/worker \
     -n=${n} \
     -e=${envido} \
     -p=${pts} \
