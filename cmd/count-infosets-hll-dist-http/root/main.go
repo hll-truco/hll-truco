@@ -16,10 +16,11 @@ import (
 
 // flags/parametros:
 var (
-	portFlag   = flag.Int("port", 8080, "HTTP port")
-	reportFlag = flag.Int("report", 1, "Delta (in seconds) for printing log msgs")
-	saveFlag   = flag.String("save", "", "Full path to file to save all progress on exit")
-	resumeFlag = flag.String("resume", "", "Full path to file to save all progress on exit")
+	portFlag      = flag.Int("port", 8080, "HTTP port")
+	reportFlag    = flag.Int("report", 1, "Delta (in seconds) for printing log msgs")
+	saveFlag      = flag.String("save", "", "Full path to file to save all progress on exit")
+	resumeFlag    = flag.String("resume", "", "Full path to file to save all progress on exit")
+	precisionFlag = flag.Int("precision", 16, "HLL precision (defaults to 16)")
 )
 
 func init() {
@@ -35,6 +36,7 @@ func init() {
 	slog.SetDefault(logger)
 	slog.Info(
 		"START",
+		"precision", *precisionFlag,
 		"port", *portFlag,
 		"resume", *resumeFlag,
 		"save", *saveFlag)
@@ -42,7 +44,7 @@ func init() {
 
 func main() {
 	var (
-		state    = state.NewState()
+		state    = state.NewState(uint8(*precisionFlag))
 		printer  = utils.NewCronoPrinter(time.Second * time.Duration(*reportFlag))
 		mux      = http.NewServeMux()
 		exitChan = make(chan bool)

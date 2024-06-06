@@ -27,8 +27,8 @@ type Worker struct {
 	rootBaseURL string
 }
 
-func NewWorker(rootBaseURL string, limit time.Duration) *Worker {
-	h, _ := hll.NewExt(16)
+func NewWorker(rootBaseURL string, limit time.Duration, precision uint8) *Worker {
+	h, _ := hll.NewExt(precision)
 	if !strings.HasPrefix(rootBaseURL, "http://") {
 		rootBaseURL = "http://" + rootBaseURL
 	}

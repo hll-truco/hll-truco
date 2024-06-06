@@ -33,11 +33,11 @@ type State struct {
 	mu *sync.Mutex
 }
 
-func NewState() *State {
+func NewState(precision uint8) *State {
 	return &State{
 		start:   time.Now(),
-		Global:  GetNewExt(),
-		decoder: GetNewExt(),
+		Global:  GetNewExt(precision),
+		decoder: GetNewExt(precision),
 		Total:   0,
 		// reports
 		WorkersResults: make([]*WorkerResult, 0),
@@ -46,8 +46,8 @@ func NewState() *State {
 	}
 }
 
-func GetNewExt() *hll.HyperLogLogExt {
-	h1, err := hll.NewExt(16)
+func GetNewExt(precision uint8) *hll.HyperLogLogExt {
+	h1, err := hll.NewExt(precision)
 	if err != nil {
 		panic(err)
 	}
