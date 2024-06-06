@@ -16,6 +16,7 @@ func ExitHandler(
 	exitChan chan bool,
 	state *state.State,
 	crono *utils.CronoPrinter,
+	savefile string,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Shutting down the server..."))
@@ -27,6 +28,9 @@ func ExitHandler(
 					"err", err)
 			}
 			state.Results()
+			if len(savefile) > 0 {
+				state.Save(savefile)
+			}
 			exitChan <- true // Signal the main function to exit
 		}()
 	}
