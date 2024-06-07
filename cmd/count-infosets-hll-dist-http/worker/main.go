@@ -86,20 +86,20 @@ func init() {
 
 func main() {
 	for w.TimeSinceStarted() < w.Limit {
-		p, _ := pdt.NuevaPartida(
-			pts,
-			azules[:n>>1],
-			rojos[:n>>1],
-			limEnvite,
-			verbose)
 		// p, _ := pdt.NuevaPartida(
 		// 	pts,
-		// 	true,           // isMini
-		// 	utils.Deck(14), // decksize
 		// 	azules[:n>>1],
 		// 	rojos[:n>>1],
 		// 	limEnvite,
 		// 	verbose)
+		p, _ := pdt.NuevaPartida(
+			pts,
+			true,           // isMini
+			utils.Deck(14), // decksize
+			azules[:n>>1],
+			rojos[:n>>1],
+			limEnvite,
+			verbose)
 		w.RandomWalk(p, infoBuilder, hashFn, printer)
 	}
 
