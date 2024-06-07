@@ -1,8 +1,5 @@
 import matplotlib.pyplot as plt
-
-import sys
-sys.path.append('cmd/_')
-import parse_utils
+from common import parse_utils
 
 title = "Distributed-HLL evol. with -deck=14 -info=InfosetRondaBase -abs=null"
 real = 248_732

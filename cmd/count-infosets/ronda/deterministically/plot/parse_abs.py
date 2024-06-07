@@ -2,10 +2,7 @@ import argparse
 import os
 import re
 import json
-
-import sys
-sys.path.append('cmd/_')
-import parse_utils
+from common import parse_utils
 
 parser = argparse.ArgumentParser(description='List all .out files in a directory')
 parser.add_argument('-d', '--directory', type=str, required=True, help='Directory to search for .out files')

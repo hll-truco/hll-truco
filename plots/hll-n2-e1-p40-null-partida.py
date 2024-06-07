@@ -1,8 +1,5 @@
 import matplotlib.pyplot as plt
-
-import sys
-sys.path.append('cmd/_')
-import parse_utils
+from common import parse_utils
 
 real = 248_732
 

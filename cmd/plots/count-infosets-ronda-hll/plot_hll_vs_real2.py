@@ -1,8 +1,5 @@
 import matplotlib.pyplot as plt
-
-import sys
-sys.path.append('cmd/_')
-import parse_utils
+from common import parse_utils
 
 title = "HLL estimate for mini-Truco with -deck=14 -info=InfosetRondaBase -abs=null"
 real = 248_732
