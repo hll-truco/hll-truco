@@ -48,3 +48,5 @@ def keep(lines :list[dict], normalize=True) -> tuple[
             deltas[i] -= deltas[0]
 
     return deltas, estimates, total_msgs
+
+parse = lambda f: keep(parse_structured_log(f))
