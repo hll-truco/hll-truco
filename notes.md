@@ -194,3 +194,11 @@ pts: 20, 40
 - 9500 core-hours per day ~ 395 cores per day
 
 - 265 cores ~ 6144 core-hours per day
+
+
+# Observaciones:
+
+- para minitruco-14 bajo sha3 se tiene un max de 19 bits consecutivos de ceros
+
+- para precision de 4 bits, el mejor valor para la base fue de `20=max+1` ~ `max+sqrt(p)`
+- para precision de 16 bits, el mejor valor para la base fue de `23=max+4` ~ `max+sqrt(p)`
