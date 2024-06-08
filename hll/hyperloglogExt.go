@@ -16,6 +16,7 @@ import (
 	"encoding/gob"
 	"errors"
 	"fmt"
+	"log/slog"
 	"math"
 	"math/big"
 
@@ -47,9 +48,16 @@ func (h *HyperLogLogExt) Clear() {
 	h.reg = make([]uint, h.m)
 }
 
+var m = uint(0)
+
 // Add adds a new item to HyperLogLogExt h.
 func (h *HyperLogLogExt) Add(hash []byte) bool {
 	i, zeroBits := GetPosValDynamic(hash, h.p)
+
+	if zeroBits > m {
+		slog.Info("NEW_RECORD", "m", zeroBits)
+		m = zeroBits
+	}
 
 	if zeroBits > h.reg[i] {
 		h.reg[i] = zeroBits
@@ -90,19 +98,72 @@ func (h *HyperLogLogExt) Count() uint64 {
 	return uint64(-two32 * math.Log(1-est/two32))
 }
 
+// stategies
+
+func Max(regs []uint) uint {
+	return m
+}
+
+func Avg(regs []uint) uint {
+	s := uint(0)
+	for _, r := range regs {
+		s += r
+	}
+	avg := float64(s) / float64(len(regs))
+	return uint(math.Round(avg))
+}
+
+func Fixed(regs []uint) uint {
+	return 19
+}
+
+func Dynm(regs []uint) uint {
+	return Max(regs) + 3
+	// return Avg(regs)
+	// return Fixed(regs)
+}
+
+func (h *HyperLogLogExt) CountDynm() uint64 {
+	est := calculateEstimateExt(h.reg)
+
+	exp := Dynm(h.reg)
+	slog.Info("VALUES", "max", m, "exp", exp)
+	base := float64(int(1) << exp)
+	return uint64(-base * math.Log(1-est/base))
+}
+
+func (h *HyperLogLogExt) CountBigDynm() *big.Float {
+	est := calculateEstimateExtBig(h.reg)
+
+	// calc dynamic base
+	exp := Dynm(h.reg)
+	slog.Info("VALUES", "max", m, "exp", exp)
+	base := big.NewFloat(0).SetUint64(1 << exp)
+
+	return new(big.Float).Mul(
+		new(big.Float).Mul(negative, base),
+		bigfloat.Log(
+			new(big.Float).Sub(
+				big.NewFloat(1),
+				new(big.Float).Quo(est, base),
+			),
+		),
+	)
+}
+
 var (
 	twoPointFive = big.NewFloat(2.5)
 
 	// deprecated
-	// two32Big   = big.NewFloat(0).SetUint64(1 << 32)
-	// two32Div30 = big.NewFloat(0).Quo(two32Big, big.NewFloat(30))
+	Two32Big   = big.NewFloat(0).SetUint64(1 << 32)
+	Two32Div30 = big.NewFloat(0).Quo(Two32Big, big.NewFloat(30))
 
 	// new
 	// 2^1024
-	twoBig         = big.NewInt(2)
-	expBig         = big.NewInt(1024)
-	two1024Big     = new(big.Float).SetInt(new(big.Int).Exp(twoBig, expBig, nil))
-	two1024Div1022 = big.NewFloat(0).Quo(two1024Big, big.NewFloat(1022))
+	TwoBig         = big.NewInt(2)
+	ExpBig         = big.NewInt(1024)
+	Two1024Big     = new(big.Float).SetInt(new(big.Int).Exp(TwoBig, ExpBig, nil))
+	Two1024Div1022 = big.NewFloat(0).Quo(Two1024Big, big.NewFloat(1022))
 
 	negative = big.NewFloat(-1)
 )
@@ -123,16 +184,16 @@ func (h *HyperLogLogExt) CountBig() *big.Float {
 			return linearCountingBig(h.m, v)
 		}
 		return est
-	} else if isLesser := est.Cmp(two1024Div1022) == -1; isLesser {
+	} else if isLesser := est.Cmp(Two1024Div1022) == -1; isLesser {
 		return est
 	}
 
 	return new(big.Float).Mul(
-		new(big.Float).Mul(negative, two1024Big),
+		new(big.Float).Mul(negative, Two1024Big),
 		bigfloat.Log(
 			new(big.Float).Sub(
 				big.NewFloat(1),
-				new(big.Float).Quo(est, two1024Big),
+				new(big.Float).Quo(est, Two1024Big),
 			),
 		),
 	)
