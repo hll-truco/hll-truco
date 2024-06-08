@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"time"
@@ -152,13 +153,8 @@ func main() {
 	azules := []string{"Alice", "Ariana", "Annie"}
 	rojos := []string{"Bob", "Ben", "Bill"}
 
-	// p, err := pdt.NuevaMiniPartida(azules[:n>>1], rojos[:n>>1], verbose)
-
-	// mini truco
-	// p, _ := pdt.NuevaPartida(pdt.A10, true, deck, azules[:n>>1], rojos[:n>>1], 0, verbose)
-
-	// gotruco
-	p, _ := pdt.NuevaPartida(pdt.A20, azules[:n>>1], rojos[:n>>1], 0, verbose)
+	os.Setenv("DECK", fmt.Sprintf("%d", deck))
+	p := utils.NuevaPartida(pdt.A10, azules[:n>>1], rojos[:n>>1], 0, verbose)
 
 	p.Puntajes[pdt.Azul] = 9
 	p.Puntajes[pdt.Rojo] = 9

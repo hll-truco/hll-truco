@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/binary"
 	"flag"
+	"fmt"
 	"log/slog"
 	"math/rand"
 	"os"
@@ -129,24 +130,14 @@ func main() {
 	rojos := []string{"Bob", "Ben", "Bill"}
 
 	rand.Seed(time.Now().UnixNano())
+	os.Setenv("DECK", fmt.Sprintf("%d", *deckSizeFlag))
 
 	for {
 		if time.Since(start) > limit {
 			break
 		}
 
-		// minitruco
-		// p, _ := pdt.NuevaPartida(
-		// 	pdt.A40, // <----- no importa poque la condicion de parada es Ronda
-		// 	true,
-		// 	deck,
-		// 	azules[:n>>1],
-		// 	rojos[:n>>1],
-		// 	limEnvite, // limiteEnvido
-		// 	verbose)
-
-		// gotruco
-		p, _ := pdt.NuevaPartida(pdt.A40, azules[:n>>1], rojos[:n>>1], limEnvite, verbose)
+		p := utils.NuevaPartida(pdt.A40, azules[:n>>1], rojos[:n>>1], limEnvite, verbose)
 
 		randomWalk(p)
 		// termino la partida o se acabó el tiempo

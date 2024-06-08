@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log/slog"
 	"os"
 	"time"
@@ -166,22 +167,8 @@ func main() {
 	azules := []string{"Alice", "Ariana", "Annie"}
 	rojos := []string{"Bob", "Ben", "Bill"}
 
-	// p, err := pdt.NuevaMiniPartida(azules[:n>>1], rojos[:n>>1], verbose)
-
-	// rand.Seed(time.Now().UnixNano())
-
-	// minitruco
-	// p, _ := pdt.NuevaPartida(
-	// 	pdt.A40, // <----- no importa poque la condicion de parada es Ronda
-	// 	true,
-	// 	deck,
-	// 	azules[:n>>1],
-	// 	rojos[:n>>1],
-	// 	limEnvite, // limiteEnvido
-	// 	verbose)
-
-	// gotruco
-	p, _ := pdt.NuevaPartida(pdt.A40, azules[:n>>1], rojos[:n>>1], limEnvite, verbose)
+	os.Setenv("DECK", fmt.Sprintf("%d", *deckSizeFlag))
+	p := utils.NuevaPartida(pdt.A40, azules[:n>>1], rojos[:n>>1], limEnvite, verbose)
 
 	slog.Info(
 		"RESULTS",

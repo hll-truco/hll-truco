@@ -1,6 +1,9 @@
 package utils
 
 import (
+	"os"
+	"strconv"
+
 	"github.com/truquito/gotruco/enco"
 	"github.com/truquito/gotruco/pdt"
 )
@@ -62,4 +65,34 @@ func SetCartasRonda(
 	p.Ronda.SetMuestra(muestra)
 	p.Ronda.SetManojos(manojos)
 
+}
+
+func NuevaPartida(
+	pts pdt.Puntuacion,
+	azules, rojos []string,
+	limEnvite int,
+	verbose bool,
+) *pdt.Partida {
+	// gotruco
+	// p, err := pdt.NuevaPartida(pts, azules, rojos, limEnvite, verbose)
+
+	// minitruco
+	deckSize, _ := strconv.Atoi(os.Getenv("DECK"))
+	if deckSize == 0 {
+		deckSize = 14
+	}
+	p, err := pdt.NuevaPartida(
+		pts,
+		true,           // isMini
+		Deck(deckSize), // decksize
+		azules,
+		rojos,
+		limEnvite,
+		verbose)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return p
 }

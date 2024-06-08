@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"hash"
 	"log/slog"
 	"math/rand"
@@ -25,7 +26,6 @@ var (
 )
 
 var (
-	deck        []int               = nil
 	infoBuilder *info.Builder       = nil
 	verbose     bool                = true
 	terminals   uint64              = 0
@@ -52,7 +52,6 @@ func init() {
 		"limitFlag", *limitFlag,
 		"reportFlag", *reportFlag)
 
-	deck = utils.Deck(*deckSizeFlag)
 	// hardcode "sha160" to avoid panics; we will use hashFn anyways
 	infoBuilder = info.BuilderFactory("sha160", *infosetFlag, *absIDFlag)
 	limit = time.Second * time.Duration(*limitFlag)
@@ -108,7 +107,7 @@ func randomWalk(p *pdt.Partida) {
 		}
 
 		if printer.ShouldPrint() {
-			e := h.Count()
+			e := h.CountDynm()
 			delta := printer.Check().Seconds()
 			slog.Info("REPORT", "delta", delta, "estimate", e)
 		}
@@ -122,24 +121,14 @@ func main() {
 	rojos := []string{"Bob", "Ben", "Bill"}
 
 	rand.Seed(time.Now().UnixNano())
+	os.Setenv("DECK", fmt.Sprintf("%d", *deckSizeFlag))
 
 	for {
 		if time.Since(start) > limit {
 			break
 		}
 
-		// minitruco
-		// p, _ := pdt.NuevaPartida(
-		// 	pdt.A40, // <----- no importa poque la condicion de parada es Ronda
-		// 	true,
-		// 	deck,
-		// 	azules[:n>>1],
-		// 	rojos[:n>>1],
-		// 	limEnvite, // limiteEnvido
-		// 	verbose)
-
-		// gotruco
-		p, _ := pdt.NuevaPartida(pdt.A40, azules[:n>>1], rojos[:n>>1], limEnvite, verbose)
+		p := utils.NuevaPartida(pdt.A40, azules[:n>>1], rojos[:n>>1], limEnvite, verbose)
 
 		randomWalk(p)
 		// termino la partida o se acabó el tiempo
@@ -147,12 +136,12 @@ func main() {
 
 	slog.Info(
 		"RESULTS",
-		"finalEstimate", h.Count(),
+		"finalEstimate", h.CountDynm(),
 		"terminals:", terminals,
 		"finished", time.Since(start).Seconds())
 
 	// data, _ := h.GobEncode()
 	// h2 := &hll.HyperLogLog{}
 	// h2.GobDecode(data)
-	// fmt.Println(h2.Count())
+	// fmt.Println(h2.CountDynm())
 }

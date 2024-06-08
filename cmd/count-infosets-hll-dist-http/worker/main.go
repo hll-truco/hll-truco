@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"hash"
 	"log/slog"
 	"os"
@@ -18,7 +19,7 @@ import (
 
 // flags/parametros:
 var (
-	// deckSizeFlag = flag.Int("deck", 7, "Deck size")
+	deckSizeFlag  = flag.Int("deck", 14, "Deck size")
 	nFlag         = flag.Int("n", 2, "Number of players <2,4,6>")
 	envidoFlag    = flag.Int("e", 1, "Envido limit (default 1)")
 	ptsFlag       = flag.Int("p", 40, "Game points limit")
@@ -85,21 +86,9 @@ func init() {
 }
 
 func main() {
+	os.Setenv("DECK", fmt.Sprintf("%d", *deckSizeFlag))
 	for w.TimeSinceStarted() < w.Limit {
-		// p, _ := pdt.NuevaPartida(
-		// 	pts,
-		// 	azules[:n>>1],
-		// 	rojos[:n>>1],
-		// 	limEnvite,
-		// 	verbose)
-		p, _ := pdt.NuevaPartida(
-			pts,
-			true,           // isMini
-			utils.Deck(14), // decksize
-			azules[:n>>1],
-			rojos[:n>>1],
-			limEnvite,
-			verbose)
+		p := utils.NuevaPartida(pts, azules[:n>>1], rojos[:n>>1], limEnvite, verbose)
 		w.RandomWalk(p, infoBuilder, hashFn, printer)
 	}
 
