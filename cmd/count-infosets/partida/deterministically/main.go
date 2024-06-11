@@ -154,7 +154,7 @@ func main() {
 	rojos := []string{"Bob", "Ben", "Bill"}
 
 	os.Setenv("DECK", fmt.Sprintf("%d", deck))
-	p := utils.NuevaPartida(pdt.A10, azules[:n>>1], rojos[:n>>1], 0, verbose)
+	p := utils.NuevaPartida(pdt.A40, azules[:n>>1], rojos[:n>>1], 0, verbose)
 
 	p.Puntajes[pdt.Azul] = 9
 	p.Puntajes[pdt.Rojo] = 9
