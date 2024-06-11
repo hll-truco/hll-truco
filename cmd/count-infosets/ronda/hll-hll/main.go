@@ -17,12 +17,13 @@ import (
 
 // flags/parametros:
 var (
-	deckSizeFlag = flag.Int("deck", 7, "Deck size")
-	absIDFlag    = flag.String("abs", "a1", "Abstractor ID")
-	infosetFlag  = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
-	hashIDFlag   = flag.String("hash", "sha160", "Infoset hashing function")
-	limitFlag    = flag.Int("limit", 60, "Run time limit (in seconds) (default 1m)")
-	reportFlag   = flag.Int("report", 10, "Delta (in seconds) for printing log msgs")
+	deckSizeFlag  = flag.Int("deck", 7, "Deck size")
+	absIDFlag     = flag.String("abs", "a1", "Abstractor ID")
+	infosetFlag   = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
+	hashIDFlag    = flag.String("hash", "sha160", "Infoset hashing function")
+	limitFlag     = flag.Int("limit", 60, "Run time limit (in seconds) (default 1m)")
+	reportFlag    = flag.Int("report", 10, "Delta (in seconds) for printing log msgs")
+	precisionFlag = flag.Uint("precision", 16, "HLL precision (defaults to 16)")
 )
 
 var (
@@ -30,7 +31,7 @@ var (
 	verbose     bool                = true
 	terminals   uint64              = 0
 	printer     *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 10)
-	h, _                            = hll.NewExt(10)
+	h           *hll.HyperLogLogExt = nil
 	start       time.Time           = time.Now()
 	limit       time.Duration       = 0
 	hashFn      hash.Hash           = nil
@@ -71,6 +72,8 @@ func init() {
 		hashFn = utils.ParseHashFn(*hashIDFlag)
 		slog.Warn("USING_FIXED_HASH", "hash", *hashIDFlag)
 	}
+
+	h, _ = hll.NewExt(uint8(*precisionFlag))
 
 	// start timer
 	start = time.Now()
