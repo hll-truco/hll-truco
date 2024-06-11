@@ -203,9 +203,9 @@ func MaxDynm(h *HyperLogLogExt) float64 {
 // 	return avg
 // }
 
-// func Fixed(h *HyperLogLogExt, f uint) uint {
-// 	return f
-// }
+func Fixed(h *HyperLogLogExt, f float64) float64 {
+	return f
+}
 
 // func MaxPlusDelta(h *HyperLogLogExt, d uint) uint {
 // 	return MaxDynm(h) + d
@@ -217,6 +217,7 @@ func MaxPlusSqrtPrec(h *HyperLogLogExt) float64 {
 
 func Dynm(h *HyperLogLogExt) float64 {
 	return MaxPlusSqrtPrec(h)
+	// return Fixed(h, 1024.0)
 }
 
 func (h *HyperLogLogExt) CountDynm() uint64 {
@@ -234,19 +235,26 @@ func (h *HyperLogLogExt) CountDynm() uint64 {
 	return uint64(-base * math.Log(1-est/base))
 }
 
+var _oneBig = big.NewInt(1)
+
+func calc2Pow(e uint) *big.Float {
+	result := new(big.Int).Lsh(_oneBig, e)
+	return new(big.Float).SetInt(result)
+}
+
 func (h *HyperLogLogExt) CountBigDynm() *big.Float {
 	est := calculateEstimateExtBig(h.reg)
 
 	// calc dynamic base
 	exp := uint(math.Ceil(Dynm(h)))
 
-	// slog.Debug(
-	// 	"VALUES",
-	// 	"m", h.max,
-	// 	"max", MaxDynm(h),
-	// 	"exp", exp)
+	slog.Info(
+		"VALUES_BIG",
+		"m", h.max,
+		// "max", MaxDynm(h),
+		"exp", exp)
 
-	base := big.NewFloat(0).SetUint64(1 << exp)
+	base := calc2Pow(exp)
 
 	return new(big.Float).Mul(
 		new(big.Float).Mul(negative, base),
