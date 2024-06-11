@@ -27,6 +27,7 @@ type HyperLogLogExt struct {
 	reg []uint // regs
 	m   uint32 // 2^precision
 	p   uint8  // precision
+	max uint   // max number of leading zeros so far
 }
 
 // New returns a new initialized HyperLogLogExt.
@@ -37,6 +38,7 @@ func NewExt(precision uint8) (*HyperLogLogExt, error) {
 	}
 
 	h := &HyperLogLogExt{}
+	h.max = uint(0)
 	h.p = precision
 	h.m = 1 << precision
 	h.reg = make([]uint, h.m)
@@ -48,15 +50,13 @@ func (h *HyperLogLogExt) Clear() {
 	h.reg = make([]uint, h.m)
 }
 
-var m = uint(0)
-
 // Add adds a new item to HyperLogLogExt h.
 func (h *HyperLogLogExt) Add(hash []byte) bool {
 	i, zeroBits := GetPosValDynamic(hash, h.p)
 
-	if zeroBits > m {
-		slog.Info("NEW_RECORD", "m", zeroBits)
-		m = zeroBits
+	if zeroBits > h.max {
+		slog.Debug("NEW_RECORD", "m", zeroBits) // comment this for no output
+		h.max = zeroBits
 	}
 
 	if zeroBits > h.reg[i] {
@@ -96,59 +96,6 @@ func (h *HyperLogLogExt) Count() uint64 {
 		return uint64(est)
 	}
 	return uint64(-two32 * math.Log(1-est/two32))
-}
-
-// stategies
-
-func Max(regs []uint) uint {
-	return m
-}
-
-func Avg(regs []uint) uint {
-	s := uint(0)
-	for _, r := range regs {
-		s += r
-	}
-	avg := float64(s) / float64(len(regs))
-	return uint(math.Round(avg))
-}
-
-func Fixed(regs []uint) uint {
-	return 19
-}
-
-func Dynm(regs []uint) uint {
-	return Max(regs) + 3
-	// return Avg(regs)
-	// return Fixed(regs)
-}
-
-func (h *HyperLogLogExt) CountDynm() uint64 {
-	est := calculateEstimateExt(h.reg)
-
-	exp := Dynm(h.reg)
-	slog.Info("VALUES", "max", m, "exp", exp)
-	base := float64(int(1) << exp)
-	return uint64(-base * math.Log(1-est/base))
-}
-
-func (h *HyperLogLogExt) CountBigDynm() *big.Float {
-	est := calculateEstimateExtBig(h.reg)
-
-	// calc dynamic base
-	exp := Dynm(h.reg)
-	slog.Info("VALUES", "max", m, "exp", exp)
-	base := big.NewFloat(0).SetUint64(1 << exp)
-
-	return new(big.Float).Mul(
-		new(big.Float).Mul(negative, base),
-		bigfloat.Log(
-			new(big.Float).Sub(
-				big.NewFloat(1),
-				new(big.Float).Quo(est, base),
-			),
-		),
-	)
 }
 
 var (
@@ -232,4 +179,82 @@ func (h *HyperLogLogExt) GobDecode(b []byte) error {
 
 func (h *HyperLogLogExt) String() string {
 	return fmt.Sprintf("%v", h.reg)
+}
+
+// dynm hll
+
+// stategies
+func MaxDynm(h *HyperLogLogExt) float64 {
+	_m := uint(0)
+	for _, v := range h.reg {
+		if v > _m {
+			_m = v
+		}
+	}
+	return float64(_m)
+}
+
+// func Mean(h *HyperLogLogExt) float64 {
+// 	s := uint(0)
+// 	for _, r := range h.reg {
+// 		s += r
+// 	}
+// 	avg := float64(s) / float64(len(h.reg))
+// 	return avg
+// }
+
+// func Fixed(h *HyperLogLogExt, f uint) uint {
+// 	return f
+// }
+
+// func MaxPlusDelta(h *HyperLogLogExt, d uint) uint {
+// 	return MaxDynm(h) + d
+// }
+
+func MaxPlusSqrtPrec(h *HyperLogLogExt) float64 {
+	return MaxDynm(h) + math.Sqrt(float64(h.p))
+}
+
+func Dynm(h *HyperLogLogExt) float64 {
+	return MaxPlusSqrtPrec(h)
+}
+
+func (h *HyperLogLogExt) CountDynm() uint64 {
+	est := calculateEstimateExt(h.reg)
+	exp := float64(Dynm(h))
+
+	// slog.Debug(
+	// 	"VALUES",
+	// 	"m", h.max,
+	// 	"max", MaxDynm(h),
+	// 	"exp", exp,
+	// 	"est", est)
+
+	base := math.Exp2(exp)
+	return uint64(-base * math.Log(1-est/base))
+}
+
+func (h *HyperLogLogExt) CountBigDynm() *big.Float {
+	est := calculateEstimateExtBig(h.reg)
+
+	// calc dynamic base
+	exp := uint(math.Ceil(Dynm(h)))
+
+	// slog.Debug(
+	// 	"VALUES",
+	// 	"m", h.max,
+	// 	"max", MaxDynm(h),
+	// 	"exp", exp)
+
+	base := big.NewFloat(0).SetUint64(1 << exp)
+
+	return new(big.Float).Mul(
+		new(big.Float).Mul(negative, base),
+		bigfloat.Log(
+			new(big.Float).Sub(
+				big.NewFloat(1),
+				new(big.Float).Quo(est, base),
+			),
+		),
+	)
 }
