@@ -44,6 +44,7 @@ hash=${6:-'sha3'} # Infoset hashing function
 limit=${7:-'600'} # 600 seconds = 10 min # Run time limit (in seconds) (default 1m)
 report=${8:-'10'} # Delta (in seconds) for printing log msgs
 root=${9:-'http://localhost:8080'} # HTTP root server
+precision=${10:-'16'} # HLL precision
 
 echo "using: worker:${worker_name} logs:${task_log} n:${n} envido:${envido} \
 pts:${pts} absId:${absId} infoset:${infoset} hash:${hash} limit:${limit} \
@@ -64,7 +65,8 @@ srun -l --output=${task_log} --error=${task_log} \
     -hash=${hash} \
     -limit=${limit} \
     -report=${report} \
-    -root=${root}
+    -root=${root} \
+    -precision=${precision}
 
 # shutdown root server
 curl -X GET ${root}/exit

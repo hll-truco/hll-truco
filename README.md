@@ -103,12 +103,13 @@
 Make sure both the logs dirs `--output` and `--error` exist before execution!
 
 ```bash
-mkdir -p ~/batches/out/hll-http/2p/E1P40AnullIipxxlW256 && sbatch -J hllroot1 --time=3-00:00:00 --begin=now+0 ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/root.sbatch 10
+mkdir -p ~/batches/out/hll-http/2p/E1P40AnullIipxxlW256 && sbatch -J hllroot1 --time=3-00:00:00 --begin=now+0 ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/root.sbatch 10 16
 ```
 
 the positional args are:
 
-1. report (in seconds)
+1. Report (in secs)
+2. HLL precision
 
 ```bash
 jobname=hllworkers1 && \
@@ -120,7 +121,7 @@ sbatch \
 --time=3-00:00:00 \
 --dependency=after:${rootid} \
 ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/workers.sbatch \
-2 1 40 null InfosetPartidaXXLarge sha3 252000 10 http://${roothost}
+2 1 40 null InfosetPartidaXXLarge sha3 252000 10 http://${roothost} 16
 ```
 
 the positional args are:
@@ -134,3 +135,4 @@ the positional args are:
 7. Run time limit (in seconds) (600 = 10min, 259.200 = 3 days)
 8. Delta (in seconds) for printing log msgs
 9. HTTP root server
+10. HLL precision
