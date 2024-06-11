@@ -30,7 +30,7 @@ var (
 	verbose     bool                = true
 	terminals   uint64              = 0
 	printer     *utils.CronoPrinter = utils.NewCronoPrinter(time.Second * 10)
-	h, _                            = hll.NewExt(16)
+	h, _                            = hll.NewExt(10)
 	start       time.Time           = time.Now()
 	limit       time.Duration       = 0
 	hashFn      hash.Hash           = nil
@@ -40,7 +40,14 @@ func init() {
 	flag.Parse()
 
 	// logging
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	logger := slog.New(
+		slog.NewJSONHandler(
+			os.Stdout,
+			&slog.HandlerOptions{
+				Level: slog.LevelDebug,
+			},
+		),
+	)
 	slog.SetDefault(logger)
 
 	slog.Info(
