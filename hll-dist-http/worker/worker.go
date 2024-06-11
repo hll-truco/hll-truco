@@ -54,7 +54,7 @@ func (w *Worker) incGamesPlayed() {
 
 func (w *Worker) checkpoint(printer *utils.CronoPrinter) {
 	if printer.ShouldPrint() {
-		e := w.H.CountBig()
+		e := w.H.CountBigDynm()
 		delta := printer.Check().Seconds()
 		slog.Info("REPORT", "delta", delta, "estimate", e)
 

@@ -79,10 +79,8 @@ func (state *State) AddWorkerResult(r *WorkerResult) {
 
 func (state *State) Estimate() any {
 	// estimate := state.Global.Count()
-	// estimate, c := state.Global.CountDynm()
-	// slog.Info("CASE", "c", c)
-	estimate := state.Global.CountBig()
-	// estimate := state.Global.CountBigDynm()
+	// estimate := state.Global.CountBig()
+	estimate := state.Global.CountBigDynm()
 	return estimate
 }
 

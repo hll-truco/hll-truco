@@ -99,7 +99,7 @@ func main() {
 	slog.Info(
 		"RESULTS",
 		"trucoVersion", gotruco.VERSION,
-		"finalEstimate", w.H.CountBig(),
+		"finalEstimate", w.H.CountBigDynm(),
 		"nodesVisited:", w.NodesVisited,
 		"gamesPlayed", w.GamesPlayed,
 		"finished", w.TimeSinceStarted().Seconds())

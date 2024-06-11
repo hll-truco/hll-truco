@@ -73,8 +73,9 @@ func main() {
 		h.Add(_hash)
 		if printer.ShouldPrint() {
 			delta := printer.Check().Seconds()
+			// e := h.Count()
 			// e := h.CountBig()
-			e := h.Count()
+			e := h.CountBigDynm()
 			p := float64(nodesVisited) / float64(*nFlag)
 			slog.Info(
 				"REPORT",
@@ -87,7 +88,7 @@ func main() {
 
 	slog.Info(
 		"RESULTS",
-		"finalEstimate", h.CountBig(),
+		"finalEstimate", h.CountBigDynm(),
 		"nodesVisited:", nodesVisited,
 		"finished", time.Since(start).Seconds())
 }
