@@ -3,13 +3,11 @@ from common import parse_utils
 
 real = 248_732
 
-parse = lambda f: parse_utils.keep(parse_utils.parse_structured_log(f))
-
 # legacy
-hll_32 = parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-32b.log")
-hll_32_4 = parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-32b-case4.log")
-hll_1024 = parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-1024b.log")
-hll_1024_4 = parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-1024b-case4.log")
+hll_32 = parse_utils.parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-32b.log")
+hll_32_4 = parse_utils.parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-32b-case4.log")
+hll_1024 = parse_utils.parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-1024b.log")
+hll_1024_4 = parse_utils.parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-1024b-case4.log")
 
 # estimate evolution over time
 fig, ax = plt.subplots(1,1, figsize=(10,5))

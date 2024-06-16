@@ -3,17 +3,15 @@ from common import parse_utils
 
 real = 248_732
 
-parse = lambda f: parse_utils.keep(parse_utils.parse_structured_log(f))
-
 # legacy
-hll_vanilla = parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-1024b.log")
-dynm_max4 = parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre16-dynm-max+4.log")
-min_larger = parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre16-dynm-minlarger.log")
-min_larger_1 = parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre16-dynm-minlarger+1.log")
-min_larger_2 = parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre16-dynm-minlarger+2.log")
-min_larger_3 = parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre16-dynm-minlarger+3.log")
-min_larger_4 = parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre16-dynm-minlarger+4.log")
-fixed_1024 = parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre16-1024.log")
+hll_vanilla = parse_utils.parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-1024b.log")
+dynm_max4 = parse_utils.parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre16-dynm-max+4.log")
+min_larger = parse_utils.parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre16-dynm-minlarger.log")
+min_larger_1 = parse_utils.parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre16-dynm-minlarger+1.log")
+min_larger_2 = parse_utils.parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre16-dynm-minlarger+2.log")
+min_larger_3 = parse_utils.parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre16-dynm-minlarger+3.log")
+min_larger_4 = parse_utils.parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre16-dynm-minlarger+4.log")
+fixed_1024 = parse_utils.parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre16-1024.log")
 
 # estimate evolution over time
 fig, ax = plt.subplots(1,1, figsize=(10,5))

@@ -3,20 +3,18 @@ from common import parse_utils
 
 real = 248_732
 
-parse = lambda f: parse_utils.keep(parse_utils.parse_structured_log(f))
-
 # legacy
-# dynm_max_sqrt = parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre10-dynm-max+sqrt.log")
-# dynm_max_4 = parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre10-dynm-max+4.log")
-# dynm_max_3_5 = parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre10-dynm-max+3.5.log")
-hll_vanilla = parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-1024b-case4-pre10.log")
-# m_m667 = parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre10-m+powM.667.log")
-# hll_experimental = parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre10-dynm-experimental.log")
+# dynm_max_sqrt = parse_utils.parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre10-dynm-max+sqrt.log")
+# dynm_max_4 = parse_utils.parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre10-dynm-max+4.log")
+# dynm_max_3_5 = parse_utils.parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre10-dynm-max+3.5.log")
+hll_vanilla = parse_utils.parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-1024b-case4-pre10.log")
+# m_m667 = parse_utils.parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre10-m+powM.667.log")
+# hll_experimental = parse_utils.parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre10-dynm-experimental.log")
 
 # new
-hll_max_plus_4 = parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre10-min-larger+4.log")
-hll_max_plus_5 = parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre10-min-larger+5.log")
-hll_max_plus_6 = parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre10-min-larger+6.log")
+hll_max_plus_4 = parse_utils.parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre10-min-larger+4.log")
+hll_max_plus_5 = parse_utils.parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre10-min-larger+5.log")
+hll_max_plus_6 = parse_utils.parse("logs/hll-min-larger-experiments/local-d14-anull-hsha3-1024b-pre10-min-larger+6.log")
 
 # estimate evolution over time
 fig, ax = plt.subplots(1,1, figsize=(10,5))

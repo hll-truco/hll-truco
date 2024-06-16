@@ -3,11 +3,9 @@ from common import parse_utils
 
 real = 248_732
 
-parse = lambda f: parse_utils.keep(parse_utils.parse_structured_log(f))
-
 # legacy
-hll_vanilla = parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-1024b-case4-pre6.log")
-dynm_max_sqrt = parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre6-dynm-max+sqrt.log")
+hll_vanilla = parse_utils.parse("logs/hll-dist-http-32-vs-1024/http-w1-d14-anull-hsha3-1024b-case4-pre6.log")
+dynm_max_sqrt = parse_utils.parse("logs/optimal-m-search/local-d14-anull-hsha3-1024b-case4-pre6-dynm-max+sqrt.log")
 
 # estimate evolution over time
 fig, ax = plt.subplots(1,1, figsize=(10,5))

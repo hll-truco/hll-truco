@@ -1,11 +1,9 @@
 import matplotlib.pyplot as plt
 from common import parse_utils
 
-parse = lambda f: parse_utils.keep(parse_utils.parse_structured_log(f))
-
 # legacy
-# hll_bin_p16_r1s_big = parse("logs/hll-local-n/n1e9-bin-p16-r1s_big.log")
-hll_n1e8_bin_p16_r1s_ui64 = parse("logs/hll-local-n/n1e8-bin-p16-r1s_ui64.log")
+# hll_bin_p16_r1s_big = parse_utils.parse("logs/hll-local-n/n1e9-bin-p16-r1s_big.log")
+hll_n1e8_bin_p16_r1s_ui64 = parse_utils.parse("logs/hll-local-n/n1e8-bin-p16-r1s_ui64.log")
 
 # estimate evolution over time
 fig, ax = plt.subplots(1,1, figsize=(10,5))

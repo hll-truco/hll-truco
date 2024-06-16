@@ -4,20 +4,18 @@ from common import parse_utils
 
 real = 248_732
 
-parse = lambda f: parse_utils.keep(parse_utils.parse_structured_log(f))
-
 # legacy
-hll_w1 = parse("logs/hll-dist-http/slurm/legacy/hllroot.3629245-w1d14anull.out")
-hll_w2 = parse("logs/hll-dist-http/slurm/legacy/hllroot.3630838-w2d14anull.out")
-hll_w4 = parse("logs/hll-dist-http/slurm/legacy/hllroot.3630871-w4d14anull.out")
-hll_w8 = parse("logs/hll-dist-http/slurm/legacy/hllroot.3629226-w8d14anull.out")
-hll_w64 = parse("logs/hll-dist-http/slurm/legacy/hllroot.3631022-w64d14anull.out")
+hll_w1 = parse_utils.parse("logs/hll-dist-http/slurm/legacy/hllroot.3629245-w1d14anull.out")
+hll_w2 = parse_utils.parse("logs/hll-dist-http/slurm/legacy/hllroot.3630838-w2d14anull.out")
+hll_w4 = parse_utils.parse("logs/hll-dist-http/slurm/legacy/hllroot.3630871-w4d14anull.out")
+hll_w8 = parse_utils.parse("logs/hll-dist-http/slurm/legacy/hllroot.3629226-w8d14anull.out")
+hll_w64 = parse_utils.parse("logs/hll-dist-http/slurm/legacy/hllroot.3631022-w64d14anull.out")
 # big
-hll_w1_big = parse("logs/hll-dist-http/slurm/big/hllroot.3631774-w1d14anull.out")
-hll_w2_big = parse("logs/hll-dist-http/slurm/big/hllroot.3631909-w2d14anull.out")
-hll_w4_big = parse("logs/hll-dist-http/slurm/big/hllroot.3631736-w4d14anull.out")
-hll_w8_big = parse("logs/hll-dist-http/slurm/big/hllroot.3631663-w8d14anull.out")
-hll_w64_big = parse("logs/hll-dist-http/slurm/big/hllroot.3631597-w64d14anull.out")
+hll_w1_big = parse_utils.parse("logs/hll-dist-http/slurm/big/hllroot.3631774-w1d14anull.out")
+hll_w2_big = parse_utils.parse("logs/hll-dist-http/slurm/big/hllroot.3631909-w2d14anull.out")
+hll_w4_big = parse_utils.parse("logs/hll-dist-http/slurm/big/hllroot.3631736-w4d14anull.out")
+hll_w8_big = parse_utils.parse("logs/hll-dist-http/slurm/big/hllroot.3631663-w8d14anull.out")
+hll_w64_big = parse_utils.parse("logs/hll-dist-http/slurm/big/hllroot.3631597-w64d14anull.out")
 
 
 
