@@ -50,3 +50,15 @@ def keep(lines :list[dict], normalize=True) -> tuple[
     return deltas, estimates, total_msgs
 
 parse = lambda f: keep(parse_structured_log(f))
+
+def joint(XYZs:list[list[tuple[int,int]]]) -> list[tuple[int,int]]:
+    X,Y,Z = [], [], []
+    delta_x = 0
+    delta_z = 0
+    for _X, _Y, _Z in XYZs:
+        X += [x+delta_x for x in _X]
+        Y += _Y
+        Z += [z+delta_z for z in _Z]
+        delta_x += _X[-1]
+        delta_z += _Z[-1]
+    return X,Y,Z
