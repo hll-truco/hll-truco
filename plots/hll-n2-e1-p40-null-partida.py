@@ -16,6 +16,10 @@ hll_13_14 = parse_utils.joint([
     parse_utils.parse("/Users/jp/Downloads/cluster/hll/2p/E1P40AnullIipxxlW256/hllroot1.3681497.out")
 ])
 
+p4_b1024 = parse_utils.joint([
+    parse_utils.parse("/Users/jp/Downloads/cluster/hll/2p/E1P40AnullIipxxlW256/hllroot1.3696572.out"),
+])
+
 # estimate evolution over time
 fig, ax = plt.subplots(1,1, figsize=(10,5))
 
@@ -28,6 +32,7 @@ ax.plot(hll_5[0], hll_5[1], '-', linewidth=1, label='run 5')
 ax.plot(hll_6[0], hll_6[1], '-', linewidth=1, label='run 6')
 
 ax.plot(hll_13_14[0], hll_13_14[1], '-', linewidth=1, label='run 13_14')
+ax.plot(p4_b1024[0], p4_b1024[1], '-', linewidth=1, label='p4 b1024')
 
 ax.set_title("HLL")
 ax.set_ylabel('Estimated cardinality of infosets at round level')
