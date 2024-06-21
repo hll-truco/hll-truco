@@ -58,7 +58,8 @@ func init() {
 		"infoset", *infosetFlag,
 		"hash", *hashIDFlag,
 		"limitFlag", *limitFlag,
-		"reportFlag", *reportFlag)
+		"reportFlag", *reportFlag,
+		"precisionFlag", *precisionFlag)
 
 	// hardcode "sha160" to avoid panics; we will use hashFn anyways
 	infoBuilder = info.BuilderFactory("sha160", *infosetFlag, *absIDFlag)
@@ -117,7 +118,7 @@ func randomWalk(p *pdt.Partida) {
 		}
 
 		if printer.ShouldPrint() {
-			e := h.CountDynm()
+			e := h.CountBigDynm()
 			delta := printer.Check().Seconds()
 			slog.Info("REPORT", "delta", delta, "estimate", e)
 		}
