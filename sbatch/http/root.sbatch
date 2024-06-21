@@ -33,6 +33,7 @@ main=$project/cmd/count-infosets-hll-dist-http/root/main.go
 
 report=${1:-'10'} # Delta (in seconds) for printing log msgs
 precision=${2:-'16'} # HLL precision
+resume=${3}
 
 echo "using main:${main} report:${report}"
 
@@ -40,7 +41,8 @@ cd ${project}
 go run ${main} \
   -port=${PORT} \
   -report=${report} \
-  -precision=${precision}
+  -precision=${precision} \
+  -resume="${resume}"
 
 # or if you have an already compiled binary you could just:
 # $project/bin/http/root -port=$PORT
