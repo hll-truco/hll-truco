@@ -207,32 +207,68 @@ func Fixed(h *HyperLogLogExt, f float64) float64 {
 	return f
 }
 
-// func MaxPlusDelta(h *HyperLogLogExt, d uint) uint {
-// 	return MaxDynm(h) + d
-// }
+func MaxPlusDelta(h *HyperLogLogExt, d float64) float64 {
+	return MaxDynm(h) + d
+}
 
-func MaxPlusSqrtPrec(h *HyperLogLogExt) float64 {
-	return MaxDynm(h) + math.Sqrt(float64(h.p))
+func MinSafePlusDelta(h *HyperLogLogExt, d float64) float64 {
+	est := calculateEstimateExt(h.reg)
+	exp := MaxDynm(h)
+
+	for base := math.Exp2(exp); est > base; exp++ {
+		base = math.Exp2(exp)
+	}
+	return exp + d
+}
+
+func MinSafePlusDeltaBig(h *HyperLogLogExt, d float64) float64 {
+	est := calculateEstimateExtBig(h.reg)
+	exp := uint(math.Ceil(MaxDynm(h)))
+	base := calc2Pow(exp)
+
+	for {
+		if isEnough := est.Cmp(base) <= 0; isEnough {
+			break
+		}
+		exp++
+		base = calc2Pow(exp)
+	}
+
+	return float64(exp) + d
 }
 
 func Dynm(h *HyperLogLogExt) float64 {
-	return MaxPlusSqrtPrec(h)
-	// return Fixed(h, 1024.0)
+
+	// 1. vanilla hll
+	// return Fixed(h, 32.0)
+
+	// 2. max + sqrt(p)
+	// delta := math.Sqrt(float64(h.p))
+	// return MaxPlusDelta(h, delta)
+
+	// 3. max + 10
+	// return MaxPlusDelta(h, 10.0)
+
+	// 4. min safe
+	return MinSafePlusDelta(h, 5.0) // non-big
+	// return MinSafePlusDeltaBig(h, 0.0) // big
+
 }
 
 func (h *HyperLogLogExt) CountDynm() uint64 {
 	est := calculateEstimateExt(h.reg)
-	exp := float64(Dynm(h))
-
-	// slog.Debug(
-	// 	"VALUES",
-	// 	"m", h.max,
-	// 	"max", MaxDynm(h),
-	// 	"exp", exp,
-	// 	"est", est)
-
+	exp := Dynm(h)
 	base := math.Exp2(exp)
-	return uint64(-base * math.Log(1-est/base))
+
+	slog.Debug(
+		"VALUES_NORMAL",
+		"m", h.max,
+		"max", MaxDynm(h),
+		"exp", exp,
+		"est", est)
+
+	e := uint64(-base * math.Log(1-est/base))
+	return e
 }
 
 var _oneBig = big.NewInt(1)
@@ -244,17 +280,15 @@ func calc2Pow(e uint) *big.Float {
 
 func (h *HyperLogLogExt) CountBigDynm() *big.Float {
 	est := calculateEstimateExtBig(h.reg)
-
-	// calc dynamic base
-	exp := uint(math.Ceil(Dynm(h)))
+	exp := Dynm(h)
+	base := calc2Pow(uint(exp))
 
 	slog.Info(
 		"VALUES_BIG",
 		"m", h.max,
-		// "max", MaxDynm(h),
-		"exp", exp)
-
-	base := calc2Pow(exp)
+		"exp", exp,
+		"est", est,
+		"base", base)
 
 	return new(big.Float).Mul(
 		new(big.Float).Mul(negative, base),
