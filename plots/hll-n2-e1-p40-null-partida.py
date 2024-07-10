@@ -20,6 +20,14 @@ p4_b1024 = parse_utils.joint([
     parse_utils.parse("/Users/jp/Downloads/cluster/hll/2p/E1P40AnullIipxxlW256/hllroot1.3696572.out"),
 ])
 
+p16_b1024 = parse_utils.joint([
+    parse_utils.parse("/Users/jp/Downloads/cluster/hll/2p/E1P40AnullIipxxlW256/hllroot1.3704925.out"),
+])
+
+p16_b1024_20PTS = parse_utils.joint([
+    parse_utils.parse("/Users/jp/Downloads/cluster/hll/2p/E1P20AnullIipxxlW256/hllroot1.3788070.out"),
+])
+
 # estimate evolution over time
 fig, ax = plt.subplots(1,1, figsize=(10,5))
 
@@ -33,6 +41,10 @@ ax.plot(hll_6[0], hll_6[1], '-', linewidth=1, label='run 6')
 
 ax.plot(hll_13_14[0], hll_13_14[1], '-', linewidth=1, label='run 13_14')
 ax.plot(p4_b1024[0], p4_b1024[1], '-', linewidth=1, label='p4 b1024')
+ax.plot(p16_b1024[0], p16_b1024[1], '-', linewidth=1, label='p16 b1024')
+
+# 20 pts + totally random chi
+ax.plot(p16_b1024_20PTS[0], p16_b1024_20PTS[1], '-', linewidth=1, label='p16 b1024 20pts')
 
 ax.set_title("HLL")
 ax.set_ylabel('Estimated cardinality of infosets at round level')
