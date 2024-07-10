@@ -121,7 +121,7 @@ sbatch \
 --time=3-00:00:00 \
 --dependency=after:${rootid} \
 ~/Workspace/facu/hll-truco/hll-truco/sbatch/http/workers.sbatch \
-2 1 40 null InfosetPartidaXXLarge sha3 252000 10 http://${roothost} 16
+2 1 40 null InfosetPartidaXXLarge sha3 252000 10 http://${roothost} 16 true
 ```
 
 the positional args are:
@@ -136,3 +136,4 @@ the positional args are:
 8. Delta (in seconds) for printing log msgs
 9. HTTP root server
 10. HLL precision
+11. Allow 'Mazo' action in Chi vector (`true` by default)

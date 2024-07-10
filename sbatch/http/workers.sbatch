@@ -45,6 +45,7 @@ limit=${7:-'600'} # 600 seconds = 10 min # Run time limit (in seconds) (default 
 report=${8:-'10'} # Delta (in seconds) for printing log msgs
 root=${9:-'http://localhost:8080'} # HTTP root server
 precision=${10:-'16'} # HLL precision
+mazo=${11:-'true'} # allow mazo action?
 
 echo "using: worker:${worker_name} logs:${task_log} n:${n} envido:${envido} \
 pts:${pts} absId:${absId} infoset:${infoset} hash:${hash} limit:${limit} \
@@ -66,7 +67,8 @@ srun -l --output=${task_log} --error=${task_log} \
     -limit=${limit} \
     -report=${report} \
     -root=${root} \
-    -precision=${precision}
+    -precision=${precision} \
+    -mazo=${mazo}
 
 # shutdown root server
 curl -X GET ${root}/exit
