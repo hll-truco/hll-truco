@@ -150,9 +150,4 @@ func main() {
 		"finalEstimate", h.CountDynm(),
 		"terminals:", terminals,
 		"finished", time.Since(start).Seconds())
-
-	// data, _ := h.GobEncode()
-	// h2 := &hll.HyperLogLog{}
-	// h2.GobDecode(data)
-	// fmt.Println(h2.CountDynm())
 }
