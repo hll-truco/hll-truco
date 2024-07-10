@@ -25,9 +25,15 @@ type Worker struct {
 	start       time.Time
 	Limit       time.Duration
 	rootBaseURL string
+	allowMazo   bool
 }
 
-func NewWorker(rootBaseURL string, limit time.Duration, precision uint8) *Worker {
+func NewWorker(
+	rootBaseURL string,
+	limit time.Duration,
+	precision uint8,
+	allowMazo bool,
+) *Worker {
 	h, _ := hll.NewExt(precision)
 	if !strings.HasPrefix(rootBaseURL, "http://") {
 		rootBaseURL = "http://" + rootBaseURL
@@ -39,6 +45,7 @@ func NewWorker(rootBaseURL string, limit time.Duration, precision uint8) *Worker
 		TotalLocal:   nil,
 		start:        time.Now(),
 		Limit:        limit,
+		allowMazo:    allowMazo,
 		rootBaseURL:  rootBaseURL,
 	}
 }
@@ -81,7 +88,7 @@ func (w *Worker) getInfosetHashBytes(
 }
 
 func (w *Worker) randomAction(p *pdt.Partida) {
-	chis := pdt.Chis(p)
+	chis := pdt.MetaChis(p, w.allowMazo)
 	j := UniformPick(chis)
 	j.Hacer(p)
 }

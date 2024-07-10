@@ -27,6 +27,7 @@ var (
 	infosetFlag   = flag.String("info", "InfosetRondaBase", "Infoset impl. to use")
 	hashIDFlag    = flag.String("hash", "sha160", "Infoset hashing function")
 	limitFlag     = flag.Int("limit", 60, "Run time limit (in seconds) (default 1m)")
+	allowMazoFlag = flag.Bool("mazo", true, "Allow 'Mazo' action in Chi vector")
 	reportFlag    = flag.Int("report", 10, "Delta (in seconds) for printing log msgs")
 	rootFlag      = flag.String("root", "localhost:8080", "HTTP root server")
 	precisionFlag = flag.Int("precision", 16, "HLL precision (defaults to 16)")
@@ -65,6 +66,7 @@ func init() {
 		"infoset", *infosetFlag,
 		"hash", *hashIDFlag,
 		"limit", *limitFlag,
+		"allowMazo", *allowMazoFlag,
 		"report", *reportFlag,
 		"root", *rootFlag,
 		"precision", *precisionFlag)
@@ -82,7 +84,11 @@ func init() {
 	limit := time.Second * time.Duration(*limitFlag)
 
 	// worker
-	w = worker.NewWorker(*rootFlag, limit, uint8(*precisionFlag))
+	w = worker.NewWorker(
+		*rootFlag,
+		limit,
+		uint8(*precisionFlag),
+		*allowMazoFlag)
 }
 
 func main() {
