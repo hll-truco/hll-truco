@@ -2,9 +2,11 @@ package worker
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"hash"
 	"log/slog"
 	"math/big"
+	"os"
 	"strings"
 	"time"
 
@@ -48,6 +50,32 @@ func NewWorker(
 		allowMazo:    allowMazo,
 		rootBaseURL:  rootBaseURL,
 	}
+}
+
+func (w *Worker) Load(filepath string) error {
+	// Create or open the file
+	bs, err := os.ReadFile(filepath)
+	if err != nil {
+		return err
+	}
+
+	checkpoint := &state.StateCheckpoint{}
+
+	// unmarshal
+	err = json.Unmarshal(bs, checkpoint)
+	if err != nil {
+		return err
+	}
+
+	data, err := base64.StdEncoding.DecodeString(checkpoint.Gob)
+	if err != nil {
+		return err
+	}
+
+	//
+	w.H.GobDecode(data)
+
+	return nil
 }
 
 func (w *Worker) TimeSinceStarted() time.Duration {

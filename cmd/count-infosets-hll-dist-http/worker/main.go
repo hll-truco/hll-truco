@@ -31,6 +31,7 @@ var (
 	reportFlag    = flag.Int("report", 10, "Delta (in seconds) for printing log msgs")
 	rootFlag      = flag.String("root", "localhost:8080", "HTTP root server")
 	precisionFlag = flag.Int("precision", 16, "HLL precision (defaults to 16)")
+	resumeFlag    = flag.String("resume", "", "Full path to bob file to load on start")
 )
 
 var (
@@ -69,7 +70,8 @@ func init() {
 		"allowMazo", *allowMazoFlag,
 		"report", *reportFlag,
 		"root", *rootFlag,
-		"precision", *precisionFlag)
+		"precision", *precisionFlag,
+		"resume", *resumeFlag)
 
 	// gameplay vars
 	n = *nFlag
@@ -89,6 +91,14 @@ func init() {
 		limit,
 		uint8(*precisionFlag),
 		*allowMazoFlag)
+
+	if len(*resumeFlag) > 0 {
+		w.Load(*resumeFlag)
+		slog.Info(
+			"LOADED",
+			"file", *resumeFlag,
+			"estimate", w.H.CountBigDynm())
+	}
 }
 
 func main() {
