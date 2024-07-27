@@ -6,16 +6,16 @@
 # `sbatch -J hllworkers ~/Workspace/facu/hll-truco/sbatch/http/workers.sbatch root [<hash> <deck> <abs> <report> <limit>]`
 
 #SBATCH --job-name=hllworkers
-#SBATCH --nodes=8 # nodes to use in total, per job or subjob
-#SBATCH --ntasks=99 # when doing `srun` launch `ntaks` parallel jobs across `nodes`
+#SBATCH --nodes=16 # nodes to use in total, per job or subjob
+#SBATCH --ntasks=119 # when doing `srun` launch `ntaks` parallel jobs across `nodes`
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=128M
 #SBATCH --time=0-00:15:00
 #SBATCH --partition=besteffort
 #SBATCH --qos=besteffort
-#SBATCH --output=/clusteruy/home/juan.filevich/batches/out/hll-http/2p/E1P40AnullIipxxlW256/%x.%j.out
-#SBATCH --error=/clusteruy/home/juan.filevich/batches/out/hll-http/2p/E1P40AnullIipxxlW256/%x.%j.out
-#SBATCH --mail-type=NONE # options: NONE, BEGIN, END, FAIL, REQUEUE, ALL
+#SBATCH --output=/clusteruy/home/juan.filevich/batches/out/hll-http/2p/E1P20AnullIipxxlW256/%x.%j.out
+#SBATCH --error=/clusteruy/home/juan.filevich/batches/out/hll-http/2p/E1P20AnullIipxxlW256/%x.%j.out
+#SBATCH --mail-type=FAIL # options: NONE, BEGIN, END, FAIL, REQUEUE, ALL
 #SBATCH --mail-user=juan.filevich@fing.edu.uy
 
 # every (sub)job will execute this from here
@@ -30,7 +30,7 @@ printf "starts: $(date)\n"
 echo "args: ${@}"
 hr
 
-task_log=$HOME/batches/out/hll-http/2p/E1P40AnullIipxxlW256/%x.%j_%t.out # edit this!
+task_log=$HOME/batches/out/hll-http/2p/E1P20AnullIipxxlW256/%x.%j_%t.out # edit this!
 project=$HOME/Workspace/facu/hll-truco/hll-truco # edit this!
 main=$project/cmd/count-infosets-hll-dist-http/worker/main.go
 worker_name="bot_${SLURM_ARRAY_JOB_ID}_${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
@@ -46,6 +46,7 @@ report=${8:-'10'} # Delta (in seconds) for printing log msgs
 root=${9:-'http://localhost:8080'} # HTTP root server
 precision=${10:-'16'} # HLL precision
 mazo=${11:-'true'} # allow mazo action?
+resume=${12:-''} # resume from json state file?
 
 echo "using: worker:${worker_name} logs:${task_log} n:${n} envido:${envido} \
 pts:${pts} absId:${absId} infoset:${infoset} hash:${hash} limit:${limit} \
@@ -68,7 +69,8 @@ srun -l --output=${task_log} --error=${task_log} \
     -report=${report} \
     -root=${root} \
     -precision=${precision} \
-    -mazo=${mazo}
+    -mazo=${mazo} \
+    -resume=${resume}
 
 # shutdown root server
 curl -X GET ${root}/exit
