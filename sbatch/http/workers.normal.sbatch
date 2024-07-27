@@ -6,13 +6,13 @@
 # `sbatch -J hllworkers ~/Workspace/facu/hll-truco/sbatch/http/workers.sbatch root [<hash> <deck> <abs> <report> <limit>]`
 
 #SBATCH --job-name=hllworkers
-#SBATCH --nodes=16 # nodes to use in total, per job or subjob
-#SBATCH --ntasks=120 # when doing `srun` launch `ntaks` parallel jobs across `nodes`
+#SBATCH --nodes=12 # nodes to use in total, per job or subjob
+#SBATCH --ntasks=78 # when doing `srun` launch `ntaks` parallel jobs across `nodes`
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=128M
 #SBATCH --time=0-00:15:00
-#SBATCH --partition=besteffort
-#SBATCH --qos=besteffort
+#SBATCH --partition=normal
+#SBATCH --qos=normal
 #SBATCH --output=/clusteruy/home/juan.filevich/batches/out/hll-http/2p/E1P20AnullIipxxlW256/%x.%j.out
 #SBATCH --error=/clusteruy/home/juan.filevich/batches/out/hll-http/2p/E1P20AnullIipxxlW256/%x.%j.out
 #SBATCH --mail-type=FAIL # options: NONE, BEGIN, END, FAIL, REQUEUE, ALL
@@ -77,8 +77,7 @@ srun \
     -resume=${resume}
 
 # shutdown root server
-# let normal do this
-# curl -X GET ${root}/exit
+curl -X GET ${root}/exit
 
 hr
 printf "done: $(date)\n"

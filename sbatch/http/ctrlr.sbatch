@@ -13,6 +13,9 @@
 #SBATCH --mail-type=NONE # options: NONE, BEGIN, END, FAIL, REQUEUE, ALL
 #SBATCH --mail-user=juan.filevich@fing.edu.uy 
 
+# WARNING: Stop all jobs but this one (this prevents besteffor jobs from running)
+scancel $(squeue -u $(whoami) -h -o "%A" | grep -v $SLURM_JOB_ID)
+
 # horizontal rule
 hr() { printf '%*s\n' 80 | tr ' ' '-'; }
 
@@ -44,14 +47,15 @@ else
 fi
 
 # 1. submit hll::root
-# 2. submit hll::workers
+# 2. submit hll::workers normal
+# 3. submit hll::workers besteffort
 
 # 1. submit hll::root
 mkdir -p $HOME/batches/out/hll-http/2p/E1P20AnullIipxxlW256
 
 job_name="hllroot_${iter}" && \
 script=$HOME/Workspace/facu/hll-truco/hll-truco/sbatch/http/root.sbatch && \
-time_limit="0-00:10:00" && \
+time_limit="5-00:00:00" && \
 # args
 report=10 && \
 precision=6 && \
@@ -79,26 +83,42 @@ while true; do
   sleep 1
 done
 
-# 2. submit hll::workers
-sleep 5 && \
-job_name=hllworkers && \
-script=$HOME/Workspace/facu/hll-truco/hll-truco/sbatch/http/workers.sbatch && \
-time_limit="0-00:09:00" && \
-run_limit=420 && \
-root_host=$(squeue -u $(whoami) -j ${root_job_id} --states=R -h -o "%N:%k") && \
-# args
-n=2 && \
-envido=1 && \
-pts=20 && \
-absId=null && \
-infoset=InfosetPartidaXXLarge && \
-hash=sha3 && \
-limit=${run_limit} && \
-report=10 && \
-root=http://${root_host} && \
-precision=6 && \
-mazo=false && \
-resume=${latest} && \
+sleep 5
+
+# hll workers shared vars
+root_host=$(squeue -u $(whoami) -j ${root_job_id} --states=R -h -o "%N:%k")
+
+# hll workers args
+n=2
+envido=1
+pts=20
+absId=null
+infoset=InfosetPartidaXXLarge
+hash=sha3
+limit=0 # <- redeclare later
+report=10
+root=http://${root_host}
+precision=6
+mazo=false
+resume=${latest}
+
+# 2. submit normal workers
+job_name=hllworkers_normal
+script=$HOME/Workspace/facu/hll-truco/hll-truco/sbatch/http/workers.normal.sbatch
+time_limit="5-00:00:00"
+limit=428400
+sbatch \
+  -J ${job_name} \
+  --time="${time_limit}" \
+  --dependency=after:${root_job_id} \
+  "${script}" \
+  ${n} ${envido} ${pts} ${absId} "${infoset}" ${hash} ${limit} ${report} "${root}" ${precision} ${mazo} "${resume}"
+
+# 3. submit besteffort workers
+job_name=hllworkers_effort
+script=$HOME/Workspace/facu/hll-truco/hll-truco/sbatch/http/workers.sbatch
+time_limit="5-00:00:00"
+limit=428400 # 5d = 432000s -> 432000s - (1h = 3600s) = 428400s
 sbatch \
   -J ${job_name} \
   --time="${time_limit}" \
