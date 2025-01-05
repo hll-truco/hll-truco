@@ -27,7 +27,7 @@
 
 - deterministically count the number of infoset for a given deck size **at round
   level**.
-- e.g.: `go run cmd/count-infosets-ronda-deterministically/main.go -deck=7 
+- e.g.: `go run cmd/count-infosets/ronda/deterministically/main.go -deck=7 
   -hash=sha160 -info=InfosetRondaBase -abs=a1 -track=true -report=10`
 
 #### `cmd/count-infosets-partida-deterministically`
