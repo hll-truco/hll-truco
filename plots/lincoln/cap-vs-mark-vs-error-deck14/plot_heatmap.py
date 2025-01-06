@@ -4,7 +4,7 @@ correct_N = 248732
 
 # load `data.json` from the same directory
 import json
-with open('plots/lincoln/cap-vs-mark-vs-error-deck14/data/naive_lincoln.json', 'r') as f:
+with open('plots/lincoln/cap-vs-mark-vs-error-deck14/data/multi_lincoln.json', 'r') as f:
     data = json.load(f)
 
 # make a color map, where `marked` is used on the x axis and `captured` is used on the y axis
