@@ -159,16 +159,16 @@ func KL(p map[int]int, q map[int]int) float64 {
 	return kl
 }
 
-func checkKL(currentLevelDist map[int]int, prevLevelDist map[int]int) {
+func checkKL(currentLevelDist map[int]int, prevLevelDist map[int]int) float64 {
 	// base case
 	if len(prevLevelDist) == 0 {
 		copyMap(currentLevelDist, prevLevelDist)
-		return
+		return -1
 	}
 	// now, we can calculate the KL divergence between currentLevelDist and prevLevelDist
 	kl := KL(prevLevelDist, currentLevelDist)
 	copyMap(currentLevelDist, prevLevelDist)
-	slog.Info("KL", "kl", kl)
+	return kl
 }
 
 // returns a map of marked elements and a map of level distribution
@@ -202,7 +202,13 @@ func sampleMarked(markedSize int, makePartida PartidaFactory, calcKLEvery int) (
 
 				// calculate KL divergence every `calcKLEvery` elements
 				if len(marked)%calcKLEvery == 0 {
-					checkKL(currentLevelDist, prevLevelDist)
+					kl := checkKL(currentLevelDist, prevLevelDist)
+					slog.Info(
+						"REPORT",
+						"len", len(marked),
+						"kl", kl,
+						"currentLevelDist", currentLevelDist,
+					)
 				}
 			}
 
@@ -251,3 +257,25 @@ func main() {
 		"finished", time.Since(start).Seconds(),
 	)
 }
+
+/*
+{
+	"time": "2025-01-11T17:21:30.393115-03:00",
+	"level": "INFO",
+	"msg": "REPORT",
+	"len": 245000,
+	"kl": 0.00022873306443087248,
+	"currentLevelDist": {
+		"0": 3082,
+		"1": 39292,
+		"2": 61829,
+		"3": 60434,
+		"4": 38999,
+		"5": 23680,
+		"6": 11336,
+		"7": 4744,
+		"8": 1196,
+		"9": 408
+	}
+}
+*/
