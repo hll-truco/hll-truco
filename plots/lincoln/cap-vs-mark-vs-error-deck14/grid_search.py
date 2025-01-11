@@ -21,8 +21,8 @@ for i, (marked,captured) in enumerate(params):
     # execute this shell command `go run cmd/count-infosets/ronda/lincoln/main.go -hash=sha160 -deck=14 -abs=null -report=1 -limit=1400 -marked=2487 -captured=24870`
     command = [
         "go",
-        # "run", "cmd/count-infosets/ronda/lincoln/main.go",
-        "run", "cmd/count-infosets/ronda/lincoln/multi-lincoln/main.go",
+        "run", "cmd/count-infosets/ronda/lincoln/naive-lincoln/main.go",
+        # "run", "cmd/count-infosets/ronda/lincoln/multi-lincoln/main.go",
         "-hash=sha160", "-deck=14", "-abs=null", "-report=1",
         f"-marked={marked}", f"-captured={captured}"
     ]
