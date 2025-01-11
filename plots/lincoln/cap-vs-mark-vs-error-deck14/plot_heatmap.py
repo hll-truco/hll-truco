@@ -4,7 +4,7 @@ correct_N = 248732
 
 # load `data.json` from the same directory
 import json
-with open('plots/lincoln/cap-vs-mark-vs-error-deck14/data/multi_lincoln.json', 'r') as f:
+with open('/Users/jp/Workspace/facu/hll-truco/hll-truco/plots/lincoln/cap-vs-mark-vs-error-deck14/data/naive_lincoln_mazo=false.json', 'r') as f:
     data = json.load(f)
 
 # make a color map, where `marked` is used on the x axis and `captured` is used on the y axis
@@ -26,6 +26,7 @@ for entry in data:
     captured_idx = captured_values.index(entry["captured"])
     relative_error = abs(entry["N"] - correct_N) / correct_N * 100
     error_matrix[captured_idx, marked_idx] = relative_error
+    print(f"{captured_idx=} {marked_idx=} {relative_error=}")
 
 # Create formatted tick labels with percentages
 def format_label(value):
