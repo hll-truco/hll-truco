@@ -147,8 +147,15 @@ func sampleMarked(markedSize int, makePartida PartidaFactory) (map[string]bool, 
 	return marked, levelDist
 }
 
-// returns a map of captured elements, the number of recaptured elements and a map of level distribution
-func capture(captureSize int, makePartida PartidaFactory, marked map[string]bool) (map[string]bool, int, map[int]int) {
+func capture(
+	captureSize int,
+	makePartida PartidaFactory,
+	marked map[string]bool,
+) (
+	map[string]bool, // a map of captured elements
+	int, // the number of recaptured elements
+	map[int]int, // a map of level distribution
+) {
 
 	captured := map[string]bool{}
 	recaptured := 0
