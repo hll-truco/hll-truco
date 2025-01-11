@@ -159,23 +159,23 @@ func KL(p map[int]int, q map[int]int) float64 {
 	return kl
 }
 
-func checkKL(levelDist map[int]int, levelDistOld map[int]int) {
+func checkKL(currentLevelDist map[int]int, prevLevelDist map[int]int) {
 	// base case
-	if len(levelDistOld) == 0 {
-		copyMap(levelDist, levelDistOld)
+	if len(prevLevelDist) == 0 {
+		copyMap(currentLevelDist, prevLevelDist)
 		return
 	}
-	// now, we can calculate the KL divergence between levelDist and levelDistOld
-	kl := KL(levelDistOld, levelDist)
-	copyMap(levelDist, levelDistOld)
+	// now, we can calculate the KL divergence between currentLevelDist and prevLevelDist
+	kl := KL(prevLevelDist, currentLevelDist)
+	copyMap(currentLevelDist, prevLevelDist)
 	slog.Info("KL", "kl", kl)
 }
 
 // returns a map of marked elements and a map of level distribution
 func sampleMarked(markedSize int, makePartida PartidaFactory, calcKLEvery int) (map[string]bool, map[int]int) {
 	marked := map[string]bool{}
-	levelDist := map[int]int{}
-	levelDistOld := map[int]int{}
+	currentLevelDist := map[int]int{}
+	prevLevelDist := map[int]int{}
 	currentLevel := 0
 
 	for len(marked) < markedSize {
@@ -195,14 +195,14 @@ func sampleMarked(markedSize int, makePartida PartidaFactory, calcKLEvery int) (
 			// check if `h` is in `marked`
 			if _, ok := marked[h]; !ok {
 				marked[h] = true
-				if _, ok := levelDist[currentLevel]; !ok {
-					levelDist[currentLevel] = 0
+				if _, ok := currentLevelDist[currentLevel]; !ok {
+					currentLevelDist[currentLevel] = 0
 				}
-				levelDist[currentLevel]++
+				currentLevelDist[currentLevel]++
 
 				// calculate KL divergence every `calcKLEvery` elements
 				if len(marked)%calcKLEvery == 0 {
-					checkKL(levelDist, levelDistOld)
+					checkKL(currentLevelDist, prevLevelDist)
 				}
 			}
 
@@ -218,7 +218,7 @@ func sampleMarked(markedSize int, makePartida PartidaFactory, calcKLEvery int) (
 		}
 	}
 
-	return marked, levelDist
+	return marked, currentLevelDist
 }
 
 func main() {
@@ -241,13 +241,13 @@ func main() {
 
 	// let's mark some elements
 	slog.Info("MARKED_START", "calcKLEvery", *calcKLEvery)
-	marked, levelDist := sampleMarked(*markedFlag, makePartida, *calcKLEvery)
+	marked, currentLevelDist := sampleMarked(*markedFlag, makePartida, *calcKLEvery)
 	slog.Info(
 		"MARKED_DONE",
 		"got", len(marked),
 		"wanted", *markedFlag,
 		"marked", len(marked),
-		"levelDist", levelDist,
+		"currentLevelDist", currentLevelDist,
 		"finished", time.Since(start).Seconds(),
 	)
 }
