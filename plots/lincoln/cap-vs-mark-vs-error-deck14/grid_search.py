@@ -24,8 +24,9 @@ for i, (marked,captured) in enumerate(params):
         "run", "cmd/count-infosets/ronda/lincoln/naive-lincoln/main.go",
         # "run", "cmd/count-infosets/ronda/lincoln/multi-lincoln/main.go",
         "-hash=sha160", "-deck=14", "-abs=null", "-report=1",
-        f"-marked={marked}", f"-captured={captured}"
+        f"-marked={marked}", f"-captured={captured}", "-mazo=false"
     ]
+    print(" ".join(command))
     subprocess.run(command)
     print("-"*80)
 
