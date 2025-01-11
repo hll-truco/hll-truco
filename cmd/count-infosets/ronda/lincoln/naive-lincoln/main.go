@@ -28,8 +28,9 @@ var (
 	// actual size for -deck=14 is 248_732
 	// we will mark 1% of the total population: 248_732 * 0.01 = 2_487
 	// we will capture 10% of the total population: 248_732 * 0.1 = 24_873
-	markedFlag   = flag.Int("marked", 2_487, "Number of marked elements")
-	capturedFlag = flag.Int("captured", 248732, "Number of captured elements")
+	markedFlag    = flag.Int("marked", 2_487, "Number of marked elements")
+	capturedFlag  = flag.Int("captured", 248732, "Number of captured elements")
+	allowMazoFlag = flag.Bool("mazo", true, "Allow mazo?")
 )
 
 var (
@@ -75,6 +76,7 @@ func init() {
 		"reportFlag", *reportFlag,
 		"markedFlag", *markedFlag,
 		"capturedFlag", *capturedFlag,
+		"allowMazoFlag", *allowMazoFlag,
 	)
 
 	deck = utils.Deck(*deckSizeFlag)
@@ -133,7 +135,7 @@ func sampleMarked(markedSize int, makePartida PartidaFactory) (map[string]bool, 
 			}
 
 			// apply a random move
-			chis := pdt.Chis(p)
+			chis := pdt.MetaChis(p, *allowMazoFlag)
 			j := uniformPick(chis)
 			pkts := j.Hacer(p)
 			if pdt.IsDone(pkts, true) || p.Terminada() {
@@ -192,7 +194,7 @@ func capture(
 			}
 
 			// apply a random move
-			chis := pdt.Chis(p)
+			chis := pdt.MetaChis(p, *allowMazoFlag)
 			j := uniformPick(chis)
 			pkts := j.Hacer(p)
 			if pdt.IsDone(pkts, true) || p.Terminada() {
