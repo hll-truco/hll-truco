@@ -239,7 +239,10 @@ func main() {
 
 	// let's capture some elements
 	captured, recaptured, levelDist := capture(*capturedFlag, makePartida, marked)
+
+	// calculate N
 	N := len(marked) * len(captured) / recaptured
+
 	slog.Info(
 		"CAPTURE_DONE",
 		"got", len(captured),
