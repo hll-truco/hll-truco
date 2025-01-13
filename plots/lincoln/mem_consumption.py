@@ -14,10 +14,10 @@ sys_gc = [28,188,369,1361,11549]
 
 import matplotlib.pyplot as plt
 
-plt.plot(n, mac, label='Mac')
-plt.plot(n, sys, label='Sys')
-plt.plot(n, mac_gc, label='Mac GC')
-plt.plot(n, sys_gc, label='Sys GC')
+plt.plot(n, mac, label='Mac', marker='o')
+plt.plot(n, sys, label='Sys', marker='o')
+plt.plot(n, mac_gc, label='Mac GC', marker='o')
+plt.plot(n, sys_gc, label='Sys GC', marker='o')
 
 plt.xlabel('Number of Elements')
 plt.ylabel('Memory Consumption (MB)')
