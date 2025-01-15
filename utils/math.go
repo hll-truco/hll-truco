@@ -1,6 +1,9 @@
 package utils
 
-import "math"
+import (
+	"math"
+	"math/big"
+)
 
 func equalizeMaps(p map[int]int, q map[int]int) {
 	for key := range p {
@@ -59,4 +62,24 @@ func KL(p map[int]int, q map[int]int) float64 {
 	}
 
 	return kl
+}
+
+func EstimatePopulation(marked, captured, recaptured int, precision uint) *big.Float {
+	// Set precision to 1700 bits (~512 decimal digits) for the result
+	// Set precision to 2048 bits for a max value of 10^616
+	// Set precision to 4096 bits for a max value of 10^1233
+
+	// Convert integers to big.Float with high precision
+	markedFloat := new(big.Float).SetPrec(precision).SetInt64(int64(marked))
+	capturedFloat := new(big.Float).SetPrec(precision).SetInt64(int64(captured))
+	recapturedFloat := new(big.Float).SetPrec(precision).SetInt64(int64(recaptured))
+
+	// Calculate N = (marked * captured) / recaptured
+	numerator := new(big.Float).SetPrec(precision)
+	numerator.Mul(markedFloat, capturedFloat)
+
+	N := new(big.Float).SetPrec(precision)
+	N.Quo(numerator, recapturedFloat)
+
+	return N
 }
