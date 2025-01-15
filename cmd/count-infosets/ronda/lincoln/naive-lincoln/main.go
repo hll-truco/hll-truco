@@ -209,7 +209,7 @@ func capture(
 }
 
 func main() {
-	n := 2
+	n := 4
 	limEnvite := 1
 	azules := []string{"Alice", "Ariana", "Annie"}
 	rojos := []string{"Bob", "Ben", "Bill"}
@@ -240,16 +240,22 @@ func main() {
 	// let's capture some elements
 	captured, recaptured, levelDist := capture(*capturedFlag, makePartida, marked)
 
-	// calculate N
-	N := len(marked) * len(captured) / recaptured
-
 	slog.Info(
 		"CAPTURE_DONE",
-		"got", len(captured),
 		"wanted", *capturedFlag,
+		"marked", len(marked),
+		"captured", len(captured),
 		"recaptured", recaptured,
 		"levelDist", levelDist,
-		"N", N,
 		"finished", time.Since(start).Seconds(),
 	)
+
+	// calculate N using int64
+	// N := len(marked) * len(captured) / recaptured
+
+	// calculate N using `big`
+	precision := uint(4096) // 4096 bits for a max value of 10^1233
+	N_big := utils.EstimatePopulation(len(marked), len(captured), recaptured, precision)
+
+	slog.Info("RESULTS", "N_big", N_big)
 }
