@@ -230,7 +230,6 @@ func main() {
 	marked, levelDist := sampleMarked(*markedFlag, makePartida)
 	slog.Info(
 		"MARKED_DONE",
-		"got", len(marked),
 		"wanted", *markedFlag,
 		"marked", len(marked),
 		"levelDist", levelDist,
