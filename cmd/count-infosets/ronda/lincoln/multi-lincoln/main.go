@@ -278,26 +278,30 @@ func main() {
 
 	// let's mark some elements
 	marked, total := sampleMarked(*markedFlag, makePartida)
-	markedLevelDist := getLevelDist(marked)
 
 	slog.Info(
 		"MARKED_DONE",
 		"wanted", *markedFlag,
 		"marked", total,
-		"levelDist", markedLevelDist,
+		"levelDist", getLevelDist(marked),
 		"finished", time.Since(start).Seconds(),
 	)
 
 	// let's capture some elements
 	captured, recapturedByLevel := capture(*capturedFlag, makePartida, marked)
 
+	slog.Info(
+		"CAPTURE_DONE",
+		"wanted", *capturedFlag,
+		"recapturedByLevel", recapturedByLevel,
+		"finished", time.Since(start).Seconds(),
+	)
+
 	// calculate multi-lincoln
 	lincolnEstimatesByLevel, multiLincolnSum := multiLincoln(marked, captured, recapturedByLevel)
 
 	slog.Info(
-		"MULTI_LINCOLN_DONE",
-		"wanted", *capturedFlag,
-		"recapturedByLevel", recapturedByLevel,
+		"RESULTS",
 		"lincolnEstimatesByLevel", lincolnEstimatesByLevel,
 		"N", multiLincolnSum,
 		"finished", time.Since(start).Seconds(),
