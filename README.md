@@ -86,7 +86,7 @@
 
 ### Upload
 
-`rsync -avz --copy-links --progress -e 'ssh -p 10022 -i ~/.ssh/id_rsa' --exclude '__pycache__/' --exclude '*.out' --exclude '*.log' --exclude '.git/' ~/Workspace/facu/hll-truco 'cluster.uy:Workspace/facu'`
+`rsync -avz --copy-links --progress -e 'ssh -p 10022 -i ~/.ssh/id_rsa' --exclude '*.mod' --exclude '__pycache__/' --exclude '*.out' --exclude '*.log' --exclude '.git/' ~/Workspace/facu/hll-truco 'cluster.uy:Workspace/facu'`
 
 ### Download
 
