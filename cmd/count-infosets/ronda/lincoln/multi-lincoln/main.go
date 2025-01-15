@@ -227,6 +227,37 @@ func getLevelDist(marked map[int]map[string]bool) map[int]int {
 	return levelDist
 }
 
+func multiLincoln(
+	marked map[int]map[string]bool,
+	captured map[int]map[string]bool,
+	recapturedByLevel map[int]int,
+) (
+	lincolnEstimatesByLevel map[int]float64,
+	multiLincolnSum float64,
+) {
+	// let's assure that marked has all the keys (i.e., levels) from recapturedByLevel
+	for k := range recapturedByLevel {
+		if _, ok := marked[k]; !ok {
+			marked[k] = map[string]bool{}
+		}
+	}
+
+	// let's calculate the recaptured elements using Lincoln-Petersen method
+	// for EACH level INDEPENDENTLY
+	lincolnEstimatesByLevel = map[int]float64{}
+	for level := range recapturedByLevel {
+		N := len(marked[level]) * len(captured[level]) / recapturedByLevel[level]
+		lincolnEstimatesByLevel[level] = float64(N)
+	}
+
+	multiLincolnSum = 0.0
+	for _, v := range lincolnEstimatesByLevel {
+		multiLincolnSum += v
+	}
+
+	return lincolnEstimatesByLevel, multiLincolnSum
+}
+
 func main() {
 	n := 2
 	limEnvite := 1
@@ -260,32 +291,15 @@ func main() {
 	// let's capture some elements
 	captured, recapturedByLevel := capture(*capturedFlag, makePartida, marked)
 
-	// let's assure that marked has all the keys (i.e., levels) from recapturedByLevel
-	for k := range recapturedByLevel {
-		if _, ok := marked[k]; !ok {
-			marked[k] = map[string]bool{}
-		}
-	}
-
-	// let's calculate the recaptured elements using Lincoln-Petersen method
-	// for EACH level INDEPENDENTLY
-	lincolnEstimatesByLevel := map[int]float64{}
-	for level := range recapturedByLevel {
-		N := len(marked[level]) * len(captured[level]) / recapturedByLevel[level]
-		lincolnEstimatesByLevel[level] = float64(N)
-	}
-
-	totalRecaptured := 0.0
-	for _, v := range lincolnEstimatesByLevel {
-		totalRecaptured += v
-	}
+	// calculate multi-lincoln
+	lincolnEstimatesByLevel, multiLincolnSum := multiLincoln(marked, captured, recapturedByLevel)
 
 	slog.Info(
 		"MULTI_LINCOLN_DONE",
 		"wanted", *capturedFlag,
 		"recapturedByLevel", recapturedByLevel,
 		"lincolnEstimatesByLevel", lincolnEstimatesByLevel,
-		"N", totalRecaptured,
+		"N", multiLincolnSum,
 		"finished", time.Since(start).Seconds(),
 	)
 }
