@@ -265,6 +265,14 @@ func multiLincoln(
 	return lincolnEstimatesByLevel, multiLincolnSum
 }
 
+func fmtMapOfBig(lincolnEstimatesByLevel map[int]*big.Float) map[int]string {
+	lincolnEstimatesByLevelStr := map[int]string{}
+	for level, v := range lincolnEstimatesByLevel {
+		lincolnEstimatesByLevelStr[level] = v.Text('e', 5)
+	}
+	return lincolnEstimatesByLevelStr
+}
+
 func main() {
 	n := 2
 	limEnvite := 1
@@ -307,14 +315,9 @@ func main() {
 	// calculate multi-lincoln
 	lincolnEstimatesByLevel, multiLincolnSum := multiLincoln(marked, captured, recapturedByLevel)
 
-	lincolnEstimatesByLevelStr := map[int]string{}
-	for level, v := range lincolnEstimatesByLevel {
-		lincolnEstimatesByLevelStr[level] = v.Text('e', 5)
-	}
-
 	slog.Info(
 		"RESULTS",
-		"lincolnEstimatesByLevel", lincolnEstimatesByLevelStr,
+		"lincolnEstimatesByLevel", fmtMapOfBig(lincolnEstimatesByLevel),
 		"N", multiLincolnSum.Text('e', 5),
 		"finished", time.Since(start).Seconds(),
 	)
