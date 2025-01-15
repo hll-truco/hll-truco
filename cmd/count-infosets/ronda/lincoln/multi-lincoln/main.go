@@ -219,6 +219,14 @@ func capture(
 	return captured, recapturedByLevel
 }
 
+func getLevelDist(marked map[int]map[string]bool) map[int]int {
+	levelDist := make(map[int]int)
+	for k, v := range marked {
+		levelDist[k] = len(v)
+	}
+	return levelDist
+}
+
 func main() {
 	n := 2
 	limEnvite := 1
@@ -239,18 +247,20 @@ func main() {
 
 	// let's mark some elements
 	marked, total := sampleMarked(*markedFlag, makePartida)
+	markedLevelDist := getLevelDist(marked)
+
 	slog.Info(
 		"MARKED_DONE",
-		"got", total,
 		"wanted", *markedFlag,
-		"levels_marked", len(marked),
+		"marked", total,
+		"levelDist", markedLevelDist,
 		"finished", time.Since(start).Seconds(),
 	)
 
 	// let's capture some elements
 	captured, recapturedByLevel := capture(*capturedFlag, makePartida, marked)
 
-	// let's assure that marked has all the keys from recapturedByLevel
+	// let's assure that marked has all the keys (i.e., levels) from recapturedByLevel
 	for k := range recapturedByLevel {
 		if _, ok := marked[k]; !ok {
 			marked[k] = map[string]bool{}
@@ -258,6 +268,7 @@ func main() {
 	}
 
 	// let's calculate the recaptured elements using Lincoln-Petersen method
+	// for EACH level INDEPENDENTLY
 	lincolnEstimatesByLevel := map[int]float64{}
 	for level := range recapturedByLevel {
 		N := len(marked[level]) * len(captured[level]) / recapturedByLevel[level]
