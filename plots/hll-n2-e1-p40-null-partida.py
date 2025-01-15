@@ -63,6 +63,10 @@ p6_b1024_20PTS_nomazo = parse_utils.joint([
     parse_utils.parse("/Users/jp/Downloads/cluster/hll/2p/E1P20AnullIipxxlW256/hllroot_1.4069887.out"),
 ])
 
+# last non logged 15 days (kept the same value)
+p6_b1024_20PTS_nomazo[0].append(p6_b1024_20PTS_nomazo[0][-1] + 1296000)
+p6_b1024_20PTS_nomazo[1].append(p6_b1024_20PTS_nomazo[1][-1])
+
 # estimate evolution over time
 fig, ax = plt.subplots(1,1, figsize=(10,5))
 
@@ -76,7 +80,7 @@ fig, ax = plt.subplots(1,1, figsize=(10,5))
 
 # ax.plot(hll_13_14[0], hll_13_14[1], '-', linewidth=1, label='run 13_14')
 # ax.plot(p4_b1024[0], p4_b1024[1], '-', linewidth=1, label='p4 b1024')
-ax.plot(p16_b1024[0], p16_b1024[1], '-', linewidth=1, label='VIEJA: prec=16 | base=1024 | pts=20 | mazo | 100 cores')
+# ax.plot(p16_b1024[0], p16_b1024[1], '-', linewidth=1, label='VIEJA: prec=16 | base=1024 | pts=20 | mazo | 100 cores')
 
 # 20 pts + totally random chi
 # ax.plot(p16_b1024_20PTS[0], p16_b1024_20PTS[1], '-', linewidth=1, label='prec=16 base=1024 pts=20')
@@ -84,7 +88,7 @@ ax.plot(p16_b1024[0], p16_b1024[1], '-', linewidth=1, label='VIEJA: prec=16 | ba
 # ax.plot(p16_b1024_20PTS_nomazo[0], p16_b1024_20PTS_nomazo[1], '-', linewidth=1, label='prec=16 base=1024 pts=20 no-mazo')
 
 # 20 pts + totally random chi + NO-MAZO (1+78+200 cores)
-ax.plot(p6_b1024_20PTS_nomazo[0], p6_b1024_20PTS_nomazo[1], '-', linewidth=1, label='NUEVA: prec=6 | base=1024 | pts=20 | no-mazo | 200 cores')
+ax.plot(p6_b1024_20PTS_nomazo[0], p6_b1024_20PTS_nomazo[1], '-', linewidth=1, label='hash=sha3; precision=6 bits; exp base=1024; pts=20; no-mazo; 200 cores')
 
 ax.set_title("HLL")
 ax.set_ylabel('Estimated cardinality of infosets at round level')
