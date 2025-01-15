@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"math/big"
 	"math/rand"
 	"os"
 	"time"
@@ -232,8 +233,8 @@ func multiLincoln(
 	captured map[int]map[string]bool,
 	recapturedByLevel map[int]int,
 ) (
-	lincolnEstimatesByLevel map[int]float64,
-	multiLincolnSum float64,
+	lincolnEstimatesByLevel map[int]*big.Float,
+	multiLincolnSum *big.Float,
 ) {
 	// let's assure that marked has all the keys (i.e., levels) from recapturedByLevel
 	for k := range recapturedByLevel {
@@ -244,15 +245,21 @@ func multiLincoln(
 
 	// let's calculate the recaptured elements using Lincoln-Petersen method
 	// for EACH level INDEPENDENTLY
-	lincolnEstimatesByLevel = map[int]float64{}
+	lincolnEstimatesByLevel = map[int]*big.Float{}
+	precision := uint(4096) // 4096 bits for a max value of 10^1233
 	for level := range recapturedByLevel {
-		N := len(marked[level]) * len(captured[level]) / recapturedByLevel[level]
-		lincolnEstimatesByLevel[level] = float64(N)
+		N_big := utils.EstimatePopulation(
+			len(marked[level]),
+			len(captured[level]),
+			recapturedByLevel[level],
+			precision,
+		)
+		lincolnEstimatesByLevel[level] = N_big
 	}
 
-	multiLincolnSum = 0.0
+	multiLincolnSum = new(big.Float).SetPrec(precision)
 	for _, v := range lincolnEstimatesByLevel {
-		multiLincolnSum += v
+		multiLincolnSum.Add(multiLincolnSum, v)
 	}
 
 	return lincolnEstimatesByLevel, multiLincolnSum
@@ -300,10 +307,15 @@ func main() {
 	// calculate multi-lincoln
 	lincolnEstimatesByLevel, multiLincolnSum := multiLincoln(marked, captured, recapturedByLevel)
 
+	lincolnEstimatesByLevelStr := map[int]string{}
+	for level, v := range lincolnEstimatesByLevel {
+		lincolnEstimatesByLevelStr[level] = v.Text('e', 5)
+	}
+
 	slog.Info(
 		"RESULTS",
-		"lincolnEstimatesByLevel", lincolnEstimatesByLevel,
-		"N", multiLincolnSum,
+		"lincolnEstimatesByLevel", lincolnEstimatesByLevelStr,
+		"N", multiLincolnSum.Text('e', 5),
 		"finished", time.Since(start).Seconds(),
 	)
 }
