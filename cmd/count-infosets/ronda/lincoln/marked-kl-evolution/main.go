@@ -93,24 +93,6 @@ func uniformPick(chis [][]pdt.IJugada) pdt.IJugada {
 
 type PartidaFactory func() *pdt.Partida
 
-func copyMap(originalMap map[int]int, destMap map[int]int) {
-	for key, value := range originalMap {
-		destMap[key] = value
-	}
-}
-
-func checkKL(currentLevelDist map[int]int, prevLevelDist map[int]int) float64 {
-	// base case
-	if len(prevLevelDist) == 0 {
-		copyMap(currentLevelDist, prevLevelDist)
-		return -1
-	}
-	// now, we can calculate the KL divergence between currentLevelDist and prevLevelDist
-	kl := utils.KL(prevLevelDist, currentLevelDist)
-	copyMap(currentLevelDist, prevLevelDist)
-	return kl
-}
-
 // returns a map of marked elements and a map of level distribution
 func sampleMarked(markedSize int, makePartida PartidaFactory, calcKLEvery int) (map[string]bool, map[int]int) {
 	marked := map[string]bool{}
@@ -142,7 +124,7 @@ func sampleMarked(markedSize int, makePartida PartidaFactory, calcKLEvery int) (
 
 				// calculate KL divergence every `calcKLEvery` elements
 				if len(marked)%calcKLEvery == 0 {
-					kl := checkKL(currentLevelDist, prevLevelDist)
+					kl := utils.CheckKL(currentLevelDist, prevLevelDist)
 					slog.Info(
 						"REPORT",
 						"len", len(marked),

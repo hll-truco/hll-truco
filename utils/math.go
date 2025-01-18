@@ -64,6 +64,24 @@ func KL(p map[int]int, q map[int]int) float64 {
 	return kl
 }
 
+func copyMap(originalMap map[int]int, destMap map[int]int) {
+	for key, value := range originalMap {
+		destMap[key] = value
+	}
+}
+
+func CheckKL(currentLevelDist map[int]int, prevLevelDist map[int]int) float64 {
+	// base case
+	if len(prevLevelDist) == 0 {
+		copyMap(currentLevelDist, prevLevelDist)
+		return -1
+	}
+	// now, we can calculate the KL divergence between currentLevelDist and prevLevelDist
+	kl := KL(prevLevelDist, currentLevelDist)
+	copyMap(currentLevelDist, prevLevelDist)
+	return kl
+}
+
 func EstimatePopulation(marked, captured, recaptured int, precision uint) *big.Float {
 	// Set precision to 1700 bits (~512 decimal digits) for the result
 	// Set precision to 2048 bits for a max value of 10^616
