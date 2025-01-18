@@ -215,10 +215,10 @@ func capture(
 
 		if printer.ShouldPrint() {
 			slog.Info(
-				"REPORT_MARKED",
-				"wanted", *markedFlag,
-				"marked", total,
-				"levelDist", getLevelDist(marked),
+				"REPORT_CAPTURE",
+				"wanted", captureSize,
+				"captured", total,
+				"levelDist", recapturedByLevel,
 				"finished", time.Since(start).Seconds(),
 			)
 			printer.Check()
