@@ -106,3 +106,21 @@ func TimeLimitReached(started time.Time, envvar string) bool {
 	elapsed := time.Since(started).Seconds()
 	return elapsed > float64(limitSeconds)
 }
+
+func TimePercentileAchieved(lastCheck time.Time, envvar string, percentage int) bool {
+	limitStr := os.Getenv(envvar)
+	if limitStr == "" || limitStr == "-1" {
+		return false
+	}
+
+	limitSeconds, err := strconv.Atoi(limitStr)
+	if err != nil {
+		return false
+	}
+
+	p := float64(percentage) / 100.0
+	maxLimit := float64(limitSeconds) * p
+	elapsed := time.Since(lastCheck).Seconds()
+
+	return elapsed > maxLimit
+}

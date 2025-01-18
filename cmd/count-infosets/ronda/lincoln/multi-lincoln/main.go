@@ -113,7 +113,12 @@ func sampleMarked(markedSize int, makePartida PartidaFactory) (map[int](map[stri
 	marked := map[int](map[string]bool){}
 	total := 0
 	currentLevel := 0
+
+	// tracking metrics
 	_start := time.Now()
+	_prevLevelDist := map[int]int{}
+	_lastKLCalc := time.Now()
+	calcKLEvery := markedSize / 10
 
 	for total < markedSize && !utils.TimeLimitReached(_start, "TIME_LIMIT_MARK") {
 		p := makePartida()
@@ -150,6 +155,23 @@ func sampleMarked(markedSize int, makePartida PartidaFactory) (map[int](map[stri
 			if _, ok := marked[currentLevel][h]; !ok {
 				marked[currentLevel][h] = true
 				total++
+
+				// calculate KL divergence every `calcKLEvery` elements
+				iterationsAchieved := total%calcKLEvery == 0
+				timePercentileAchieved := utils.TimePercentileAchieved(_lastKLCalc, "TIME_LIMIT_MARK", 10)
+				if iterationsAchieved || timePercentileAchieved {
+					_lastKLCalc = time.Now()
+					currentLevelDist := getLevelDist(marked)
+					kl := utils.CheckKL(currentLevelDist, _prevLevelDist)
+					slog.Info(
+						"KL_REPORT",
+						"len", total,
+						"kl", kl,
+						"currentLevelDist", currentLevelDist,
+						"iterationsAchieved", iterationsAchieved,
+						"timePercentileAchieved", timePercentileAchieved,
+					)
+				}
 			}
 
 			// apply a random move
@@ -180,7 +202,12 @@ func capture(
 	captured = map[int](map[string]bool){}
 	recapturedByLevel = map[int]int{}
 	total := 0
+
+	// tracking metrics
 	_start := time.Now()
+	_prevLevelDist := map[int]int{}
+	_lastKLCalc := time.Now()
+	calcKLEvery := captureSize / 10
 
 	for total < captureSize && !utils.TimeLimitReached(_start, "TIME_LIMIT_CAPTURE") {
 		p := makePartida()
@@ -229,6 +256,22 @@ func capture(
 						recapturedByLevel[currentLevel] = 0
 					}
 					recapturedByLevel[currentLevel]++
+				}
+
+				// calculate KL divergence every `calcKLEvery` elements
+				iterationsAchieved := total%calcKLEvery == 0
+				timePercentileAchieved := utils.TimePercentileAchieved(_lastKLCalc, "TIME_LIMIT_MARK", 10)
+				if iterationsAchieved || timePercentileAchieved {
+					_lastKLCalc = time.Now()
+					kl := utils.CheckKL(recapturedByLevel, _prevLevelDist)
+					slog.Info(
+						"KL_REPORT",
+						"len", total,
+						"kl", kl,
+						"currentLevelDist", recapturedByLevel,
+						"iterationsAchieved", iterationsAchieved,
+						"timePercentileAchieved", timePercentileAchieved,
+					)
 				}
 			}
 
