@@ -77,6 +77,9 @@ func init() {
 		"markedFlag", *markedFlag,
 		"capturedFlag", *capturedFlag,
 		"allowMazoFlag", *allowMazoFlag,
+		"GOMEMLIMIT", os.Getenv("GOMEMLIMIT"),
+		"TIME_LIMIT_MARK", os.Getenv("TIME_LIMIT_MARK"),
+		"TIME_LIMIT_CAPTURE", os.Getenv("TIME_LIMIT_CAPTURE"),
 	)
 
 	deck = utils.Deck(*deckSizeFlag)
@@ -110,8 +113,9 @@ func sampleMarked(markedSize int, makePartida PartidaFactory) (map[int](map[stri
 	marked := map[int](map[string]bool){}
 	total := 0
 	currentLevel := 0
+	_start := time.Now()
 
-	for total < markedSize {
+	for total < markedSize && !utils.TimeLimitReached(_start, "TIME_LIMIT_MARK") {
 		p := makePartida()
 		currentLevel = 0
 
@@ -176,8 +180,9 @@ func capture(
 	captured = map[int](map[string]bool){}
 	recapturedByLevel = map[int]int{}
 	total := 0
+	_start := time.Now()
 
-	for total < captureSize {
+	for total < captureSize && !utils.TimeLimitReached(_start, "TIME_LIMIT_CAPTURE") {
 		p := makePartida()
 		currentLevel := 0
 
@@ -305,7 +310,7 @@ func main() {
 
 	makePartida := func() *pdt.Partida {
 		return utils.NuevaPartida(
-			pdt.A40,
+			pdt.A20,
 			azules[:n>>1],
 			rojos[:n>>1],
 			limEnvite,
