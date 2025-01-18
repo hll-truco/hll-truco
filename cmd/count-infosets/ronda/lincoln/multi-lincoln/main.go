@@ -115,6 +115,17 @@ func sampleMarked(markedSize int, makePartida PartidaFactory) (map[int](map[stri
 		p := makePartida()
 		currentLevel = 0
 
+		if printer.ShouldPrint() {
+			slog.Info(
+				"REPORT_MARKED",
+				"wanted", *markedFlag,
+				"marked", total,
+				"levelDist", getLevelDist(marked),
+				"finished", time.Since(start).Seconds(),
+			)
+			printer.Check()
+		}
+
 		for !p.Terminada() && total < markedSize {
 
 			// infoset
@@ -169,6 +180,17 @@ func capture(
 	for total < captureSize {
 		p := makePartida()
 		currentLevel := 0
+
+		if printer.ShouldPrint() {
+			slog.Info(
+				"REPORT_MARKED",
+				"wanted", *markedFlag,
+				"marked", total,
+				"levelDist", getLevelDist(marked),
+				"finished", time.Since(start).Seconds(),
+			)
+			printer.Check()
+		}
 
 		for !p.Terminada() && total < captureSize {
 
