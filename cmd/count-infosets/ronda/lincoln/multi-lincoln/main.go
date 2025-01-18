@@ -164,7 +164,7 @@ func sampleMarked(markedSize int, makePartida PartidaFactory) (map[int](map[stri
 					currentLevelDist := getLevelDist(marked)
 					kl := utils.CheckKL(currentLevelDist, _prevLevelDist)
 					slog.Info(
-						"KL_REPORT",
+						"KL_MARKED_REPORT",
 						"len", total,
 						"kl", kl,
 						"currentLevelDist", currentLevelDist,
@@ -265,7 +265,7 @@ func capture(
 					_lastKLCalc = time.Now()
 					kl := utils.CheckKL(recapturedByLevel, _prevLevelDist)
 					slog.Info(
-						"KL_REPORT",
+						"KL_CAPTURE_REPORT",
 						"len", total,
 						"kl", kl,
 						"currentLevelDist", recapturedByLevel,
