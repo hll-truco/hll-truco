@@ -38,12 +38,12 @@ go build -ldflags="-w -s" -o bin/multi_lincoln $cmd
 
 # run
 
-srun --export=ALL,GOMEMLIMIT=496GiB \
+srun --export=ALL,GOMEMLIMIT=496GiB,TIME_LIMIT_MARK=48960,TIME_LIMIT_CAPTURE=58752 \
   bin/multi_lincoln \
     -hash=sha512 \
     -abs=null \
     -info=InfosetPartidaXXLarge \
-    -report=1 \
+    -report=3600 \
     -marked=$mark \
     -captured=$capture \
     -mazo=false
