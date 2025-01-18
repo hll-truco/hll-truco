@@ -8,7 +8,9 @@ import (
 	"hash"
 	"hash/adler32"
 	"log"
+	"os"
 	"runtime"
+	"strconv"
 	"time"
 )
 
@@ -88,4 +90,19 @@ func ParseHashFn(ID string) hash.Hash {
 	}
 	log.Panicf("hash `%s` not found", ID)
 	return nil
+}
+
+func TimeLimitReached(started time.Time, envvar string) bool {
+	limitStr := os.Getenv(envvar)
+	if limitStr == "" || limitStr == "-1" {
+		return false
+	}
+
+	limitSeconds, err := strconv.Atoi(limitStr)
+	if err != nil {
+		return false
+	}
+
+	elapsed := time.Since(started).Seconds()
+	return elapsed > float64(limitSeconds)
 }
